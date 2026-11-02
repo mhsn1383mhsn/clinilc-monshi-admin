@@ -422,7 +422,7 @@ const CenterHub=(()=>{
  const raw=window.localStorage,MAIN='center_main',META=new Set(['clinic_centers','clinic_licenses','clinic_adminCenter','clinic_testCenter','clinic_licenseSession']);
  const safe=v=>String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),parse=(v,d)=>{try{return v==null?d:JSON.parse(v)}catch(e){return d}},read=(k,d)=>parse(raw.getItem(k),d),write=(k,v)=>raw.setItem(k,JSON.stringify(v));
  const demoPeople=[{id:'p1',name:'سارا احمدی',type:'client',phone:'09120000001'},{id:'p2',name:'دکتر مریم رضایی',type:'therapist',phone:'09120000002'},{id:'p3',name:'نگار کریمی',type:'secretary',phone:'09120000003'},{id:'p4',name:'دکتر علی محمدی',type:'therapist',phone:'09120000004'},{id:'p5',name:'زهرا نوری',type:'client',phone:'09120000005'}];
- function centers(){let a=read('clinic_centers',null);if(!Array.isArray(a))a=[];a=a.filter(c=>c&&c.id&&c.id!==MAIN&&c.name!=='مرکز فعلی'&&c.name!=='کلینیک چهارم');if(!a.length&&!(window.ClinicCloud&&window.ClinicCloud.engaged)){/* empty until cloud */ }write('clinic_centers',a);return a}
+ function centers(){let a=read('clinic_centers',null);if(!Array.isArray(a))a=[];a=a.filter(c=>c&&c.id&&c.id!==MAIN&&c.name!=='مرکز فعلی'&&c.name!=='کلینیک چهارم'&&c.name!=='مرکز');if(!a.length){try{const s=JSON.parse(localStorage.getItem('suite_session_admin')||'null');const list=(s&&s.centers)||(s&&s.center?[s.center]:[]);if(Array.isArray(list)&&list.length){a=list.map(c=>({id:c.id,name:c.name||'مرکز',active:c.active!==false})).filter(c=>c.id);if(a.length)write('clinic_centers',a);}}catch(e){}}else{write('clinic_centers',a);}return a}
  function licenses(){const a=read('clinic_licenses',[]);return Array.isArray(a)?a:[]}
  function current(){const cs=centers();if(!cs.length)return '';if(window.CLINIC_PANEL_ROLE==='admin'){const id=raw.getItem('clinic_adminCenter');return cs.find(x=>x.id===id)?.id||cs.find(x=>x.active!==false)?.id||cs[0].id}const id=raw.getItem('clinic_testCenter');return cs.find(x=>x.id===id&&x.active!==false)?.id||cs.find(x=>x.active!==false)?.id||cs[0].id}
  function scopedKey(centerId,t){return`clinic_center_${centerId}_${t}`}
@@ -435,13 +435,14 @@ const CenterHub=(()=>{
  function removeCenter(id){write('clinic_centers',centers().filter(c=>c.id!==id));const cur=current();if(cur===id){const next=centers().find(c=>c.active!==false);if(window.CLINIC_PANEL_ROLE==='admin'){if(next)raw.setItem('clinic_adminCenter',next.id);else raw.removeItem('clinic_adminCenter')}else{if(next)raw.setItem('clinic_testCenter',next.id);else raw.removeItem('clinic_testCenter')}}return true}
  function therapistChoices(exceptId){const out=[];for(const c of centers().filter(c=>c.active!==false&&c.id!==exceptId)){let people=rootData(c.id,'people');if(!Array.isArray(people))continue; if(false&&c.id===MAIN)people=[];if(!Array.isArray(people))continue;people.filter(p=>p.type==='therapist').forEach(p=>out.push({centerId:c.id,centerName:c.name,person:p}))}return out}
  function copyTherapist(sourceCenterId,targetCenterId,personId){const src=rootData(sourceCenterId,'people');if(!Array.isArray(src))return false;const person=src.find(p=>String(p.id)===String(personId)&&p.type==='therapist');if(!person)return false;const key=scopedKey(targetCenterId,'people');let target=parse(raw.getItem(key),null);if(!Array.isArray(target))target=rootData(targetCenterId,'people')||[];if(target.some(p=>String(p.id)===String(person.id)))return false;raw.setItem(key,JSON.stringify([{...person,sharedFromCenter:sourceCenterId},...target]));return true}
- function contextBar(){const role=window.CLINIC_PANEL_ROLE;if(!role)return null;const c=centers().find(x=>x.id===current())||centers()[0],bar=document.createElement('div');bar.className='center-context';if(role==='admin'){bar.innerHTML=`<span class="center-context-label" style="opacity:.8">مرکز فعال برای نظارت</span><button type="button" class="btn sec sm" id="centerContextSwitch">تغییر مرکز · ${safe(c.name)}</button>`}else{bar.innerHTML=`<span>${window.CLINIC_CENTER_LABEL||'مرکز فعال'}: <b>${safe(c.name)}</b></span><button type="button" class="btn sec sm" id="centerContextSwitch">تغییر مرکز</button>`}return bar}
- function mountContext(){const bar=contextBar(),head=document.querySelector('header.top');if(!bar||!head)return;head.insertAdjacentElement('afterend',bar);const switchBtn=bar.querySelector('#centerContextSwitch');if(switchBtn)switchBtn.onclick=()=>{const options=centers().filter(c=>c.active!==false);sheet(window.CLINIC_PANEL_ROLE==='admin'?'انتخاب مرکز برای نظارت':'انتخاب مرکز',options.map(c=>`<button class="btn sec big" data-center="${c.id}">${safe(c.name)}${c.id===current()?' · انتخاب‌شده':''}</button>`).join(''),(b,close)=>b.querySelectorAll('[data-center]').forEach(x=>x.onclick=async()=>{const id=x.dataset.center;if(window.CLINIC_PANEL_ROLE==='admin'&&window.ClinicCloud&&typeof window.ClinicCloud.switchCenter==='function'){try{close();await window.ClinicCloud.switchCenter(id);location.reload()}catch(err){alert(String(err.message||err))}}else{if(window.CLINIC_PANEL_ROLE==='admin')setAdminCenter(id);else setTestCenter(id);close();location.reload()}}))}}
+ function contextBar(){const role=window.CLINIC_PANEL_ROLE;if(!role)return null;const list=centers();const c=list.find(x=>x.id===current())||list[0]||{id:'',name:'در حال بارگذاری…'};const bar=document.createElement('div');bar.className='center-context';if(role==='admin'){bar.innerHTML=`<span class="center-context-label" style="opacity:.8">مرکز فعال برای نظارت</span><button type="button" class="btn sec sm" id="centerContextSwitch" ${list.length?'':'disabled'}>تغییر مرکز · ${safe(c.name||'—')}</button>`}else{bar.innerHTML=`<span>${window.CLINIC_CENTER_LABEL||'مرکز فعال'}: <b>${safe(c.name||'—')}</b></span>`}return bar}
+ function mountContext(){const bar=contextBar(),head=document.querySelector('header.top');if(!bar||!head)return;document.querySelectorAll('.center-context').forEach(x=>x.remove());head.insertAdjacentElement('afterend',bar);const switchBtn=bar.querySelector('#centerContextSwitch');if(switchBtn)switchBtn.onclick=()=>{const options=centers().filter(c=>c.active!==false);sheet(window.CLINIC_PANEL_ROLE==='admin'?'انتخاب مرکز برای نظارت':'انتخاب مرکز',options.map(c=>`<button class="btn sec big" data-center="${c.id}">${safe(c.name)}${c.id===current()?' · انتخاب‌شده':''}</button>`).join(''),(b,close)=>b.querySelectorAll('[data-center]').forEach(x=>x.onclick=async()=>{const id=x.dataset.center;if(window.CLINIC_PANEL_ROLE==='admin'&&window.ClinicCloud&&typeof window.ClinicCloud.switchCenter==='function'){try{close();await window.ClinicCloud.switchCenter(id);location.reload()}catch(err){alert(String(err.message||err))}}else{if(window.CLINIC_PANEL_ROLE==='admin')setAdminCenter(id);else setTestCenter(id);close();location.reload()}}))}}
  function renderLoginGate(){document.body.innerHTML='<main class="license-gate"><div class="card"><h2>ورود به این بخش در دسترس نیست</h2><p class="mut">برای راهنمایی با مدیر سامانه تماس بگیرید.</p></div></main>'}
  centers();
  try{Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem(k){k=String(k);if(k.startsWith('clinic_')&&!META.has(k)){const id=current(),scoped=scopedKey(id,k.slice(7)),v=raw.getItem(scoped);if(v!==null)return v;return id===MAIN?raw.getItem(k):null}return raw.getItem(k)},setItem(k,v){k=String(k);v=String(v);if(k.startsWith('clinic_')&&!META.has(k)){raw.setItem(scopedKey(current(),k.slice(7)),v);return}raw.setItem(k,v)},removeItem(k){k=String(k);if(k.startsWith('clinic_')&&!META.has(k)){raw.removeItem(scopedKey(current(),k.slice(7)));return}raw.removeItem(k)},clear(){raw.clear()},key(i){return raw.key(i)},get length(){return raw.length}}})}catch(e){console.warn('Tenant storage isolation could not be enabled',e)}
  return{MAIN,centers,licenses,current,setAdminCenter,setTestCenter,addCenter,renameCenter,setCenterActive,mountContext,renderLoginGate,therapistChoices,copyTherapist,storeKey:scopedKey,isIsolated:()=>window.localStorage!==raw};
 })();
+window.CenterHub=CenterHub;
 </script>
 <style id="clinic-appearance-theme">
 /* Theme adapted from the supplied financial dashboard reference. Visual-only layer. */
@@ -1175,7 +1176,7 @@ window.DM_CONFIG = {
       p_action: 'pull',
       p_payload: { since: null },
     });
-    if (!result || result.error) throw new Error((result && result.error) || 'دریافت داده از سرور ناموفق بود');
+    if (!result || result.ok === false || result.error) throw new Error((result && result.error) || 'دریافت داده از سرور ناموفق بود');
     state.snapshot = {};
     state.known = {};
     state.revision = Number(result.rev || 0);
@@ -1196,13 +1197,34 @@ window.DM_CONFIG = {
     clearInterval(state.timer);
     state.timer = setInterval(poll, POLL_MS);
     if (window.ClinicConnection && ClinicConnection.paint) { try { ClinicConnection.paint(); } catch (e) {} }
+    try {
+      if (typeof CenterHub !== 'undefined' && CenterHub.mountContext) CenterHub.mountContext();
+    } catch (e) {}
     if (typeof App !== 'undefined' && App.refresh) {
       try { App.refresh(); } catch (e) {}
-    } else if (fromLogin) {
-      repaint();
     } else {
-      repaint();
+      try { repaint(); } catch (e) {}
     }
+    // اگر UI هنوز خالی بود، یک رفرش سبک بعد از تیک
+    setTimeout(function () {
+      try {
+        if (typeof CenterHub !== 'undefined' && CenterHub.mountContext) CenterHub.mountContext();
+        if (typeof App !== 'undefined' && App.refresh) App.refresh();
+        if (window.ClinicConnection && ClinicConnection.paint) ClinicConnection.paint();
+        // اگر main خالی ماند، یک‌بار کل شل را دوباره بساز
+        var view = document.getElementById('view');
+        if (view && !view.innerHTML.trim() && typeof App !== 'undefined' && App.boot) {
+          try {
+            var tabs = (window.TABS || []);
+            if (!tabs.length && typeof orderTabs === 'function' && typeof TABS !== 'undefined') tabs = orderTabs(TABS);
+          } catch (e2) {}
+        }
+        if (view && !String(view.innerHTML||'').trim()) {
+          view.innerHTML = '<div class="card"><b>در حال بارگذاری داشبورد…</b><div class="mut">اگر چند ثانیه طول کشید، صفحه را یک‌بار رفرش کنید.</div></div>';
+          if (typeof App !== 'undefined' && App.refresh) setTimeout(function(){ try{App.refresh()}catch(e){} }, 100);
+        }
+      } catch (e) { console.error(e); }
+    }, 50);
     return true;
   }
 
@@ -1266,7 +1288,9 @@ window.DM_CONFIG = {
       login(wrap.querySelector('#cloudLicense').value)
         .then(function () {
           wrap.remove();
-          repaint();
+          try { if (window.ClinicCloud && ClinicCloud.centerName) {} } catch (e) {}
+          // رفرش کامل تا هدر، مراکز و داشبورد با دادهٔ سرور رسم شوند
+          location.reload();
         })
         .catch(function (problem) {
           error.textContent = String(problem.message || problem);
@@ -1833,22 +1857,28 @@ function groupSheet(id){const g=Store.all('groups').find(x=>String(x.id)===Strin
 /* ---- پیامک تکی و گروهی ---- */
 /* ماژول ارسال پیامک: برگرفته از «اتو سرویس» — پل نیتیو اندروید (AndroidSms)، پیش‌نمایش قابل ویرایش، ارسال گروهی با نوار پیشرفت و حالت یکی‌یکی.
    اگر برنامه داخل APK با پل SmsBridge اجرا نشود، همهٔ ارسال‌ها به‌صورت خودکار به باز شدن برنامهٔ پیامک گوشی (sms:) برمی‌گردند. */
-const DEF_TPL=[{id:'t1',name:'یادآوری نوبت',text:'سلام {name} عزیز، یادآوری نوبت مشاوره شما در تاریخ {date} ساعت {time}.'},{id:'t2',name:'یادآوری پرداخت',text:'{name} عزیز، مبلغ {amount} از حساب شما باقی است. لطفاً برای تسویه اقدام کنید.'},{id:'t3',name:'اطلاعیه عمومی',text:'همراه گرامی، '}];
+const DEF_TPL=[{id:'t1',name:'یادآوری نوبت',text:'سلام {gender} {name} عزیز، یادآوری نوبت مشاوره شما در تاریخ {date} ساعت {time}.'},{id:'t2',name:'یادآوری پرداخت',text:'{gender} {name} عزیز، مبلغ {amount} از حساب شما باقی است. لطفاً برای تسویه اقدام کنید.'},{id:'t3',name:'اطلاعیه عمومی',text:'{gender} {name} گرامی، '}];
 const SMS_STATUS={sent:'✅ ارسال شد',failed:'⚠️ ناموفق',pending:'⏳ در حال ارسال',opened:'📲 در برنامهٔ پیامک باز شد',check:'⚠️ نیاز به بررسی (برخی ناموفق بودند)',unknown:'❔ نتیجه نامشخص'};
 const SMS_ERR={permission:'مجوز پیامک داده نشده',empty_list:'لیست شماره‌ها خالی است',busy:'ارسال قبلی هنوز تمام نشده',send_failed:'ارسال انجام نشد'};
 const smsDigits=s=>String(s??'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
 const smsNorm=p=>{let d=smsDigits(p).replace(/\D/g,'');if(d.startsWith('0098'))d='0'+d.slice(4);else if(d.startsWith('98')&&d.length===12)d='0'+d.slice(2);else if(/^9\d{9}$/.test(d))d='0'+d;return d};
 const smsValid=p=>smsNorm(p).length>=10;
-const smsFill=(r,t,real)=>{const polite=real?politeName(r):'همراه گرامی';return String(t||'').replace(/\{name\}/g,polite).replace(/\{date\}/g,fa(r.date||T().key)).replace(/\{time\}/g,fa(r.time||'')).replace(/\{amount\}/g,money(r.amount||0));};
+const smsGenderLabel=p=>{let g='';if(p&&typeof p==='object'){g=p.gender||'';if(!g){const id=p.id||p.cid||p.pid||p.personId;let person=id?Store.all('people').find(x=>String(x.id)===String(id)):null;if(!person&&p.phone){const ph=String(p.phone).replace(/\D/g,'');person=Store.all('people').find(x=>String(x.phone||'').replace(/\D/g,'').endsWith(ph.slice(-10)));}if(!person&&p.name)person=Store.all('people').find(x=>x.name===p.name);g=(person&&person.gender)||'';}}else if(p!=null&&p!==''){g=(Store.all('people').find(x=>String(x.id)===String(p))||{}).gender||'';}g=String(g||'').toLowerCase();if(g==='male'||g==='m'||g==='آقا'||g==='agha')return 'آقا';if(g==='female'||g==='f'||g==='خانم'||g==='khanom'||g==='khanoom')return 'خانم';return '';};
+const smsPersonName=p=>{if(!p)return '';return typeof p==='object'?(p.name||''):(pname(p)||'');};
+const smsFill=(r,t,real)=>{
+  const raw=String(t||'');
+  if(!real)return raw.replace(/\{gender\}/g,'آقا/خانم').replace(/\{name\}/g,'همراه گرامی').replace(/\{fullname\}/g,'آقا/خانم همراه گرامی').replace(/\{date\}/g,fa(r.date||T().key)).replace(/\{time\}/g,fa(r.time||'')).replace(/\{amount\}/g,money(r.amount||0));
+  const gender=smsGenderLabel(r),name=smsPersonName(r),fullname=(gender?(gender+' '):'')+name;
+  return raw.replace(/\{gender\}/g,gender).replace(/\{name\}/g,name).replace(/\{fullname\}/g,fullname||name||'همراه گرامی').replace(/\{date\}/g,fa(r.date||T().key)).replace(/\{time\}/g,fa(r.time||'')).replace(/\{amount\}/g,money(r.amount||0));
+};
 const smsParts=t=>{const n=[...String(t||'')].length,u=/[^\x00-\x7F]/.test(t||''),one=u?70:160,many=u?67:153;return n<=one?1:Math.ceil(n/many)};
 const smsLog=(r,phone,text,status)=>Store.add('sms',{to:r.name,phone,text,date:T().key,time:T().time,status});
 const smsSetStatus=(id,st)=>{try{Store.upd('sms',id,{status:st})}catch(e){}try{document.querySelectorAll('[data-sms-st="'+id+'"]').forEach(x=>x.textContent=SMS_STATUS[st]||'')}catch(e){}};
 function smsCopy(text,msg){const done=()=>toast(msg||'کپی شد');const fb=()=>{const x=document.createElement('textarea');x.value=text;x.style.cssText='position:fixed;opacity:0;top:0';document.body.append(x);x.select();try{document.execCommand('copy');done()}catch(e){toast('کپی نشد')}x.remove()};try{if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(text).then(done,fb);else fb()}catch(e){fb()}}
 
 const SMSX={waiters:{},pendingSingle:null,bulk:null,running:false,stop:false,ui:null,hooks:new Set()};
-const smsNat=()=>window.AndroidSms||window.Android||(window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.AndroidSms)||null;
+const smsNat=()=>window.AndroidSms||window.Android||null;
 const smsHas=f=>{const n=smsNat();return !!(n&&typeof n[f]==='function')};
-setTimeout(function smsBridgeWatch(){try{if(window.SMSBridgeUIRefresh)window.SMSBridgeUIRefresh();else if(typeof App!=='undefined'&&App.refresh){/* bridge may appear late */}}catch(e){}},800);
 const SMSBridge={
  isNative(){return smsHas('sendSms')},
  canAutoSend(){return smsHas('sendBulkSmsFast')},
@@ -2014,7 +2044,7 @@ function smsSettings(){const tpl=Store.cfg('tpl',DEF_TPL);
 function smsListEditorSheet(id){const lists=Store.cfg('smsLists',[]),old=lists.find(x=>String(x.id)===String(id)),people=Store.all('people').filter(p=>p.type!=='secretary'),selected=new Set((old?.members||[]).map(String)),rows=people.map(p=>`<button type="button" class="member-select${selected.has(String(p.id))?' selected':''}" data-sms-member="${esc(p.id)}" data-sms-gender="${esc(p.gender||'')}" data-sms-search="${esc((politeName(p)+' '+(p.phone||'')+' '+(p.gender==='male'?'آقا':p.gender==='female'?'خانم':'')).toLowerCase())}" aria-pressed="${selected.has(String(p.id))}"><span class="member-select-mark">${selected.has(String(p.id))?'✓':''}</span><span class="g"><b>${esc(politeName(p))}</b><span class="mut">${esc(TYPES[p.type]||'')} · ${esc(p.gender==='male'?'آقا':p.gender==='female'?'خانم':'—')} · ${esc(p.phone||'')}</span></span></button>`).join('');sheet(old?'ویرایش فهرست پیامکی':'فهرست پیامکی جدید',`<label>نام فهرست</label><input id="smsListName" value="${esc(old?.name||'')}" placeholder="مثلاً مراجعان دورهٔ پاییز"><label>فیلتر جنسیت</label><select id="smsListGenderFilter"><option value="">همه</option><option value="male">فقط آقا</option><option value="female">فقط خانم</option></select><label>جست‌وجوی عضو</label><input id="smsListSearch" type="search" placeholder="نام، تلفن یا آقا/خانم"><div class="card" id="smsListMembers">${rows||'<div class="empty">شخصی در دسترس نیست.</div>'}</div><div class="mut" id="smsListCount">${fa(selected.size)} نفر انتخاب شده</div><div class="row"><button class="btn g" id="saveSmsList">ذخیرهٔ فهرست</button>${old?'<button class="btn bad" id="deleteSmsList">حذف فهرست</button>':''}</div>`,(b,c)=>{const apply=()=>{const q=$('#smsListSearch',b).value.trim().toLowerCase();const g=$('#smsListGenderFilter',b)?.value||'';$$('[data-sms-member]',b).forEach(x=>{const matchQ=!q||(x.dataset.smsSearch||'').includes(q);const matchG=!g||(x.dataset.smsGender||'')===g;x.hidden=!(matchQ&&matchG)})};$('#smsListSearch',b).oninput=apply;const gf=$('#smsListGenderFilter',b);if(gf)gf.onchange=apply;$$('[data-sms-member]',b).forEach(btn=>btn.onclick=()=>{const key=String(btn.dataset.smsMember);if(selected.has(key))selected.delete(key);else selected.add(key);const yes=selected.has(key);btn.classList.toggle('selected',yes);btn.setAttribute('aria-pressed',String(yes));$('.member-select-mark',btn).textContent=yes?'✓':'';$('#smsListCount',b).textContent=fa(selected.size)+' نفر انتخاب شده'});$('#saveSmsList',b).onclick=()=>{const name=$('#smsListName',b).value.trim();if(!name)return toast('نام فهرست را وارد کنید.');const next={id:old?.id||'smslist-'+Date.now(),name,members:[...selected]};Store.setCfg('smsLists',old?lists.map(x=>String(x.id)===String(old.id)?next:x):[...lists,next]);toast('فهرست پیامکی ذخیره شد.');c();App.refresh()};const del=$('#deleteSmsList',b);if(del)del.onclick=()=>confirmSheet('فهرست پیامکی حذف شود؟ سوابق ارسال حذف نمی‌شوند.',()=>{Store.setCfg('smsLists',lists.filter(x=>String(x.id)!==String(old.id)));c();App.refresh()})})}
 function smsTab(el){const tpl=Store.cfg('tpl',DEF_TPL),ppl=Store.all('people'),gs=Store.all('groups'),lists=Store.cfg('smsLists',[]),to=tpl.map(t=>[t.id,t.name]),onlineDraft=Store.cfg('onlineSessionSmsDraft',null),lastBulk=Store.cfg('smsLastBulk',null);
  const categories=[['t:client','همهٔ مراجعان'],['t:client:male','مراجعان آقا'],['t:client:female','مراجعان خانم'],['t:therapist','همهٔ درمانگران'],['t:secretary','همهٔ منشی‌ها'],...gs.map(g=>['g:'+g.id,`${g.kind||'گروه'}: ${g.name}`]),...lists.map(l=>['l:'+l.id,'فهرست: '+l.name])],filters=[['all','همهٔ مراجعان'],['male','فقط آقا'],['female','فقط خانم'],['debt','مراجعان دارای بدهی'],['installment','دارندگان قسط/چک سررسیدشده'],['phone','دارای شمارهٔ تلفن'],['no-phone','بدون شمارهٔ تلفن']];
- el.innerHTML=`<div id="smsxTabBanner"></div><div class="card"><b>پیامک تکی</b><label>گیرنده</label><select id="sp">${opt(ppl.map(p=>[p.id,politeName(p)+(p.gender==='male'?' · آقا':p.gender==='female'?' · خانم':'')]))}</select><label>الگو</label><select class="tp" data-t="x1">${opt(to)}</select><textarea id="x1" class="smsx-text"></textarea><div class="mut">می‌توانید از {name} {date} {time} {amount} استفاده کنید؛ پیش از ارسال، متن نهایی را می‌بینید و می‌توانید ویرایش کنید.</div><div class="row" style="margin-top:8px"><button class="btn g" id="s1">✉️ پیش‌نمایش و ارسال</button><button class="btn sec g" id="c1">📞 تماس</button></div></div><div class="card"><div class="row"><b class="g">پیامک گروهی</b><button class="btn sec sm" id="newSmsList">+ فهرست پیامکی</button></div><label>مخاطبان</label><select id="sg">${opt(categories,'t:client')}</select><label>فیلتر مراجعان</label><select id="smsClientFilter">${opt(filters,'all')}</select><div id="smsRecipientCount" class="mut"></div><label>الگو</label><select class="tp" data-t="x2">${opt(to)}</select><textarea id="x2" class="smsx-text"></textarea><button class="btn big" id="s2" style="margin:0">📢 ارسال گروهی</button>${lastBulk?`<div class="smsx-last">📤 آخرین ارسال گروهی: ${fa(lastBulk.date||'')} ${fa(lastBulk.time||'')} · ${fa(lastBulk.count||0)} نفر</div>`:''}<h4>فهرست‌های ذخیره‌شده</h4><div id="smsSavedLists"></div></div><button class="btn sec big" id="ss">تنظیمات پیامک (متن‌های پیش‌فرض)</button><h4>سابقهٔ ارسال</h4><div id="smsxHist"></div>`;
+ el.innerHTML=`<div id="smsxTabBanner"></div><div class="card"><b>پیامک تکی</b><label>گیرنده</label><select id="sp">${opt(ppl.map(p=>[p.id,politeName(p)+(p.gender==='male'?' · آقا':p.gender==='female'?' · خانم':'')]))}</select><label>الگو</label><select class="tp" data-t="x1">${opt(to)}</select><textarea id="x1" class="smsx-text"></textarea><div class="mut">متغیرها: {gender} (آقا/خانم) · {name} (نام) · {fullname} (آقا/خانم + نام) · {date} · {time} · {amount}. پیش از ارسال متن نهایی را می‌بینید.</div><div class="row" style="margin-top:8px"><button class="btn g" id="s1">✉️ پیش‌نمایش و ارسال</button><button class="btn sec g" id="c1">📞 تماس</button></div></div><div class="card"><div class="row"><b class="g">پیامک گروهی</b><button class="btn sec sm" id="newSmsList">+ فهرست پیامکی</button></div><label>مخاطبان</label><select id="sg">${opt(categories,'t:client')}</select><label>فیلتر مراجعان</label><select id="smsClientFilter">${opt(filters,'all')}</select><div id="smsRecipientCount" class="mut"></div><label>الگو</label><select class="tp" data-t="x2">${opt(to)}</select><textarea id="x2" class="smsx-text"></textarea><button class="btn big" id="s2" style="margin:0">📢 ارسال گروهی</button>${lastBulk?`<div class="smsx-last">📤 آخرین ارسال گروهی: ${fa(lastBulk.date||'')} ${fa(lastBulk.time||'')} · ${fa(lastBulk.count||0)} نفر</div>`:''}<h4>فهرست‌های ذخیره‌شده</h4><div id="smsSavedLists"></div></div><button class="btn sec big" id="ss">تنظیمات پیامک (متن‌های پیش‌فرض)</button><h4>سابقهٔ ارسال</h4><div id="smsxHist"></div>`;
  smsPaintBanner($('#smsxTabBanner',el),'group');
  const paintHistory=()=>{const h=Store.all('sms').slice(0,30);$('#smsxHist',el).innerHTML=h.length?h.map(m=>`<div class="card"><div class="row"><b class="g">${esc(m.to)}</b><span class="mut">${fa(m.date)} ${fa(m.time)}</span></div><div class="mut">${esc(m.text)}</div>${m.status?`<div class="smsx-st" data-sms-st="${esc(m.id)}">${SMS_STATUS[m.status]||''}</div>`:''}</div>`).join(''):'<div class="empty">هنوز پیامکی ثبت نشده.</div>'};
  const fillT=s=>{$('#'+s.dataset.t,el).value=(tpl.find(t=>t.id===s.value)||{}).text||''};$$('.tp',el).forEach(s=>{s.onchange=()=>fillT(s);fillT(s)});
@@ -2022,16 +2052,16 @@ function smsTab(el){const tpl=Store.cfg('tpl',DEF_TPL),ppl=Store.all('people'),g
  const P=()=>ppl.find(p=>String(p.id)===String($('#sp',el).value));
  const recipients=()=>{const v=$('#sg',el).value,filter=$('#smsClientFilter',el).value;let out;if(v.startsWith('t:')){const parts=v.slice(2).split(':');out=ppl.filter(p=>p.type===parts[0]&&(!parts[1]||p.gender===parts[1]));}else if(v.startsWith('g:'))out=ppl.filter(p=>((gs.find(g=>String(g.id)===v.slice(2))||{}).members||[]).map(String).includes(String(p.id)));else out=ppl.filter(p=>((lists.find(l=>String(l.id)===v.slice(2))||{}).members||[]).map(String).includes(String(p.id)));if(filter!=='all')out=out.filter(p=>{if(p.type!=='client')return filter==='phone'?!!p.phone:filter==='no-phone'?!p.phone:true;if(filter==='male')return p.gender==='male';if(filter==='female')return p.gender==='female';if(filter==='debt')return bal(p.id)>0;if(filter==='installment')return Store.all('tx').some(t=>String(t.pid)===String(p.id)&&['inst','check'].includes(t.kind)&&t.status==='due');if(filter==='phone')return!!p.phone;if(filter==='no-phone')return!p.phone;return true});return out};
  const paint=()=>{const rr=recipients(),withPhone=rr.filter(p=>p.phone&&smsValid(p.phone)).length;$('#smsRecipientCount',el).textContent=`${fa(rr.length)} مخاطب انتخاب شده · ${fa(withPhone)} شمارهٔ قابل ارسال`;$('#smsSavedLists',el).innerHTML=lists.length?lists.map(l=>`<div class="row"><span class="g">${esc(l.name)} · ${fa(l.members.length)} عضو</span><button class="btn sec sm" data-edit-sms-list="${esc(l.id)}">ویرایش</button></div>`).join(''):'<div class="mut">هنوز فهرستی ذخیره نشده است.</div>';$$('[data-edit-sms-list]',el).forEach(b=>b.onclick=()=>smsListEditorSheet(b.dataset.editSmsList))};
- $('#s1',el).onclick=()=>{const p=P();if(!p)return;if(!p.phone)return toast('برای این شخص شمارهٔ تلفن ثبت نشده است.');const text=$('#x1',el).value;if(!text.trim())return toast('متن پیام خالی است');smsSend([{name:p.name,phone:p.phone,amount:Math.max(0,bal(p.id))}],text,false,{onDone:()=>{if(onlineDraft&&String(p.id)===String(onlineDraft.pid))Store.setCfg('onlineSessionSmsDraft',null);paintHistory()}})};
+ $('#s1',el).onclick=()=>{const p=P();if(!p)return;if(!p.phone)return toast('برای این شخص شمارهٔ تلفن ثبت نشده است.');const text=$('#x1',el).value;if(!text.trim())return toast('متن پیام خالی است');smsSend([{id:p.id,name:p.name,phone:p.phone,gender:p.gender,amount:Math.max(0,bal(p.id))}],text,false,{onDone:()=>{if(onlineDraft&&String(p.id)===String(onlineDraft.pid))Store.setCfg('onlineSessionSmsDraft',null);paintHistory()}})};
  $('#c1',el).onclick=()=>{const p=P();if(p&&p.phone)location.href='tel:'+p.phone;else toast('شماره ندارد')};
  $('#sg',el).onchange=paint;$('#smsClientFilter',el).onchange=paint;
- $('#s2',el).onclick=()=>{const text=$('#x2',el).value;if(!text.trim())return toast('متن پیام خالی است');smsSend(recipients().map(p=>({name:p.name,phone:p.phone,amount:Math.max(0,bal(p.id))})),text,true,{onDone:paintHistory})};
+ $('#s2',el).onclick=()=>{const text=$('#x2',el).value;if(!text.trim())return toast('متن پیام خالی است');smsSend(recipients().map(p=>({id:p.id,name:p.name,phone:p.phone,gender:p.gender,amount:Math.max(0,bal(p.id))})),text,true,{onDone:paintHistory})};
  $('#newSmsList',el).onclick=()=>smsListEditorSheet('');$('#ss',el).onclick=smsSettings;paint();paintHistory();
 }
 function apptAt(a){const[y,m,d]=jp(a.date),[g,mm,dd]=j2g(y,m,d),[h,mi]=String(a.time||'0:0').split(':').map(Number);return new Date(g,mm-1,dd,h,mi)}
 function dueRem(){const lead=+Store.cfg('lead',1440)*6e4,n=Date.now();return Store.all('appts').filter(a=>!a.rem&&apptAt(a)>n&&apptAt(a)-n<=lead)}
 function remindList(el){const r=dueRem();el.insertAdjacentHTML('beforeend',r.length?`<div class="card"><b>یادآوری‌های موعدرسیده (${fa(r.length)})</b>${r.map(a=>`<div class="row" style="padding:6px 0"><div class="g">${esc(pname(a.cid))} · پرونده ${fa(pfile(a.cid)||'—')}<div class="mut">${fa(a.date)} ${fa(a.time)}</div></div><button class="btn sm" data-r="${a.id}">پیامک یادآوری</button></div>`).join('')}</div>`:'');
- $$('[data-r]',el).forEach(b=>b.onclick=()=>{const a=Store.all('appts').find(x=>x.id===b.dataset.r),p=Store.all('people').find(x=>x.id===a.cid)||{};smsSend([{name:p.name,phone:p.phone,date:a.date,time:a.time}],(Store.cfg('tpl',DEF_TPL)[0]||{}).text||'',false,{onDone:()=>{Store.upd('appts',a.id,{rem:1});App.refresh()}})})}
+ $$('[data-r]',el).forEach(b=>b.onclick=()=>{const a=Store.all('appts').find(x=>x.id===b.dataset.r),p=Store.all('people').find(x=>x.id===a.cid)||{};smsSend([{id:p.id||p.cid,name:p.name,phone:p.phone,gender:p.gender,date:a.date,time:a.time}],(Store.cfg('tpl',DEF_TPL)[0]||{}).text||'',false,{onDone:()=>{Store.upd('appts',a.id,{rem:1});App.refresh()}})})}
 function daySheet(k){
  const inf=dayInfo(k),allAppts=Store.all('appts'),tx=Store.all('tx'),att=Store.all('att'),ovr=Store.all('ovr'),workshops=Store.all('events').filter(e=>(e.type==='workshop'||e.type==='program')&&e.date===k);const workshopGroups=new Map();workshops.forEach(e=>{const tid=String(e.tid||'');if(!workshopGroups.has(tid))workshopGroups.set(tid,[]);workshopGroups.get(tid).push(e)});
  const ap=allAppts.filter(a=>a.date===k||a.startDate===k||a.endDate===k).sort((a,b)=>String(a.time||'').localeCompare(String(b.time||'')));
@@ -2276,7 +2306,7 @@ function staffTab(el){const sec=Store.all('people').filter(p=>p.type==='secretar
     });
     return;
   }
-
+ });
 
  $('#secretaryPayrollMonth',el).onchange=e=>{Store.setCfg('secretaryPayrollMonth',e.target.value);App.refresh()};const tolControl=$('[data-g="tol"]',el);tolControl.oninput=()=>$('#secretaryTolerancePreview',el).textContent=durationLabel(tolControl.value);el.onchange=e=>{const t=e.target,d=t.dataset;if(d.g)Store.setCfg(d.g,t.type==='number'?+t.value:t.value);else if(d.sch){const w=t.closest('.card'),previous=Store.cfg('sch_'+d.pid,{from:'09:00',to:'17:00',days:[0,1,2,3,4,5]});Store.setCfg('sch_'+d.pid,{...previous,from:$('[data-sch=from]',w).value,to:$('[data-sch=to]',w).value})}else if(d.wage)Store.setCfg('wage_'+d.pid,parseMoneyValue(t.value));else return;toast('ذخیره شد');if(d.wage)App.refresh()};$$('[data-workday]',el).forEach(btn=>btn.onclick=()=>{const pid=btn.dataset.pid,card=btn.closest('[data-id]'),days=Array.from(card.querySelectorAll('[data-workday].selected')).map(x=>+x.dataset.workday);if(btn.classList.contains('selected')&&days.length===1)return toast('برای منشی دست‌کم یک روز کاری انتخاب کنید.');btn.classList.toggle('selected');btn.setAttribute('aria-pressed',String(btn.classList.contains('selected')));const chosen=Array.from(card.querySelectorAll('[data-workday].selected')).map(x=>+x.dataset.workday),previous=Store.cfg('sch_'+pid,{from:'09:00',to:'17:00',days:[0,1,2,3,4,5]});Store.setCfg('sch_'+pid,{...previous,days:chosen});toast('روزهای کاری منشی ذخیره شد.')});
  $('#rp',el).onclick=()=>App.goto('attendance');
@@ -2400,9 +2430,9 @@ function boot(open){
  App.boot=({title,tabs})=>{
   tabs=orderTabs(tabs);const initial=tabs.find(t=>t.id===open)||tabs.find(t=>t.id==='dash')||tabs[0];
   const activeCenterName=(typeof CenterHub!=='undefined'&&CenterHub.centers)?((CenterHub.centers().find(x=>x.id===CenterHub.current())||{}).name||''):'';
-  document.body.innerHTML=`<header class="top"><div class="top-title-wrap"><h1>${esc(title)}<span class="sub" id="sectionLabel">${esc(initial.title)}</span></h1>${activeCenterName?`<div class="top-center-name" id="topCenterName" title="مرکز فعال برای نظارت">${esc(activeCenterName)}</div>`:''}</div><button class="theme-toggle" type="button" aria-label="تغییر به حالت روشن" title="حالت روشن"><span aria-hidden="true">☀️</span><span class="theme-toggle-label">روشن</span></button><button class="menu-trigger" id="topMenu" aria-label="باز کردن منوی بخش‌ها" title="منوی بخش‌ها">☰</button></header><main id="view"></main>`;CenterHub.mountContext();document.documentElement.style.setProperty('--clinic-font-scale',String(Store.cfg('fontScale',1)));document.documentElement.style.setProperty('--clinic-calendar-scale',String(Store.cfg('calendarScale',1.15)));
+  document.body.innerHTML=`<header class="top"><div class="top-title-wrap"><h1>${esc(title)}<span class="sub" id="sectionLabel">${esc(initial.title)}</span></h1>${activeCenterName?`<div class="top-center-name" id="topCenterName" title="مرکز فعال برای نظارت">${esc(activeCenterName)}</div>`:''}</div><button class="theme-toggle" type="button" aria-label="تغییر به حالت روشن" title="حالت روشن"><span aria-hidden="true">☀️</span><span class="theme-toggle-label">روشن</span></button><button class="menu-trigger" id="topMenu" aria-label="باز کردن منوی بخش‌ها" title="منوی بخش‌ها">☰</button></header><main id="view"></main>`;try{if(window.CenterHub&&CenterHub.mountContext)CenterHub.mountContext()}catch(e){};document.documentElement.style.setProperty('--clinic-font-scale',String(Store.cfg('fontScale',1)));document.documentElement.style.setProperty('--clinic-calendar-scale',String(Store.cfg('calendarScale',1.15)));
   const view=$('#view');
-  const go=id=>{const t=tabs.find(x=>x.id===id)||tabs[0];App.cur=t.id;$('#sectionLabel').textContent=t.title;view.style.opacity='0';view.innerHTML='';t.render(view);requestAnimationFrame(()=>{view.style.transition='opacity .15s';view.style.opacity='1'})};
+  const go=id=>{const t=tabs.find(x=>x.id===id)||tabs[0];App.cur=t.id;const lab=$('#sectionLabel');if(lab)lab.textContent=t.title;view.style.opacity='0';view.innerHTML='';try{t.render(view)}catch(err){console.error(err);view.innerHTML='<div class="card"><b>خطا در نمایش این بخش</b><div class="mut">'+String(err.message||err)+'</div><button class="btn sec sm" id="retryView">تلاش مجدد</button></div>';const r=$('#retryView',view);if(r)r.onclick=()=>go(t.id)}requestAnimationFrame(()=>{view.style.transition='opacity .15s';view.style.opacity='1'})};
   App.goto=go;
   $('#topMenu').onclick=()=>{const html=tabs.map((t,i)=>`<div class="card row" data-menu-index="${i}" style="cursor:pointer;padding:14px"><div class="g"><b>${esc(t.icon)} ${esc(t.title)}</b></div><span class="mut">${t.id===App.cur?'●':'›'}</span></div>`).join('');sheet('منوی بخش‌ها',html,(b,c)=>$$('[data-menu-index]',b).forEach(item=>item.onclick=()=>{const t=tabs[+item.dataset.menuIndex];c();go(t.id)}))};
   App.refresh=()=>go(App.cur);go(initial.id);
@@ -2768,7 +2798,7 @@ setInterval(()=>{const now=T();for(const a of Store.all('att'))if(!a.out&&String
     var expiry = license.expires_at ? new Date(license.expires_at).toLocaleDateString('fa-IR') : 'بدون محدودیت';
     return '<div class="conn-row is-on"><span class="conn-icon" aria-hidden="true">☁️</span>' +
       '<span class="conn-name"><b>' + (c.center ? c.center.name : 'مرکز') + '</b>' +
-      '<small>مرکز + ' · اعتبار لایسنس تا ' + expiry + ' · نسخهٔ داده ' + c.revision + '</small></span>' +
+      '<small>اعتبار لایسنس تا ' + expiry + ' · نسخهٔ داده ' + c.revision + '</small></span>' +
       '<span class="conn-dot" aria-hidden="true"></span></div>' +
       '<div class="conn-row ' + (c.error ? 'is-off' : 'is-on') + '"><span class="conn-icon" aria-hidden="true">' + (c.error ? '⚠️' : '✅') + '</span>' +
       '<span class="conn-name"><b>' + (c.error ? 'خطا در همگام‌سازی' : 'همگام‌سازی سالم') + '</b>' +
