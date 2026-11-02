@@ -2,11 +2,10 @@
   "name": "clinic-admin",
   "version": "1.0.0",
   "private": true,
-  "description": "مدیریت کلینیک",
+  "description": "پنل مدیریت کلینیک",
   "scripts": {
     "build:web": "node -e \"console.log('static web app')\"",
-    "cap:sync": "npx cap sync android",
-    "cap:open": "npx cap open android"
+    "cap:sync": "npx cap sync android"
   },
   "dependencies": {
     "@capacitor/android": "^6.2.0",

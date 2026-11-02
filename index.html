@@ -181,10 +181,9 @@ h4{margin:16px 0 8px;font-size:14px;font-weight:700}
 .center-context-main{display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;min-width:0;text-align:center;gap:2px}
 .center-context-label{font-size:11px;opacity:.75;line-height:1.2}
 .center-context-name{font-size:15px;font-weight:700;line-height:1.25;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.top-title-wrap{flex:0 1 auto;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:1px}
-.top-center-name{position:absolute;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;line-height:1.2;max-width:46%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:4px 12px;border-radius:999px;background:color-mix(in srgb,var(--cc,#5EEAD4) 22%,transparent);color:#fff;border:1px solid color-mix(in srgb,var(--cc,#5EEAD4) 55%,transparent);box-shadow:0 0 0 1px color-mix(in srgb,var(--cc,#5EEAD4) 15%,transparent);z-index:2}
-.top-center-dot{width:8px;height:8px;border-radius:50%;background:var(--cc,#5EEAD4);box-shadow:0 0 8px var(--cc,#5EEAD4);flex-shrink:0}
-header.top{align-items:center;position:relative}
+.top-title-wrap{flex:1;min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:1px}
+.top-center-name{font-size:12px;font-weight:600;opacity:.92;line-height:1.2;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;letter-spacing:-.1px}
+header.top{align-items:center}
 
 .staff-subtabs .staff-subtab.is-active{background:var(--pri);color:#fff;border-color:var(--pri)}
 .staff-subpanel{margin-top:4px}
@@ -1325,18 +1324,8 @@ window.DM_CONFIG = {
       if (!result || result.ok !== true) throw new Error((result && result.error) || 'حذف مرکز ناموفق بود');
       return result;
     },
-    issueStaffLicense: async function (personId, panel, seats) {
-      var session = state.session || readSession();
-      if (!session || !session.center || !session.center.id) throw new Error('ابتدا به یک مرکز متصل شوید');
-      var result = await rpc('clinic_issue_staff_license', {
-        p_center_id: session.center.id,
-        p_person_id: String(personId),
-        p_panel: panel || 'secretary',
-        p_seats: seats || 1,
-        p_days: 365
-      });
-      if (!result || result.ok !== true) throw new Error((result && result.error) || 'صدور لایسنس ناموفق بود');
-      return result;
+    issueStaffLicense: async function () {
+      throw new Error('صدور لایسنس از پنل مدیریت غیرفعال است؛ لایسنس فقط توسط مدیر سیستم تعریف می‌شود');
     },
     onSave: onSave,
     repaint: function () { repaint(); },
@@ -1857,8 +1846,9 @@ const smsSetStatus=(id,st)=>{try{Store.upd('sms',id,{status:st})}catch(e){}try{d
 function smsCopy(text,msg){const done=()=>toast(msg||'کپی شد');const fb=()=>{const x=document.createElement('textarea');x.value=text;x.style.cssText='position:fixed;opacity:0;top:0';document.body.append(x);x.select();try{document.execCommand('copy');done()}catch(e){toast('کپی نشد')}x.remove()};try{if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(text).then(done,fb);else fb()}catch(e){fb()}}
 
 const SMSX={waiters:{},pendingSingle:null,bulk:null,running:false,stop:false,ui:null,hooks:new Set()};
-const smsNat=()=>window.AndroidSms||window.Android||null;
+const smsNat=()=>window.AndroidSms||window.Android||(window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.AndroidSms)||null;
 const smsHas=f=>{const n=smsNat();return !!(n&&typeof n[f]==='function')};
+setTimeout(function smsBridgeWatch(){try{if(window.SMSBridgeUIRefresh)window.SMSBridgeUIRefresh();else if(typeof App!=='undefined'&&App.refresh){/* bridge may appear late */}}catch(e){}},800);
 const SMSBridge={
  isNative(){return smsHas('sendSms')},
  canAutoSend(){return smsHas('sendBulkSmsFast')},
@@ -2237,9 +2227,9 @@ function therTab(el){
  paint();
 }
 function staffTab(el){const sec=Store.all('people').filter(p=>p.type==='secretary'),mo=Store.cfg('secretaryPayrollMonth',T().month),payMonths=[...new Set([T().month,mo,...Store.all('att').map(a=>(a.date||'').slice(0,7)).filter(Boolean),...Store.all('tx').filter(t=>t.kind==='expense'&&(t.salaryForSecretary||t.expenseClass==='secretary_salary')).map(t=>(t.date||'').slice(0,7)).filter(Boolean)])].sort((a,b)=>b.localeCompare(a));
- el.innerHTML=`<button class="btn big" id="addSecretary">+ منشی جدید</button><div class="mut" style="margin:8px 0 12px">ترتیب درست: ۱) منشی را اینجا تعریف کنید ۲) برای همان منشی لایسنس منشی و ورود و خروج صادر کنید ۳) کلید را به منشی بدهید. بدون تعریف منشی، ورود با لایسنس ممکن نیست.</div><div class="card"><b>تنظیمات نظارتی</b><label>تلورانس تأخیر/تعجیل</label><input type="number" data-g="tol" value="${Store.cfg('tol',10)}"><div class="mut" id="secretaryTolerancePreview">${durationLabel(Store.cfg('tol',10))}</div><label>ساعت ارسال گزارش کار روزانهٔ منشی‌ها</label><input type="time" data-g="rep" value="${Store.cfg('rep','20:00')}"><button class="btn sec sm" id="rp">گزارش کامل ورود و خروج</button><div class="mut">ارسال خودکار در ساعت تعیین‌شده با اتصال به Edge Functions فعال می‌شود.</div></div><div class="card"><b>حقوق منشی‌ها</b><label for="secretaryPayrollMonth">ماه محاسبهٔ حقوق</label><select id="secretaryPayrollMonth">${opt(payMonths.map(m=>[m,fa(m)]),mo)}</select><div class="mut">حقوق ساعتی، ساعات ثبت‌شده و هزینه‌های افزوده‌شده برای ماه انتخاب‌شده محاسبه می‌شوند.</div></div>`+
+ el.innerHTML=`<button class="btn big" id="addSecretary">+ منشی جدید</button><div class="mut" style="margin:8px 0 12px">منشی را اینجا با نام و مشخصات تعریف کنید. لایسنس ورود هر منشی توسط مدیر سیستم ساخته و به شما داده می‌شود؛ از این پنل لایسنس صادر نمی‌شود.</div><div class="card"><b>تنظیمات نظارتی</b><label>تلورانس تأخیر/تعجیل</label><input type="number" data-g="tol" value="${Store.cfg('tol',10)}"><div class="mut" id="secretaryTolerancePreview">${durationLabel(Store.cfg('tol',10))}</div><label>ساعت ارسال گزارش کار روزانهٔ منشی‌ها</label><input type="time" data-g="rep" value="${Store.cfg('rep','20:00')}"><button class="btn sec sm" id="rp">گزارش کامل ورود و خروج</button><div class="mut">ارسال خودکار در ساعت تعیین‌شده با اتصال به Edge Functions فعال می‌شود.</div></div><div class="card"><b>حقوق منشی‌ها</b><label for="secretaryPayrollMonth">ماه محاسبهٔ حقوق</label><select id="secretaryPayrollMonth">${opt(payMonths.map(m=>[m,fa(m)]),mo)}</select><div class="mut">حقوق ساعتی، ساعات ثبت‌شده و هزینه‌های افزوده‌شده برای ماه انتخاب‌شده محاسبه می‌شوند.</div></div>`+
  (sec.map(p=>{const sc=Store.cfg('sch_'+p.id,{from:'09:00',to:'17:00'}),w=+Store.cfg('wage_'+p.id,0),mm=monthMin(p.id,mo),expenseRows=Store.all('tx').filter(t=>t.kind==='expense'&&(t.salaryForSecretary||t.expenseClass==='secretary_salary')&&String(t.secretaryId||t.pid)===String(p.id)&&(t.date||'').startsWith(mo)),expenseTotal=expenseRows.reduce((z,t)=>z+(+t.amount||0),0),basePay=Math.round(mm/60*w),totalPay=basePay+expenseTotal;
-  return `<div class="card" data-id="${p.id}"><div class="row"><b class="g">${esc(p.name)}</b><button type="button" class="btn sec sm" data-edit-secretary="${p.id}">ویرایش مشخصات</button><button type="button" class="btn bad sm" data-delete-secretary="${p.id}">حذف منشی</button></div><div class="mut">تلفن: ${esc(p.phone||'ثبت نشده')}</div><div class="mut" style="direction:ltr;text-align:right">لایسنس منشی: ${esc(p.secretaryLicense||'-')}</div><div class="mut" style="direction:ltr;text-align:right">لایسنس ورود و خروج: ${esc(p.attendanceLicense||'-')}</div><div class="row" style="margin:8px 0;gap:6px;flex-wrap:wrap"><button type="button" class="btn sec sm" data-issue-license="${p.id}" data-panel="secretary">صدور/بازتولید لایسنس منشی</button><button type="button" class="btn sec sm" data-issue-license="${p.id}" data-panel="attendance">صدور/بازتولید لایسنس ورود و خروج</button></div><div class="row"><div class="g"><label>از ساعت</label><input type="time" data-sch="from" data-pid="${p.id}" value="${sc.from}"></div><div class="g"><label>تا ساعت</label><input type="time" data-sch="to" data-pid="${p.id}" value="${sc.to}"></div></div><label>روزهای کاری منشی</label><div class="secretary-workdays" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px">${WEEKDAY_LABELS.map((day,i)=>`<button type="button" class="weekday-choice${(Array.isArray(sc.days)?sc.days.map(Number):[0,1,2,3,4,5]).includes(i)?' selected':''}" data-workday="${i}" data-pid="${p.id}" aria-pressed="${(Array.isArray(sc.days)?sc.days.map(Number):[0,1,2,3,4,5]).includes(i)}">${day}</button>`).join('')}</div><label>حقوق ساعتی (تومان)</label><input type="text" inputmode="numeric" data-money="1" data-k="wage_${p.id}" data-wage="1" data-pid="${p.id}" value="${w?fa(Number(w).toLocaleString('en-US')):''}"><div class="mut" data-preview="wage_${p.id}" style="margin:-6px 0 10px"></div><div>ساعت کارکرد این ماه: <b>${durationLabel(mm)}</b></div><div class="mut">حقوق پایهٔ این ماه: ${money(basePay)} · هزینه‌های افزوده‌شده: ${money(expenseTotal)}</div><div class="ok"><b>حقوق قابل پرداخت: ${money(totalPay)}</b></div>${expenseRows.length?`<details class="card"><summary>ریز هزینه‌ها (${fa(expenseRows.length)})</summary>${expenseRows.map(x=>`<div class="row"><span class="g">${fa(x.date)} · ${esc(x.title)}${x.description?' · '+esc(x.description):''}</span><b>${money(x.amount)}</b></div>`).join('')}</details>`:''}<div class="row"><button class="btn sec sm g" data-o="${p.id}">تغییر لحظه‌ای</button><button class="btn sec sm g" data-l="${p.id}">سوابق حضور</button></div></div>`}).join('')||'<div class="empty">منشی‌ای تعریف نشده. در بخش اشخاص با نقش «منشی» اضافه کن.</div>')+
+  return `<div class="card" data-id="${p.id}"><div class="row"><b class="g">${esc(p.name)}</b><button type="button" class="btn sec sm" data-edit-secretary="${p.id}">ویرایش مشخصات</button><button type="button" class="btn bad sm" data-delete-secretary="${p.id}">حذف منشی</button></div><div class="mut">تلفن: ${esc(p.phone||'ثبت نشده')}</div><div class="mut" style="direction:ltr;text-align:right">لایسنس منشی: ${esc(p.secretaryLicense||'-')}</div><div class="mut" style="direction:ltr;text-align:right">لایسنس ورود و خروج: ${esc(p.attendanceLicense||'-')}</div><div class="mut" style="margin:6px 0 8px">لایسنس منشی و ورود و خروج فقط توسط مدیر سیستم تعریف می‌شود؛ از پنل مدیریت قابل صدور نیست.</div><div class="row"><div class="g"><label>از ساعت</label><input type="time" data-sch="from" data-pid="${p.id}" value="${sc.from}"></div><div class="g"><label>تا ساعت</label><input type="time" data-sch="to" data-pid="${p.id}" value="${sc.to}"></div></div><label>روزهای کاری منشی</label><div class="secretary-workdays" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px">${WEEKDAY_LABELS.map((day,i)=>`<button type="button" class="weekday-choice${(Array.isArray(sc.days)?sc.days.map(Number):[0,1,2,3,4,5]).includes(i)?' selected':''}" data-workday="${i}" data-pid="${p.id}" aria-pressed="${(Array.isArray(sc.days)?sc.days.map(Number):[0,1,2,3,4,5]).includes(i)}">${day}</button>`).join('')}</div><label>حقوق ساعتی (تومان)</label><input type="text" inputmode="numeric" data-money="1" data-k="wage_${p.id}" data-wage="1" data-pid="${p.id}" value="${w?fa(Number(w).toLocaleString('en-US')):''}"><div class="mut" data-preview="wage_${p.id}" style="margin:-6px 0 10px"></div><div>ساعت کارکرد این ماه: <b>${durationLabel(mm)}</b></div><div class="mut">حقوق پایهٔ این ماه: ${money(basePay)} · هزینه‌های افزوده‌شده: ${money(expenseTotal)}</div><div class="ok"><b>حقوق قابل پرداخت: ${money(totalPay)}</b></div>${expenseRows.length?`<details class="card"><summary>ریز هزینه‌ها (${fa(expenseRows.length)})</summary>${expenseRows.map(x=>`<div class="row"><span class="g">${fa(x.date)} · ${esc(x.title)}${x.description?' · '+esc(x.description):''}</span><b>${money(x.amount)}</b></div>`).join('')}</details>`:''}<div class="row"><button class="btn sec sm g" data-o="${p.id}">تغییر لحظه‌ای</button><button class="btn sec sm g" data-l="${p.id}">سوابق حضور</button></div></div>`}).join('')||'<div class="empty">منشی‌ای تعریف نشده. در بخش اشخاص با نقش «منشی» اضافه کن.</div>')+
  `<h4>تغییرات لحظه‌ای ثبت‌شده</h4>`+(Store.all('ovr').map(o=>`<div class="card row"><span class="g">${esc(pname(o.pid))} · ${fa(o.date)}<div class="mut">${o.off?'حضور لازم نیست':fa(o.from)+' تا '+fa(o.to)}</div></span><button class="btn bad sm" data-xo="${o.id}">✕</button></div>`).join('')||'<div class="mut">—</div>')+
 `<div class="card" style="margin-top:20px">
   <b>گزارش‌های تکمیلی منشی</b>
@@ -2286,24 +2276,7 @@ function staffTab(el){const sec=Store.all('people').filter(p=>p.type==='secretar
     });
     return;
   }
-  const btn=ev.target.closest('[data-issue-license]');
-  if(!btn||!el.contains(btn))return;
-  const personId=btn.dataset.issueLicense, panel=btn.dataset.panel||'secretary';
-  if(!window.ClinicCloud||typeof window.ClinicCloud.issueStaffLicense!=='function')return toast('اتصال ابری در دسترس نیست');
-  btn.disabled=true;const old=btn.textContent;btn.textContent='در حال صدور…';
-  try{
-    const r=await window.ClinicCloud.issueStaffLicense(personId,panel,1);
-    const patch={};
-    if(panel==='secretary')patch.secretaryLicense=r.license_key;
-    if(panel==='attendance')patch.attendanceLicense=r.license_key;
-    if(Object.keys(patch).length)Store.upd('people',personId,patch);
-    toast('لایسنس صادر و فعال شد: '+(r.license_key||''));
-    try{await navigator.clipboard.writeText(r.license_key)}catch(e){}
-    alert('کلید لایسنس '+panel+' (فعال):\n'+r.license_key+'\n\nکپی شد. فقط با همین کلید و برای همین مرکز کار می کند.');
-    App.refresh();
-  }catch(err){toast(String(err.message||err))}
-  finally{btn.disabled=false;btn.textContent=old}
- });
+
 
  $('#secretaryPayrollMonth',el).onchange=e=>{Store.setCfg('secretaryPayrollMonth',e.target.value);App.refresh()};const tolControl=$('[data-g="tol"]',el);tolControl.oninput=()=>$('#secretaryTolerancePreview',el).textContent=durationLabel(tolControl.value);el.onchange=e=>{const t=e.target,d=t.dataset;if(d.g)Store.setCfg(d.g,t.type==='number'?+t.value:t.value);else if(d.sch){const w=t.closest('.card'),previous=Store.cfg('sch_'+d.pid,{from:'09:00',to:'17:00',days:[0,1,2,3,4,5]});Store.setCfg('sch_'+d.pid,{...previous,from:$('[data-sch=from]',w).value,to:$('[data-sch=to]',w).value})}else if(d.wage)Store.setCfg('wage_'+d.pid,parseMoneyValue(t.value));else return;toast('ذخیره شد');if(d.wage)App.refresh()};$$('[data-workday]',el).forEach(btn=>btn.onclick=()=>{const pid=btn.dataset.pid,card=btn.closest('[data-id]'),days=Array.from(card.querySelectorAll('[data-workday].selected')).map(x=>+x.dataset.workday);if(btn.classList.contains('selected')&&days.length===1)return toast('برای منشی دست‌کم یک روز کاری انتخاب کنید.');btn.classList.toggle('selected');btn.setAttribute('aria-pressed',String(btn.classList.contains('selected')));const chosen=Array.from(card.querySelectorAll('[data-workday].selected')).map(x=>+x.dataset.workday),previous=Store.cfg('sch_'+pid,{from:'09:00',to:'17:00',days:[0,1,2,3,4,5]});Store.setCfg('sch_'+pid,{...previous,days:chosen});toast('روزهای کاری منشی ذخیره شد.')});
  $('#rp',el).onclick=()=>App.goto('attendance');
@@ -2426,12 +2399,8 @@ function setTab(el){const tabs=orderTabs(TABS);
 function boot(open){
  App.boot=({title,tabs})=>{
   tabs=orderTabs(tabs);const initial=tabs.find(t=>t.id===open)||tabs.find(t=>t.id==='dash')||tabs[0];
-  const _ac=(typeof CenterHub!=='undefined'&&CenterHub.centers)?(CenterHub.centers().find(x=>x.id===CenterHub.current())||{}):{};
-  const activeCenterName=_ac.name||'';
-  const COLORS_HDR=['#5EEAD4','#C4B5FD','#FDBA74','#86EFAC','#93C5FD','#F9A8D4','#D8B4FE','#67E8F9','#FCD34D','#A5B4FC'];
-  const colorForHdr=id=>{let h=0;for(let i=0;i<String(id||'').length;i++)h=(h*31+String(id).charCodeAt(i))>>>0;return COLORS_HDR[h%COLORS_HDR.length]};
-  const activeCenterColor=colorForHdr(_ac.id);
-  document.body.innerHTML=`<header class="top"><div class="top-title-wrap"><h1>${esc(title)}<span class="sub" id="sectionLabel">${esc(initial.title)}</span></h1></div>${activeCenterName?`<div class="top-center-name" id="topCenterName" title="مرکز فعال برای نظارت" style="--cc:${activeCenterColor}"><span class="top-center-dot"></span>${esc(activeCenterName)}</div>`:''}<button class="theme-toggle" type="button" aria-label="تغییر به حالت روشن" title="حالت روشن"><span aria-hidden="true">☀️</span><span class="theme-toggle-label">روشن</span></button><button class="menu-trigger" id="topMenu" aria-label="باز کردن منوی بخش‌ها" title="منوی بخش‌ها">☰</button></header><main id="view"></main>`;CenterHub.mountContext();document.documentElement.style.setProperty('--clinic-font-scale',String(Store.cfg('fontScale',1)));document.documentElement.style.setProperty('--clinic-calendar-scale',String(Store.cfg('calendarScale',1.15)));
+  const activeCenterName=(typeof CenterHub!=='undefined'&&CenterHub.centers)?((CenterHub.centers().find(x=>x.id===CenterHub.current())||{}).name||''):'';
+  document.body.innerHTML=`<header class="top"><div class="top-title-wrap"><h1>${esc(title)}<span class="sub" id="sectionLabel">${esc(initial.title)}</span></h1>${activeCenterName?`<div class="top-center-name" id="topCenterName" title="مرکز فعال برای نظارت">${esc(activeCenterName)}</div>`:''}</div><button class="theme-toggle" type="button" aria-label="تغییر به حالت روشن" title="حالت روشن"><span aria-hidden="true">☀️</span><span class="theme-toggle-label">روشن</span></button><button class="menu-trigger" id="topMenu" aria-label="باز کردن منوی بخش‌ها" title="منوی بخش‌ها">☰</button></header><main id="view"></main>`;CenterHub.mountContext();document.documentElement.style.setProperty('--clinic-font-scale',String(Store.cfg('fontScale',1)));document.documentElement.style.setProperty('--clinic-calendar-scale',String(Store.cfg('calendarScale',1.15)));
   const view=$('#view');
   const go=id=>{const t=tabs.find(x=>x.id===id)||tabs[0];App.cur=t.id;$('#sectionLabel').textContent=t.title;view.style.opacity='0';view.innerHTML='';t.render(view);requestAnimationFrame(()=>{view.style.transition='opacity .15s';view.style.opacity='1'})};
   App.goto=go;
