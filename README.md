@@ -1,32 +1,30 @@
-# پنل مدیریت کلینیک
+# مدیریت کلینیک
 
-برنامهٔ PWA مستقل برای مدیریت کلینیک.
+برنامهٔ PWA / اندروید مستقل.
 
-## اجرا
+## بیلد APK در GitHub
+
+1. این پوشه را به‌عنوان یک مخزن جدا روی GitHub پوش کنید.
+2. بروید به تب **Actions**
+3. workflow به نام **Build APK** را باز کنید و **Run workflow** بزنید.
+4. بعد از اتمام، از بخش **Artifacts** فایل `app-debug-apk` را دانلود کنید.
+
+هر push روی `main` هم به‌صورت خودکار APK می‌سازد.
+
+## اجرای وب
 
 ```bash
 npx serve .
-# یا
-python3 -m http.server 8080
 ```
 
-## انتشار GitHub Pages
-
-Settings → Pages → Deploy from branch `main` / root
-
-## بیلد APK با GitHub Actions (PWA Builder / Bubblewrap)
-
-این مخزن فقط فایل‌های وب را دارد. برای APK می‌توانید از [PWA Builder](https://www.pwabuilder.com/) استفاده کنید یا workflow زیر را اضافه کنید.
-
-### ساختار
+## ساختار
 
 ```
 ├── index.html
 ├── manifest.webmanifest
 ├── sw.js
-└── icons/
-    ├── icon-180.png
-    ├── icon-192.png
-    ├── icon-512.png
-    └── icon-512-maskable.png
+├── icons/
+├── package.json
+├── capacitor.config.json
+└── .github/workflows/build-apk.yml
 ```

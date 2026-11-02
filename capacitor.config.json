@@ -1,0 +1,22 @@
+{
+  "appId": "com.clinic.admin",
+  "appName": "مدیریت کلینیک",
+  "webDir": ".",
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 1200,
+      "backgroundColor": "#061230",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "style": "DARK",
+      "backgroundColor": "#0A4D8C"
+    }
+  }
+}
