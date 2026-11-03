@@ -2267,7 +2267,7 @@ setTimeout(()=>ClinicNet.paint(),500);
    اگر برنامه داخل APK با پل SmsBridge اجرا نشود، همهٔ ارسال‌ها به‌صورت خودکار به باز شدن برنامهٔ پیامک گوشی (sms:) برمی‌گردند. */
 const DEF_TPL=[{id:'t1',name:'یادآوری نوبت',text:'سلام {gender} {name} عزیز، یادآوری نوبت مشاوره شما در تاریخ {date} ساعت {time}.'},{id:'t2',name:'یادآوری پرداخت',text:'{gender} {name} عزیز، مبلغ {amount} از حساب شما باقی است. لطفاً برای تسویه اقدام کنید.'},{id:'t3',name:'اطلاعیه عمومی',text:'{gender} {name} گرامی، '}];
 const SMS_STATUS={sent:'✅ ارسال شد',failed:'⚠️ ناموفق',pending:'⏳ در حال ارسال',opened:'📲 در برنامهٔ پیامک باز شد',check:'⚠️ نیاز به بررسی (برخی ناموفق بودند)',unknown:'❔ نتیجه نامشخص',sent_u:'📤 ارسال شد (گزارش تحویل از گوشی نرسید)'};
-const SMS_ERR={permission:'مجوز پیامک داده نشده',empty_list:'لیست شماره‌ها خالی است',busy:'ارسال قبلی هنوز تمام نشده',send_failed:'ارسال انجام نشد'};
+const SMS_ERR={permission:'مجوز پیامک داده نشده',empty_list:'لیست شماره‌ها خالی است',busy:'ارسال قبلی هنوز تمام نشده',send_failed:'ارسال انجام نشد',no_credit:'اعتبار سیم‌کارت برای ارسال کافی نیست',no_service:'سیم‌کارت آنتن یا سرویس ندارد'};
 const smsDigits=s=>String(s??'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
 const smsNorm=p=>{let d=smsDigits(p).replace(/\D/g,'');if(d.startsWith('0098'))d='0'+d.slice(4);else if(d.startsWith('98')&&d.length===12)d='0'+d.slice(2);else if(/^9\d{9}$/.test(d))d='0'+d;return d};
 const smsValid=p=>smsNorm(p).length>=10;
@@ -2294,12 +2294,21 @@ const smsSimOk=s=>!!(s&&(s.slot===0||s.slot===1||s.slot===2)&&+s.price>0);
 const smsSimName=s=>s?((s.label&&String(s.label).trim())||('سیم‌کارت '+(Number(s.slot)+1))):'';
 function smsNativeSend(phone,text){const s=smsSim();if(smsSimOk(s)&&smsHas('sendSmsSim'))return smsNat().sendSmsSim(phone,text,Number(s.slot));return smsNat().sendSms(phone,text)}
 function smsNativeBulk(json,msg){const s=smsSim();if(smsSimOk(s)&&smsHas('sendBulkSmsFastSim'))return smsNat().sendBulkSmsFastSim(json,msg,Number(s.slot));return smsNat().sendBulkSmsFast(json,msg)}
+/* SMS-V11 */
+function smsErrSheet(d){d=d||{};const raw=String(d.error||d.message||'');
+ const msg=SMS_ERR[raw]||(/credit|balance|insufficient|funds|اعتبار|شارژ/i.test(raw)?SMS_ERR.no_credit:raw);
+ const row=(k,v)=>`<div class="row" style="padding:6px 0"><span class="mut g">${k}</span><b>${v}</b></div>`;
+ const body=d.pre?`<div class="warn">${esc(SMS_ERR.no_credit)}؛ هیچ پیامکی ارسال نشد.</div><div class="card">${row('اعتبار فعلی سیم‌کارت',money(d.bal))}${row('هزینهٔ این ارسال',money(d.cost))}</div><div class="mut">ابتدا سیم‌کارت را شارژ کنید و دوباره ارسال کنید.</div>`
+  :`<div class="warn">${esc(msg||'ارسال همهٔ پیامک‌ها کامل نشد.')}</div><div class="card">${d.sent?row('ارسال‌شده',fa(d.sent)):''}${d.failed?row('ناموفق',fa(d.failed)):''}${d.stopped?row('وضعیت','ارسال همان‌جا متوقف شد'):''}</div><div class="mut">اگر اعتبار سیم‌کارت کم است، ابتدا شارژ کنید. در «سابقهٔ ارسال» می‌توانید ببینید کدام پیامک‌ها نرسیده و فقط همان‌ها را دوباره بفرستید.</div>`;
+ sheet(d.pre?'اعتبار سیم‌کارت کافی نیست':'ارسال کامل نشد',body+'<button type="button" class="btn big" id="eok">متوجه شدم</button>',(b,c)=>{$('#eok',b).onclick=c})}
 function smsCostSheet(info,onYes){
  const s=smsSim(),ok=smsSimOk(s);
  if(!ok){sheet('سیم‌کارت هزینه مشخص نیست','<p>پیش از ارسال خودکار باید در «تنظیمات پیامک» مشخص کنید هزینهٔ پیامک‌ها از کدام سیم‌کارت و با چه تعرفه‌ای محاسبه شود.</p><button type="button" class="btn big" id="gs">رفتن به تنظیمات پیامک</button><button type="button" class="btn sec big" id="gc">انصراف</button>',(b,c)=>{$('#gs',b).onclick=()=>{c();smsSettings()};$('#gc',b).onclick=c});return}
  const per=+s.price,total=info.totalParts,cost=total*per,pin=smsHas('sendSmsSim')&&smsHas('sendBulkSmsFastSim');
+ let bal=NaN;try{if(smsHas('getSimBalance'))bal=Number(smsNat().getSimBalance(Number(s.slot)))}catch(e){}
+ if(isFinite(bal)&&bal>=0&&bal<cost){smsErrSheet({pre:true,bal,cost});return}
  const row=(k,v)=>`<div class="row" style="padding:6px 0"><span class="mut g">${k}</span><b>${v}</b></div>`;
- sheet('هزینهٔ ارسال را تأیید کنید',`<div class="card">${row('تعداد گیرندگان',fa(info.count)+' نفر')}${row('مجموع بخش‌های پیامک',fa(total)+' بخش')}${row('سیم‌کارت',esc(smsSimName(s)))}${row('تعرفهٔ هر بخش',money(per))}<div class="row" style="padding:10px 0 2px;border-top:1px solid var(--line);margin-top:6px"><span class="g"><b>هزینهٔ تخمینی ارسال</b></span><b style="font-size:19px">${money(cost)}</b></div></div>${pin?'':'<div class="warn" style="margin:8px 0">این نسخهٔ APK انتخاب سیم‌کارت را پشتیبانی نمی‌کند؛ ارسال با سیم‌کارت پیش‌فرض گوشی انجام می‌شود و ممکن است هزینه از سیم دیگری کسر شود.</div>'}<div class="mut">با تأیید، ارسال شروع می‌شود؛ بدون تأیید هیچ پیامکی ارسال نمی‌شود.</div><button type="button" class="btn big" id="cy">✅ تأیید و ارسال</button><button type="button" class="btn sec big" id="cn">انصراف</button>`,(b,c)=>{$('#cy',b).onclick=()=>{c();onYes()};$('#cn',b).onclick=c})}
+ sheet('هزینهٔ ارسال را تأیید کنید',`<div class="card">${row('تعداد گیرندگان',fa(info.count)+' نفر')}${row('مجموع بخش‌های پیامک',fa(total)+' بخش')}${row('سیم‌کارت',esc(smsSimName(s)))}${row('تعرفهٔ هر بخش',money(per))}<div class="row" style="padding:10px 0 2px;border-top:1px solid var(--line);margin-top:6px"><span class="g"><b>هزینهٔ تخمینی ارسال</b></span><b style="font-size:19px">${money(cost)}</b></div></div>${pin?'':'<div class="warn" style="margin:8px 0">این نسخهٔ APK انتخاب سیم‌کارت را پشتیبانی نمی‌کند؛ ارسال با سیم‌کارت پیش‌فرض گوشی انجام می‌شود و ممکن است هزینه از سیم دیگری کسر شود.</div>'}${smsHas('getSimBalance')?'':'<div class="mut">برنامه نمی‌تواند اعتبار سیم‌کارت را بخواند؛ پیش از تأیید از کافی‌بودن اعتبار مطمئن شوید.</div>'}<div class="mut">با تأیید، ارسال شروع می‌شود؛ بدون تأیید هیچ پیامکی ارسال نمی‌شود.</div><button type="button" class="btn big" id="cy">✅ تأیید و ارسال</button><button type="button" class="btn sec big" id="cn">انصراف</button>`,(b,c)=>{$('#cy',b).onclick=()=>{c();onYes()};$('#cn',b).onclick=c})}
 const SMSBridge={
  isNative(){return smsHas('sendSms')},
  canAutoSend(){return smsHas('sendBulkSmsFast')},
@@ -2377,7 +2386,7 @@ async function smsRunPersonal(list,fillOne,ui){
    SMSX.waiters[r.phone]={id:log.id,res:v=>{clearTimeout(to);res(v)}};
    try{smsNativeSend(r.phone,text)}catch(e){clearTimeout(to);delete SMSX.waiters[r.phone];smsSetStatus(log.id,'failed');res(false)}
   });
-  if(ok===true)sent++;else if(ok===false)failed++;else{unk++;smsSetStatus(log.id,'sent_u')}
+  if(ok===true)sent++;else if(ok===false){failed++;SMSX.stop=true}else{unk++;smsSetStatus(log.id,'sent_u')}
   ui.progress&&ui.progress({current:i+1,total:list.length,failed:failed+unk});
   if(i<list.length-1)await new Promise(r=>setTimeout(r,delay));
  }
@@ -2429,12 +2438,13 @@ function smsBulkSheet(recs,text,group,opts){
   ta.oninput=paintMeta;
   smsPaintBanner($('#smsxBanner',b),'group');
   const ui={
-   start(total){prog.hidden=false;bar.style.width='0%';pt.textContent='۰ / '+fa(total)},
-   progress(d){const c=d.current||0,tt=d.total||1;bar.style.width=(c/tt*100)+'%';pt.textContent=fa(c)+' / '+fa(tt)+(d.failed>0?' ('+fa(d.failed)+' ناموفق)':'')},
+   start(total){prog.hidden=false;bar.style.width='0%';pt.textContent='۰ / '+fa(total);clearInterval(SMSX.est);SMSX.realProg=false;let c=0;SMSX.est=setInterval(()=>{if(SMSX.realProg){clearInterval(SMSX.est);return}if(c<total-1){c++;bar.style.width=(c/total*100)+'%';pt.textContent='≈ '+fa(c)+' / '+fa(total)}},1500)},
+   progress(d){SMSX.realProg=true;clearInterval(SMSX.est);const c=d.current||0,tt=d.total||1;bar.style.width=(c/tt*100)+'%';pt.textContent=fa(c)+' / '+fa(tt)+(d.failed>0?' ('+fa(d.failed)+' ناموفق)':'')},
    done(d){
+    clearInterval(SMSX.est);if(d.ok)bar.style.width='100%';
     const a=$('#smsxAuto',b);if(a)a.disabled=false;stopBtn.hidden=true;
-    if(d.ok){const p=[fa(d.sent||0)+' موفق'];if(d.failed)p.push(fa(d.failed)+' ناموفق');if(d.unknown)p.push(fa(d.unknown)+' نامشخص');toast((d.stopped?'ارسال متوقف شد: ':'ارسال کامل شد: ')+p.join(' · '));try{Store.setCfg('smsLastBulk',{date:T().key,time:T().time,count:(d.sent||0)+(d.unknown||0)})}catch(e){}fire();setTimeout(close,1800)}
-    else{prog.hidden=true;toast('ارسال ناموفق: '+(SMS_ERR[d.error]||d.error||'خطای نامشخص'))}
+    if(d.ok){const p=[fa(d.sent||0)+' موفق'];if(d.failed)p.push(fa(d.failed)+' ناموفق');if(d.unknown)p.push(fa(d.unknown)+' نامشخص');toast((d.stopped?'ارسال متوقف شد: ':'ارسال کامل شد: ')+p.join(' · '));try{Store.setCfg('smsLastBulk',{date:T().key,time:T().time,count:(d.sent||0)+(d.unknown||0)})}catch(e){}fire();if((d.failed||0)>0||d.stopped)smsErrSheet(d);else setTimeout(close,1800)}
+    else{prog.hidden=true;smsErrSheet(d)}
    }
   };
   const needText=()=>{const t=ta.value.trim();if(!t)toast('متن پیام خالی است');return t};
