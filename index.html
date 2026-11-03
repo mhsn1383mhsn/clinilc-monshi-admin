@@ -3,7 +3,7 @@
 (function(){
  const KEY='clinicAppearanceMode';
  let initial='dark';
- try{initial=localStorage.getItem(KEY)==='light'?'light':'dark'}catch(e){}
+ try{initial=localStorage.getItem(KEY)==='dark'?'dark':'light'}catch(e){}
  document.documentElement.setAttribute('data-theme',initial);
  function syncButtons(){
   const light=document.documentElement.getAttribute('data-theme')==='light';
@@ -773,6 +773,364 @@ header.top .app-install-trigger {
 .smsx-st{font-size:11px;margin-top:4px;color:var(--mut)}
 .smsx-last{font-size:11px;color:var(--mut);text-align:center;margin-top:8px}
 </style>
+
+
+
+<style id="clinic-modern-ui-v2">
+/* ========== Modern dashboard layout — own blue/white + navy dark theme ========== */
+@import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap');
+
+:root{
+  --bg:#EAF2F8;
+  --bg2:#F5F9FC;
+  --card:#FFFFFF;
+  --card-soft:#F3F8FC;
+  --ink:#0B1F33;
+  --mut:#5B7390;
+  --pri:#0B6E78;
+  --pri2:#0A8A96;
+  --pri-deep:#08545C;
+  --pri-soft:rgba(11,110,120,.12);
+  --pri-soft-2:rgba(11,110,120,.08);
+  --ok:#1F7A45; --warn:#C99412; --bad:#B83A32;
+  --line:rgba(11,31,51,.08);
+  --line-2:rgba(11,31,51,.12);
+  --r:22px; --r-sm:16px; --r-xs:12px;
+  --shadow:0 8px 28px rgba(11,31,51,.07);
+  --shadow-sm:0 2px 10px rgba(11,31,51,.05);
+  --shadow-float:0 12px 32px rgba(11,110,120,.22);
+  --font:"Vazirmatn","Tahoma",system-ui,-apple-system,sans-serif;
+  --nav-h:72px;
+}
+html[data-theme="dark"]{
+  --bg:#0A1520;
+  --bg2:#0E1B28;
+  --card:#132433;
+  --card-soft:#182C3D;
+  --ink:#E8F1F7;
+  --mut:#8FA6B8;
+  --pri:#31BCC8;
+  --pri2:#3DCDD8;
+  --pri-deep:#0A5B63;
+  --pri-soft:rgba(49,188,200,.14);
+  --pri-soft-2:rgba(49,188,200,.08);
+  --ok:#3DCF7A; --warn:#E0B33E; --bad:#E06B63;
+  --line:rgba(255,255,255,.08);
+  --line-2:rgba(255,255,255,.12);
+  --shadow:0 10px 32px rgba(0,0,0,.35);
+  --shadow-sm:0 2px 12px rgba(0,0,0,.28);
+  --shadow-float:0 12px 32px rgba(49,188,200,.18);
+}
+
+*{box-sizing:border-box}
+html,body{
+  margin:0;padding:0;
+  font-family:var(--font)!important;
+  background:var(--bg)!important;
+  color:var(--ink)!important;
+  -webkit-font-smoothing:antialiased;
+  line-height:1.5;
+}
+body{
+  min-height:100dvh;
+  background:
+    radial-gradient(900px 420px at 50% -80px, var(--pri-soft), transparent 60%),
+    linear-gradient(180deg, var(--bg2) 0%, var(--bg) 40%, var(--bg) 100%)!important;
+}
+
+/* ===== Header / hero ===== */
+header.top{
+  position:sticky; top:0; z-index:50;
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:center;
+  gap:8px;
+  padding:16px 16px 12px!important;
+  background:linear-gradient(180deg, rgba(11,110,120,.16), rgba(11,110,120,.04) 70%, transparent)!important;
+  border-bottom:none!important;
+  box-shadow:none!important;
+  backdrop-filter:none;
+}
+html[data-theme="dark"] header.top{
+  background:linear-gradient(180deg, rgba(49,188,200,.12), rgba(10,21,32,.2) 80%, transparent)!important;
+}
+header.top h1{
+  width:100%; margin:0!important; text-align:center;
+  font-size:1.15rem!important; font-weight:700!important;
+  letter-spacing:-.02em; color:var(--ink)!important;
+}
+header.top .sub{
+  display:block; margin-top:3px;
+  font-size:.78rem!important; font-weight:500!important; color:var(--mut)!important;
+}
+header.top a{
+  color:var(--pri)!important; text-decoration:none!important;
+  font-size:.78rem!important; font-weight:600;
+  padding:6px 10px; border-radius:999px; background:var(--card);
+  box-shadow:var(--shadow-sm);
+}
+.theme-toggle{
+  border:none!important; background:var(--card)!important; color:var(--ink)!important;
+  border-radius:999px!important; padding:8px 12px!important;
+  font-size:.75rem!important; font-weight:600!important;
+  box-shadow:var(--shadow-sm)!important;
+}
+
+/* Quick nav chips under title */
+#headerQuickNav{
+  width:100%!important; display:flex!important; flex-wrap:wrap;
+  justify-content:center; gap:6px!important; padding:4px 0 2px!important;
+}
+#headerQuickNav .btn{
+  border:none!important; border-radius:999px!important;
+  padding:8px 12px!important; font-size:.74rem!important; font-weight:600!important;
+  background:var(--card)!important; color:var(--mut)!important;
+  box-shadow:var(--shadow-sm)!important;
+}
+#headerQuickNav .btn.g{
+  background:var(--pri)!important; color:#fff!important;
+  box-shadow:var(--shadow-float)!important;
+}
+
+/* ===== Main ===== */
+main, main#view, #view{
+  padding:8px 14px calc(var(--nav-h) + 18px)!important;
+  max-width:480px;
+  margin:0 auto;
+}
+@media (min-width:768px){
+  main, main#view, #view{max-width:920px; padding:12px 18px calc(var(--nav-h) + 24px)!important}
+}
+
+/* ===== Cards — soft, large radius ===== */
+.card{
+  background:var(--card)!important;
+  border:1px solid var(--line)!important;
+  border-radius:var(--r)!important;
+  box-shadow:var(--shadow-sm)!important;
+  padding:14px!important;
+  margin:0 0 12px!important;
+}
+.card > b, .card b:first-of-type{
+  font-size:.95rem!important; font-weight:700!important; letter-spacing:-.01em;
+}
+
+/* Featured / primary info card */
+.card.stat, .stat.card, .card.stat{
+  background:linear-gradient(135deg, var(--pri-deep), var(--pri2))!important;
+  color:#fff!important; border:none!important;
+  box-shadow:var(--shadow-float)!important;
+}
+.card.stat b, .stat b{color:#fff!important; font-size:1.4rem!important}
+.card.stat span, .stat span{color:rgba(255,255,255,.82)!important; font-size:.75rem!important}
+
+/* Soft stats strip look when several cards in a row */
+.grid .card.stat, .grid .stat{
+  background:var(--card)!important; color:var(--ink)!important;
+  border:1px solid var(--line)!important; box-shadow:var(--shadow-sm)!important;
+}
+.grid .card.stat b, .grid .stat b{color:var(--pri)!important; font-size:1.15rem!important}
+.grid .card.stat span, .grid .stat span{color:var(--mut)!important}
+
+/* ===== Lists ===== */
+.lst{display:flex; flex-direction:column; gap:8px}
+.lst .card{
+  margin:0!important; padding:12px 14px!important;
+  border-radius:var(--r-sm)!important;
+}
+.row{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+.row .g{flex:1; min-width:0}
+.mut{color:var(--mut)!important; font-size:.78rem!important}
+h4{
+  margin:16px 4px 8px!important;
+  font-size:.82rem!important; font-weight:700!important;
+  color:var(--ink)!important;
+  display:flex; align-items:center; justify-content:space-between;
+}
+
+/* ===== Buttons ===== */
+.btn{
+  font-family:inherit!important; font-weight:600!important; font-size:.86rem!important;
+  border:none!important; border-radius:14px!important;
+  padding:11px 14px!important;
+  background:var(--pri)!important; color:#fff!important;
+  box-shadow:var(--shadow-float)!important;
+}
+.btn.sec{
+  background:var(--card)!important; color:var(--ink)!important;
+  border:1px solid var(--line)!important; box-shadow:var(--shadow-sm)!important;
+}
+.btn.bad{background:var(--bad)!important; color:#fff!important; box-shadow:0 8px 20px rgba(184,58,50,.25)!important}
+.btn.sm{padding:7px 11px!important; font-size:.74rem!important; border-radius:12px!important; box-shadow:none!important}
+.btn.big{width:100%; padding:13px 16px!important; font-size:.92rem!important; border-radius:16px!important}
+.btn.g{
+  background:var(--pri-soft)!important; color:var(--pri-deep)!important;
+  box-shadow:none!important;
+}
+html[data-theme="dark"] .btn.g{color:var(--pri)!important}
+
+/* Action tiles (grid of section shortcuts) */
+.grid{
+  display:grid!important;
+  grid-template-columns:repeat(3,1fr)!important;
+  gap:10px!important;
+  margin:10px 0 14px!important;
+}
+.grid .btn{
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:8px; min-height:92px;
+  padding:14px 8px!important;
+  border-radius:20px!important;
+  background:var(--card)!important;
+  color:var(--ink)!important;
+  border:1px solid var(--line)!important;
+  box-shadow:var(--shadow-sm)!important;
+  font-size:.72rem!important; font-weight:600!important;
+  text-align:center;
+}
+.grid .btn.sec{background:var(--card)!important}
+.grid .btn.g{background:var(--pri-soft)!important; border-color:transparent!important}
+@media (max-width:380px){
+  .grid{grid-template-columns:repeat(2,1fr)!important}
+}
+
+/* ===== Forms ===== */
+label{
+  display:block; margin:10px 2px 5px!important;
+  font-size:.74rem!important; font-weight:600!important; color:var(--mut)!important;
+}
+input, select, textarea{
+  width:100%; font-family:inherit!important; font-size:.9rem!important;
+  color:var(--ink)!important; background:var(--card)!important;
+  border:1px solid var(--line-2)!important; border-radius:14px!important;
+  padding:12px 13px!important; outline:none!important;
+  box-shadow:var(--shadow-sm)!important;
+}
+input:focus, select:focus, textarea:focus{
+  border-color:var(--pri)!important;
+  box-shadow:0 0 0 4px var(--pri-soft)!important;
+}
+textarea{min-height:96px}
+
+/* ===== Bottom navigation — floating modern bar ===== */
+nav.tabs{
+  position:fixed!important; left:12px; right:12px; bottom:10px; z-index:60;
+  display:flex!important; align-items:center; justify-content:space-between;
+  gap:2px;
+  padding:8px 10px calc(8px + env(safe-area-inset-bottom))!important;
+  background:rgba(255,255,255,.92)!important;
+  backdrop-filter:blur(18px) saturate(160%);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);
+  border:1px solid var(--line)!important;
+  border-radius:28px!important;
+  box-shadow:0 10px 40px rgba(11,31,51,.12)!important;
+  overflow:visible;
+}
+html[data-theme="dark"] nav.tabs{
+  background:rgba(19,36,51,.92)!important;
+  box-shadow:0 10px 40px rgba(0,0,0,.45)!important;
+}
+nav.tabs button{
+  flex:1 1 0; min-width:0;
+  border:none!important; background:transparent!important;
+  color:var(--mut)!important; border-radius:18px!important;
+  padding:8px 4px!important;
+  font-family:inherit!important; font-size:.62rem!important; font-weight:600!important;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  box-shadow:none!important;
+}
+nav.tabs button i{font-style:normal; font-size:1.25rem!important; line-height:1}
+nav.tabs button.on{
+  color:var(--pri)!important;
+  background:var(--pri-soft)!important;
+}
+/* Center-ish emphasis for active */
+nav.tabs button.on i{
+  width:42px; height:42px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:var(--pri); color:#fff;
+  box-shadow:var(--shadow-float);
+  margin-bottom:2px;
+}
+
+/* ===== Sheets / modal ===== */
+.ov{background:rgba(11,31,51,.42)!important; backdrop-filter:blur(6px)}
+.sh{
+  background:var(--card)!important;
+  border-radius:26px 26px 0 0!important;
+  border:1px solid var(--line)!important; border-bottom:none!important;
+  box-shadow:0 -12px 40px rgba(11,31,51,.16)!important;
+}
+.sh h3{font-size:1.05rem!important; font-weight:700!important}
+.sh .x{
+  width:36px; height:36px; border-radius:50%!important;
+  background:var(--bg)!important; border:none!important; color:var(--mut)!important;
+}
+
+/* ===== Calendar day chips ===== */
+.cal{display:grid; grid-template-columns:repeat(7,1fr); gap:6px}
+.cd{
+  aspect-ratio:1; border-radius:16px!important;
+  background:var(--card)!important; border:1px solid var(--line)!important;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:2px; font-weight:600; font-size:.82rem;
+  box-shadow:var(--shadow-sm);
+}
+.cd.today{
+  background:var(--pri)!important; color:#fff!important; border-color:transparent!important;
+  box-shadow:var(--shadow-float)!important;
+}
+.cd.today i, .cd.today u{color:rgba(255,255,255,.85)!important}
+.cd i, .cd u{font-style:normal; font-size:.58rem; color:var(--mut)}
+
+/* ===== Session cards ===== */
+.session-grid{
+  display:grid!important;
+  grid-template-columns:1fr!important;
+  gap:10px!important;
+}
+@media (min-width:720px){
+  .session-grid{grid-template-columns:repeat(2,1fr)!important}
+}
+.session-grid > .card{
+  margin:0!important; padding:14px!important;
+  border-radius:var(--r)!important;
+}
+
+/* ===== Client pick ===== */
+.client-choice, .client-results .client-choice{
+  border:1px solid var(--line)!important; border-radius:16px!important;
+  background:var(--card)!important; padding:12px 14px!important; margin:6px 0!important;
+  box-shadow:var(--shadow-sm);
+}
+.client-choice.selected{
+  border-color:transparent!important; background:var(--pri-soft)!important;
+}
+.client-choice b{font-size:.9rem!important}
+.client-choice small{font-size:.74rem!important; color:var(--mut)!important}
+
+/* ===== Misc ===== */
+.empty{
+  text-align:center; color:var(--mut); padding:22px 12px; font-size:.84rem;
+  border:1px dashed var(--line-2); border-radius:var(--r); background:var(--card);
+}
+#toast{
+  border-radius:16px!important; padding:12px 16px!important;
+  font-size:.86rem!important; font-weight:600!important;
+  box-shadow:var(--shadow)!important;
+}
+.ok{color:var(--ok)!important}
+.bad{color:var(--bad)!important}
+.warn{color:var(--warn)!important}
+
+/* Soft section containers like image blocks */
+.bar{
+  background:var(--card)!important; border:1px solid var(--line)!important;
+  border-radius:var(--r)!important; padding:10px!important;
+  box-shadow:var(--shadow-sm)!important;
+}
+
+#clinicNetBar{font-family:var(--font)!important}
+</style>
+
 </head><body>
 <div id="appSplash" class="app-splash" aria-hidden="true"><div class="app-splash-card" style="--sp-1:#0C2A33;--sp-2:#11525E;--sp-bg:#0E181E"><img class="app-splash-icon" src="icons/icon-192.png" alt=""><b>پنل مدیریت کلینیک</b><span>در حال آماده‌سازی…</span></div></div>
 <script>
@@ -1220,7 +1578,7 @@ window.DM_CONFIG = {
           } catch (e2) {}
         }
         if (view && !String(view.innerHTML||'').trim()) {
-          view.innerHTML = '<div class="card"><b>در حال بارگذاری داشبورد…</b><div class="mut">اگر چند ثانیه طول کشید، صفحه را یک‌بار رفرش کنید.</div></div>';
+          view.innerHTML = '<div class="card"><b>در حال بارگذاری خانه…</b><div class="mut">اگر چند ثانیه طول کشید، صفحه را یک‌بار رفرش کنید.</div></div>';
           if (typeof App !== 'undefined' && App.refresh) setTimeout(function(){ try{App.refresh()}catch(e){} }, 100);
         }
       } catch (e) { console.error(e); }
@@ -1563,6 +1921,16 @@ window.addEventListener('storage',e=>{if(window.ClinicCloud&&window.ClinicCloud.
 function ensureClientFileNumbers(){const clients=Store.all('people').filter(p=>p.type==='client');let max=clients.reduce((z,p)=>Math.max(z,+p.fileNo||0),0),seen=new Set();for(const p of clients){const n=+p.fileNo;if(Number.isInteger(n)&&n>0&&!seen.has(n)){seen.add(n);continue}do{max++}while(seen.has(max));Store.upd('people',p.id,{fileNo:max});seen.add(max)}}
 ensureClientFileNumbers();
 
+
+function mountAdminQuickNav(){
+  const host=document.getElementById('headerQuickNav');
+  if(!host)return;
+  const items=[['cal','برنامه‌ها'],['staff','تنظیمات منشی‌ها'],['people','مراجعین'],['dash','خانه'],['ther','درمانگران']];
+  const cur=App&&App.cur;
+  host.innerHTML=items.map(([id,title])=>`<button type="button" class="btn sec sm${cur===id?' g':''}" data-quick-nav="${id}" style="border-radius:999px">${title}</button>`).join('');
+  host.querySelectorAll('[data-quick-nav]').forEach(b=>b.onclick=()=>App.goto&&App.goto(b.dataset.quickNav));
+}
+
 const pname=id=>(Store.all('people').find(p=>p.id===id)||{}).name||'—';
 const politeName=p=>{if(!p)return '—';const n=typeof p==='object'? (p.name||'—'):pname(p);const g=typeof p==='object'?p.gender:(Store.all('people').find(x=>String(x.id)===String(p))||{}).gender;return (g==='male'?'آقا ':g==='female'?'خانم ':'')+n;};
 const personById=id=>Store.all('people').find(p=>String(p.id)===String(id))||{};
@@ -1661,7 +2029,7 @@ function form(title,fields,onSave){
 /* اسکلت پنل: هدر، تب‌های پایین، لینک بین پنل‌ها */
 const App={boot({title,tabs,links=[]}){
  const sub=(typeof T==='function')?T().key:'';
- document.body.innerHTML=`<header class="top"><h1>${esc(title)}<span class="sub">${fa(sub)}</span></h1><button class="theme-toggle" type="button" aria-label="تغییر به حالت روشن" title="حالت روشن"><span aria-hidden="true">☀️</span><span class="theme-toggle-label">روشن</span></button>${links.map(l=>`<a href="${l[1]}">${esc(l[0])}</a>`).join('')}</header><main id="view"></main><nav class="tabs"></nav>`;CenterHub.mountContext();
+ document.body.innerHTML=`<header class="top"><div style="width:100%;text-align:center"><h1 style="margin:0">${esc(title)}<span class="sub">${fa(sub)}</span></h1><div id="headerQuickNav" style="display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:8px 0 4px"></div></div><button class="theme-toggle" type="button" aria-label="تغییر به حالت روشن" title="حالت روشن"><span aria-hidden="true">☀️</span><span class="theme-toggle-label">روشن</span></button>${links.map(l=>`<a href="${l[1]}">${esc(l[0])}</a>`).join('')}</header><main id="view"></main><nav class="tabs"></nav>`;CenterHub.mountContext();
  tabs=orderTabs(tabs);const nav=$('nav.tabs'),view=$('#view');
  const preferred=['dash','people','tx','sessions'];
  let mainTabs=tabs.filter(t=>preferred.includes(t.id));
@@ -1670,7 +2038,7 @@ const App={boot({title,tabs,links=[]}){
  const menuTabs=tabs.filter(t=>!mainIds.has(t.id));
  const go=id=>{
   const t=tabs.find(x=>x.id===id)||tabs[0];
-  App.cur=t.id;
+  App.cur=t.id;try{mountAdminQuickNav()}catch(e){}
   $$('button',nav).forEach(b=>b.classList.toggle('on',b.dataset.id===t.id||(b.dataset.id==='menu'&&!mainIds.has(t.id))));
   view.style.opacity='0';view.innerHTML='';t.render(view);
   requestAnimationFrame(()=>{view.style.transition='opacity .15s';view.style.opacity='1'});
@@ -1807,8 +2175,42 @@ function personSheet(pid,o={}){
  const all=Store.all('tx').filter(t=>String(t.pid)===String(pid)).sort((a,b)=>(b.date||'').localeCompare(a.date||'')),sessions=all.filter(t=>t.kind==='charge'&&(t.source==='session'||t.apptId||t.title==='جلسه مشاوره'||t.start||t.end)),sessionIds=new Set(sessions.map(t=>String(t.id))),sessionAppointments=new Set(sessions.map(t=>String(t.apptId||'')));
  const linked=t=>sessionIds.has(String(t.relatedChargeId||''))||sessionIds.has(String(t.sid||''))||(t.apptId&&sessionAppointments.has(String(t.apptId)));
  const sessionRelated=all.filter(t=>t.kind!=='charge'&&linked(t)),other=all.filter(t=>!sessions.includes(t)&&!sessionRelated.includes(t)),months=[...new Set([T().month,...all.map(t=>(t.date||'').slice(0,7)).filter(Boolean)])].sort((a,b)=>b.localeCompare(a)),groups=Store.all('groups').filter(g=>(g.members||[]).map(String).includes(String(pid))).map(g=>g.name),balance=bal(pid);
- const row=t=>`<div class="card fin-row fin-${txTone(t.kind)}"><div class="row"><div class="g"><span class="fin-pill fin-pill-${txTone(t.kind)}">${KIND[t.kind]||esc(t.kind||'تراکنش')}</span> <b>${esc(t.title||'')}</b><div class="mut">${fa(t.date||'—')}${t.tid?' · '+therapistColorChip(t.tid):''}${t.status==='due'?' · <span class="warn">در انتظار</span>':''}${t.dueDate?' · سررسید '+fa(t.dueDate):''}${t.checkNumber?' · چک '+esc(t.checkNumber):''}${t.paymentMethod?' · '+esc(PAYMENT_LABEL?.[t.paymentMethod]||t.paymentMethod):''}</div></div><b>${money(t.amount||0)}</b></div></div>`;
- sheet(p.name,`<div class="mut">${esc(TYPES[p.type]||'مراجع')} · پروندهٔ شمارهٔ ${fa(p.fileNo||'—')} · ${esc(p.phone||'')}${groups.length?' · عضویت گروه: '+esc(groups.join('، ')):''}</div><div class="card stat"><b class="${balance>0?'bad':'ok'}">${money(Math.abs(balance))}</b><span>${balance>0?'بدهکار':balance<0?'بستانکار':'تسویه'}</span></div>${o.del?'<div class="row"><button class="btn sec g" data-person-edit>ویرایش اطلاعات</button><button class="btn bad g" data-person-delete>حذف شخص</button></div>':''}<h4>جلسات و گزارش ماهانه</h4><div class="card"><label>ماه گزارش جلسه‌ها</label><select id="personReportMonth">${opt([['all','همهٔ ماه‌ها'],...months.map(m=>[m,fa(m)])],months.includes(T().month)?T().month:'all')}</select><div class="mut">گزارش جلسات از سایر تراکنش‌های مالی تفکیک شده است.</div></div><div id="personSessionReport"></div><div id="personMonthlyTx"></div><h4>تراکنش‌های غیرجلسه‌ای — همهٔ سوابق</h4>${other.length?other.map(row).join(''):'<div class="empty">تراکنش غیرجلسه‌ای ثبت نشده است.</div>'}`,(b,c)=>{
+ const catLabels={session:'جلسات حضوری',online:'جلسات آنلاین',workshop:'کارگاه / گروه',penalty:'جریمه عدم حضور',other:'سایر'};
+ const catSums={session:0,online:0,workshop:0,penalty:0,other:0};
+ all.filter(t=>t.kind==='charge').forEach(t=>{
+  let k=t.debtCategory;
+  if(!k){if(t.source==='group'||t.groupId)k='workshop';else if(t.serviceMode==='online'||(t.title||'').includes('آنلاین'))k='online';else if(t.penaltyForNoShow||t.debtCategory==='penalty')k='penalty';else if(t.source==='session'||t.apptId)k='session';else k='other';}
+  if(catSums[k]==null)k='other';
+  catSums[k]=(catSums[k]||0)+(+t.amount||0);
+ });
+ const adjusted=all.filter(t=>t.kind==='charge'&&(t.secretaryAdjusted||t.amountOverrideReason||t.amountOverride));
+ const penalties=all.filter(t=>t.kind==='charge'&&(t.debtCategory==='penalty'||t.penaltyForNoShow));
+ const oversightHtml=`<div class="card"><b>اشراف مدیریتی</b>
+ <div class="mut">جمع بدهی به تفکیک</div>
+ <div style="display:flex;flex-wrap:wrap;gap:6px;margin:6px 0">${Object.keys(catLabels).filter(k=>catSums[k]>0).map(k=>`<span class="chip" style="display:inline-block;padding:6px 10px;border-radius:999px;background:var(--pri-soft)">${catLabels[k]}: <b>${money(catSums[k])}</b></span>`).join('')||'<span class="mut">—</span>'}</div>
+ <label>فیلتر دسته</label>
+ <select id="adminDebtCatFilter"><option value="all">همه</option>${Object.keys(catLabels).map(k=>`<option value="${k}">${catLabels[k]}${catSums[k]?(' · '+money(catSums[k])):''}</option>`).join('')}</select>
+ <div id="adminDebtCatDetail" class="lst" style="margin-top:8px"></div>
+ ${penalties.length?`<div class="card" style="margin-top:8px"><b class="bad">جریمه‌ها</b>${penalties.map(t=>`<div class="row"><span class="g">${fa(t.date)} · ${esc(t.title||'جریمه')}${t.note?(' · '+esc(t.note)):''}</span><b>${money(t.amount)}</b></div>`).join('')}</div>`:''}
+ ${adjusted.length?`<div class="card" style="margin-top:8px"><b>تغییر مبلغ توسط منشی</b>${adjusted.map(t=>`<div class="row"><span class="g">${fa(t.date)} · از ${money(t.amountOriginal||0)} به ${money(t.amountOverride||t.amount)} · علت: ${esc(t.amountOverrideReason||'—')}</span></div>`).join('')}</div>`:''}
+ </div>`;
+ const row=t=>`<div class="card fin-row fin-${txTone(t.kind)}"><div class="row"><div class="g"><span class="fin-pill fin-pill-${txTone(t.kind)}">${KIND[t.kind]||esc(t.kind||'تراکنش')}</span> <b>${esc(t.title||'')}</b><div class="mut">${fa(t.date||'—')}${t.tid?' · '+therapistColorChip(t.tid):''}${t.status==='due'?' · <span class="warn">در انتظار</span>':''}${t.dueDate?' · سررسید '+fa(t.dueDate):''}${t.checkNumber?' · چک '+esc(t.checkNumber):''}${t.paymentMethod?' · '+esc(PAYMENT_LABEL?.[t.paymentMethod]||t.paymentMethod):''}${t.amountOverrideReason?' · <span class="warn">اصلاح منشی: '+esc(t.amountOverrideReason)+'</span>':''}${t.debtCategory==='penalty'||t.penaltyForNoShow?' · <span class="bad">جریمه</span>':''}</div></div><b>${money(t.amount||0)}</b></div></div>`;
+ sheet(p.name,`<div class="mut">${esc(TYPES[p.type]||'مراجع')} · پروندهٔ شمارهٔ ${fa(p.fileNo||'—')} · ${esc(p.phone||'')}${groups.length?' · عضویت گروه: '+esc(groups.join('، ')):''}</div><div class="card stat"><b class="${balance>0?'bad':'ok'}">${money(Math.abs(balance))}</b><span>${balance>0?'بدهکار':balance<0?'بستانکار':'تسویه'}</span></div>${oversightHtml}${o.del?'<div class="row"><button class="btn sec g" data-person-edit>ویرایش اطلاعات</button><button class="btn bad g" data-person-delete>حذف شخص</button></div>':''}<h4>جلسات و گزارش ماهانه</h4><div class="card"><label>ماه گزارش جلسه‌ها</label><select id="personReportMonth">${opt([['all','همهٔ ماه‌ها'],...months.map(m=>[m,fa(m)])],months.includes(T().month)?T().month:'all')}</select><div class="mut">گزارش جلسات از سایر تراکنش‌های مالی تفکیک شده است.</div></div><div id="personSessionReport"></div><div id="personMonthlyTx"></div><h4>تراکنش‌های غیرجلسه‌ای — همهٔ سوابق</h4>${other.length?other.map(row).join(''):'<div class="empty">تراکنش غیرجلسه‌ای ثبت نشده است.</div>'}`,(b,c)=>{
+  const paintDebt=cat=>{
+    const host=$('#adminDebtCatDetail',b);if(!host)return;
+    const labels={session:'جلسات حضوری',online:'جلسات آنلاین',workshop:'کارگاه / گروه',penalty:'جریمه عدم حضور',other:'سایر'};
+    const rows=all.filter(t=>t.kind==='charge').filter(t=>{
+      let k=t.debtCategory;
+      if(!k){if(t.source==='group'||t.groupId)k='workshop';else if(t.serviceMode==='online'||(t.title||'').includes('آنلاین'))k='online';else if(t.penaltyForNoShow)k='penalty';else if(t.source==='session'||t.apptId)k='session';else k='other';}
+      return cat==='all'||k===cat;
+    });
+    const sum=rows.reduce((z,t)=>z+(+t.amount||0),0);
+    host.innerHTML=`<div class="mut">نمایش: ${labels[cat]||'همه'} · جمع: <b>${money(sum)}</b></div>`+(rows.length?rows.map(t=>{
+      const adj=(t.secretaryAdjusted||t.amountOverrideReason)?` · <span class="warn">اصلاح منشی: ${esc(t.amountOverrideReason||'')}</span>`:'';
+      return `<div class="row"><span class="g">${fa(t.date)} · ${esc(t.title||'')}${adj}</span><b>${money(t.amount)}</b></div>`;
+    }).join(''):'<div class="empty">موردی نیست</div>');
+  };
+  const df=$('#adminDebtCatFilter',b);if(df){df.onchange=()=>paintDebt(df.value);paintDebt('all');}
   const render=()=>{const mo=$('#personReportMonth',b).value,rows=sessions.filter(t=>mo==='all'||(t.date||'').startsWith(mo)),gross=rows.reduce((z,t)=>z+(+t.amount||0),0),minutes=rows.reduce((z,t)=>z+(+t.minutes||0),0),discount=rows.reduce((z,t)=>z+all.filter(x=>x.kind==='discount'&&String(x.sid)===String(t.id)).reduce((a,x)=>a+(+x.amount||0),0),0);$('#personSessionReport',b).innerHTML=`<div class="grid"><div class="card stat"><b>${fa(rows.length)}</b><span>جلسه</span></div><div class="card stat"><b>${durationLabel(minutes)}</b><span>مدت واقعی · دقیقه و ساعت</span></div><div class="card stat"><b>${money(gross-discount)}</b><span>خالص پس از تخفیف</span></div></div>${rows.length?rows.map(t=>{const related=sessionRelated.filter(x=>linked(x)&&((x.apptId&&String(x.apptId)===String(t.apptId))||String(x.relatedChargeId||x.sid||'')===String(t.id))),d=all.filter(x=>x.kind==='discount'&&String(x.sid)===String(t.id)).reduce((z,x)=>z+(+x.amount||0),0),pay=related.filter(x=>x.kind==='pay'&&x.source!=='deposit').reduce((z,x)=>z+(+x.amount||0),0),depositUsed=related.filter(x=>x.kind==='deposit_apply').reduce((z,x)=>z+(+x.amount||0),0),orgDue=all.filter(x=>x.kind==='org_receivable'&&String(x.chargeId)===String(t.id)).reduce((z,x)=>z+(+x.amount||0),0),due=related.filter(x=>['inst','check'].includes(x.kind)),openBalance=Math.max(0,(+t.amount||0)-d-depositUsed-pay);return `<div class="card session-finance-card" style="--therapist-color:${therapistColor(t.tid)}"><div class="row"><div class="g"><b>${fa(t.date||'')}</b> ${therapistColorChip(t.tid)}<div class="mut">${t.serviceMode==='online'?'مشاورهٔ آنلاین · مدت ثبت‌شده '+durationLabel(t.minutes||0):'مشاورهٔ حضوری · شروع واقعی '+fa(t.start||'—')+' · مبنای محاسبه '+fa(t.billableStart||t.start||'—')+' · پایان '+fa(t.end||'—')+' · حضور '+durationLabel(t.actualMinutes||t.minutes||0)+' / قابل محاسبه '+durationLabel(t.minutes||0)} · نرخ اختصاصی ${money(t.rate||0)}/دقیقه</div></div><span class="ok">${esc(PAYMENT_LABEL?.[t.paymentMethod]||'ثبت‌شده')}</span></div><div class="row"><span class="g">هزینه ${money(t.amount)} · تخفیف ${money(d)}</span><b>خالص ${money((+t.amount||0)-d)}</b></div><div class="mut">${t.serviceMode==='online'?`جلسهٔ آنلاین · ماندهٔ قابل‌پرداخت ${money(openBalance)} · `:''}پرداخت‌های پس از جلسه ${money(pay)} · بیعانه/اعتبار اعمال‌شده ${money(depositUsed)}${orgDue?` · طلب بهزیستی ${money(orgDue)}`:''}${due.length?' · '+due.map(x=>`${KIND[x.kind]} ${money(x.amount)}، سررسید ${fa(x.dueDate||x.date)}`).join(' · '):''}</div></div>`}).join(''):'<div class="empty">برای این ماه جلسه‌ای ثبت نشده است.</div>'}`};const renderMonthlyTx=()=>{const mo=$('#personReportMonth',b).value,rows=other.filter(t=>mo==='all'||(t.date||'').startsWith(mo)),total=k=>rows.filter(t=>t.kind===k).reduce((z,t)=>z+(+t.amount||0),0);$('#personMonthlyTx',b).innerHTML=`<h4>تراکنش‌های مالی ماه انتخاب‌شده</h4><div class="grid"><div class="card stat"><b>${money(total('charge'))}</b><span>بدهی‌های ثبت‌شده</span></div><div class="card stat fin-stat-paid"><b>${money(total('pay'))}</b><span>پرداخت‌ها</span></div><div class="card stat fin-stat-expense"><b>${money(total('expense'))}</b><span>هزینه‌ها</span></div></div>${rows.length?rows.map(row).join(''):'<div class="empty">برای این ماه تراکنش غیرجلسه‌ای نیست.</div>'}`};$('#personReportMonth',b).onchange=()=>{render();renderMonthlyTx()};render();renderMonthlyTx();
   $('[data-person-edit]',b)?.addEventListener('click',()=>{c();personForm(p)});$('[data-person-delete]',b)?.addEventListener('click',()=>confirmSheet('«'+p.name+'» و همهٔ سوابقش حذف شود؟',()=>{Store.del('people',pid);Store.all('tx').filter(t=>String(t.pid)===String(pid)).forEach(t=>Store.del('tx',t.id));c();App.refresh()}));
  });
@@ -1854,11 +2256,17 @@ function groupSheet(id){const g=Store.all('groups').find(x=>String(x.id)===Strin
  const memberHtml=members.length?members.map(p=>{const rows=tx.filter(t=>String(t.groupId)===String(id)&&String(t.pid)===String(p.id)),charge=rows.find(t=>t.kind==='charge'),paid=rows.filter(t=>t.kind==='pay').reduce((z,t)=>z+(+t.amount||0),0),due=rows.filter(t=>['inst','check'].includes(t.kind)&&t.status==='due'),balance=Math.max(0,(+charge?.amount||0)-rows.filter(t=>t.kind==='discount').reduce((z,t)=>z+(+t.amount||0),0)-paid);return `<div class="card" data-group-person="${esc(p.id)}"><div class="row"><b class="g">${esc(p.name)}</b><b class="${balance?'bad':'ok'}">${money(balance)}</b></div><div class="mut">${esc(p.phone||'')} · کل دوره ${charge?money(charge.amount):'ثبت مالی نشده'} · روش ${esc(PAYMENT_LABEL[charge?.paymentMethod]||'—')} · پرداخت‌شده ${money(paid)}</div>${due.map(x=>`<div class="mut ${x.kind==='check'?'warn':'mut'}">${KIND[x.kind]} · ${esc(x.title||'')} · ${money(x.amount)} · سررسید ${fa(x.dueDate||x.date)}${x.checkNumber?' · شماره '+esc(x.checkNumber):''} · ${x.status==='due'?'در انتظار پرداخت':'پرداخت‌شده'}</div>`).join('')}${rows.filter(x=>x.kind==='pay').map(x=>`<div class="mut">پرداخت ${money(x.amount)} · ${fa(x.date)} · ${esc(x.title||'')}</div>`).join('')}</div>`}).join(''):'<div class="empty">عضوی ثبت نشده است.</div>';
  sheet(g.name,`<div class="card"><b>${esc(g.kind==='طرح'?'سایر':g.kind||'گروه')} · ${fa((g.members||[]).length)} عضو</b><div class="mut">مبلغ کل هر نفر: ${money(roundClientCost(g.feePerMember||tx.find(t=>String(t.groupId)===String(id)&&t.kind==='charge')?.amount||0))} · درمانگر مسئول: ${g.tid?therapistColorChip(g.tid):'ثبت نشده'} · ${g.schedule?.mode==='weekly'?'روتین هفتگی':g.schedule?.mode==='dated'?'جلسه‌های با تاریخ مستقل':'برنامه هنوز تنظیم نشده'}${g.schedule?.mode==='weekly'?' · روزها: '+(g.schedule.weekdays||[]).map(x=>WEEKDAY_LABELS[+x]||x).join('، ')+' · ساعت '+fa(g.schedule.startTime||'—')+' · '+fa(g.schedule.count||0)+' جلسه':''}</div><div class="mut">${g.tid?therapistColorChip(g.tid)+' · '+esc(Store.all('people').find(p=>String(p.id)===String(g.tid))?.specialty||''):''}</div><div class="mut">روتین پیامک اعضا: ${esc(({manual:'دستی',day_before:'یک روز پیش از هر جلسه',session_day:'روز برگزاری هر جلسه'})[g.smsConfig?.routine]||'تنظیم نشده')}</div>${g.smsConfig?.text?`<div class="mut">متن ذخیره‌شده: ${esc(g.smsConfig.text)}</div>`:''}</div><h4>نوبت‌های تقویمی (${fa(events.length)})</h4>${events.length?events.map(e=>`<div class="card"><div class="row"><div class="g"><b>${fa(e.date)} · ${fa(e.time)}</b><div class="mut">${fa(e.durationHours)} ساعت · ${fa((e.members||[]).length)} عضو · درمانگر: ${therapistColorChip(e.tid||g.tid)}</div></div><span class="ok">${e.type==='program'?'رویداد گروهی':'کارگاه'}</span></div></div>`).join(''):'<div class="empty">نوبت گروهی ثبت نشده است.</div>'}<h4>مراجعان و پرداخت‌های هر عضو</h4>${memberHtml}<h4>سایر تراکنش‌های مرتبط</h4>${tx.filter(t=>String(t.groupId)===String(id)).map(txCardHTML).join('')||'<div class="empty">تراکنشی ثبت نشده است.</div>'}`,(b,c)=>$$('[data-group-person]',b).forEach(card=>card.onclick=()=>personSheet(card.dataset.groupPerson,{admin:true})))}
 
+
+const ClinicNet={online:navigator.onLine!==false,lastErr:'',paint(){let bar=document.getElementById('clinicNetBar');if(!bar){bar=document.createElement('div');bar.id='clinicNetBar';bar.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;padding:12px 14px;text-align:center;font-size:14px;font-weight:600;display:none;box-shadow:0 4px 16px rgba(0,0,0,.35)';const head=document.querySelector('header.top')||document.body.firstChild;if(head&&head.parentNode)head.parentNode.insertBefore(bar,head.nextSibling);else document.body.prepend(bar);}if(this.online){bar.style.display='none';}else{bar.style.display='block';bar.style.background='#7a1f1f';bar.style.color='#fff';bar.textContent='اتصال اینترنت برقرار نیست. برنامه باز می‌ماند؛ پس از اتصال همگام‌سازی می‌شود.';}},guard(a){if(this.online)return true;toast((a||'این عملیات')+' به اینترنت نیاز دارد.');this.paint();return false;}};
+window.addEventListener('online',()=>{ClinicNet.online=true;ClinicNet.paint();});
+window.addEventListener('offline',()=>{ClinicNet.online=false;ClinicNet.paint();toast('اتصال اینترنت قطع شد');});
+setTimeout(()=>ClinicNet.paint(),500);
+
 /* ---- پیامک تکی و گروهی ---- */
 /* ماژول ارسال پیامک: برگرفته از «اتو سرویس» — پل نیتیو اندروید (AndroidSms)، پیش‌نمایش قابل ویرایش، ارسال گروهی با نوار پیشرفت و حالت یکی‌یکی.
    اگر برنامه داخل APK با پل SmsBridge اجرا نشود، همهٔ ارسال‌ها به‌صورت خودکار به باز شدن برنامهٔ پیامک گوشی (sms:) برمی‌گردند. */
 const DEF_TPL=[{id:'t1',name:'یادآوری نوبت',text:'سلام {gender} {name} عزیز، یادآوری نوبت مشاوره شما در تاریخ {date} ساعت {time}.'},{id:'t2',name:'یادآوری پرداخت',text:'{gender} {name} عزیز، مبلغ {amount} از حساب شما باقی است. لطفاً برای تسویه اقدام کنید.'},{id:'t3',name:'اطلاعیه عمومی',text:'{gender} {name} گرامی، '}];
-const SMS_STATUS={sent:'✅ ارسال شد',failed:'⚠️ ناموفق',pending:'⏳ در حال ارسال',opened:'📲 در برنامهٔ پیامک باز شد',check:'⚠️ نیاز به بررسی (برخی ناموفق بودند)',unknown:'❔ نتیجه نامشخص'};
+const SMS_STATUS={sent:'✅ ارسال شد',failed:'⚠️ ناموفق',pending:'⏳ در حال ارسال',opened:'📲 در برنامهٔ پیامک باز شد',check:'⚠️ نیاز به بررسی (برخی ناموفق بودند)',unknown:'❔ نتیجه نامشخص',sent_u:'📤 ارسال شد (گزارش تحویل از گوشی نرسید)'};
 const SMS_ERR={permission:'مجوز پیامک داده نشده',empty_list:'لیست شماره‌ها خالی است',busy:'ارسال قبلی هنوز تمام نشده',send_failed:'ارسال انجام نشد'};
 const smsDigits=s=>String(s??'').replace(/[۰-۹]/g,d=>'۰۱۲۳۴۵۶۷۸۹'.indexOf(d)).replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d));
 const smsNorm=p=>{let d=smsDigits(p).replace(/\D/g,'');if(d.startsWith('0098'))d='0'+d.slice(4);else if(d.startsWith('98')&&d.length===12)d='0'+d.slice(2);else if(/^9\d{9}$/.test(d))d='0'+d;return d};
@@ -1872,13 +2280,26 @@ const smsFill=(r,t,real)=>{
   return raw.replace(/\{gender\}/g,gender).replace(/\{name\}/g,name).replace(/\{fullname\}/g,fullname||name||'همراه گرامی').replace(/\{date\}/g,fa(r.date||T().key)).replace(/\{time\}/g,fa(r.time||'')).replace(/\{amount\}/g,money(r.amount||0));
 };
 const smsParts=t=>{const n=[...String(t||'')].length,u=/[^\x00-\x7F]/.test(t||''),one=u?70:160,many=u?67:153;return n<=one?1:Math.ceil(n/many)};
-const smsLog=(r,phone,text,status)=>Store.add('sms',{to:r.name,phone,text,date:T().key,time:T().time,status});
-const smsSetStatus=(id,st)=>{try{Store.upd('sms',id,{status:st})}catch(e){}try{document.querySelectorAll('[data-sms-st="'+id+'"]').forEach(x=>x.textContent=SMS_STATUS[st]||'')}catch(e){}};
+const smsLog=(r,phone,text,status)=>{const m=Store.add('sms',{to:r.name,phone,text,date:T().key,time:T().time,status,ts:Date.now()});try{window.__smsHistRepaint&&window.__smsHistRepaint()}catch(e){}return m};
+const smsSetStatus=(id,st)=>{try{Store.upd('sms',id,{status:st})}catch(e){}try{document.querySelectorAll('[data-sms-st="'+id+'"]').forEach(x=>x.textContent=SMS_STATUS[st]||'')}catch(e){}try{window.__smsHistRepaint&&window.__smsHistRepaint()}catch(e){}};
 function smsCopy(text,msg){const done=()=>toast(msg||'کپی شد');const fb=()=>{const x=document.createElement('textarea');x.value=text;x.style.cssText='position:fixed;opacity:0;top:0';document.body.append(x);x.select();try{document.execCommand('copy');done()}catch(e){toast('کپی نشد')}x.remove()};try{if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(text).then(done,fb);else fb()}catch(e){fb()}}
 
 const SMSX={waiters:{},pendingSingle:null,bulk:null,running:false,stop:false,ui:null,hooks:new Set()};
 const smsNat=()=>window.AndroidSms||window.Android||null;
 const smsHas=f=>{const n=smsNat();return !!(n&&typeof n[f]==='function')};
+
+/* SMS-V9: انتخاب سیم‌کارت و هزینه */
+const smsSim=()=>{try{return Store.cfg('smsSim',null)}catch(e){return null}};
+const smsSimOk=s=>!!(s&&(s.slot===0||s.slot===1||s.slot===2)&&+s.price>0);
+const smsSimName=s=>s?((s.label&&String(s.label).trim())||('سیم‌کارت '+(Number(s.slot)+1))):'';
+function smsNativeSend(phone,text){const s=smsSim();if(smsSimOk(s)&&smsHas('sendSmsSim'))return smsNat().sendSmsSim(phone,text,Number(s.slot));return smsNat().sendSms(phone,text)}
+function smsNativeBulk(json,msg){const s=smsSim();if(smsSimOk(s)&&smsHas('sendBulkSmsFastSim'))return smsNat().sendBulkSmsFastSim(json,msg,Number(s.slot));return smsNat().sendBulkSmsFast(json,msg)}
+function smsCostSheet(info,onYes){
+ const s=smsSim(),ok=smsSimOk(s);
+ if(!ok){sheet('سیم‌کارت هزینه مشخص نیست','<p>پیش از ارسال خودکار باید در «تنظیمات پیامک» مشخص کنید هزینهٔ پیامک‌ها از کدام سیم‌کارت و با چه تعرفه‌ای محاسبه شود.</p><button type="button" class="btn big" id="gs">رفتن به تنظیمات پیامک</button><button type="button" class="btn sec big" id="gc">انصراف</button>',(b,c)=>{$('#gs',b).onclick=()=>{c();smsSettings()};$('#gc',b).onclick=c});return}
+ const per=+s.price,total=info.totalParts,cost=total*per,pin=smsHas('sendSmsSim')&&smsHas('sendBulkSmsFastSim');
+ const row=(k,v)=>`<div class="row" style="padding:6px 0"><span class="mut g">${k}</span><b>${v}</b></div>`;
+ sheet('هزینهٔ ارسال را تأیید کنید',`<div class="card">${row('تعداد گیرندگان',fa(info.count)+' نفر')}${row('مجموع بخش‌های پیامک',fa(total)+' بخش')}${row('سیم‌کارت',esc(smsSimName(s)))}${row('تعرفهٔ هر بخش',money(per))}<div class="row" style="padding:10px 0 2px;border-top:1px solid var(--line);margin-top:6px"><span class="g"><b>هزینهٔ تخمینی ارسال</b></span><b style="font-size:19px">${money(cost)}</b></div></div>${pin?'':'<div class="warn" style="margin:8px 0">این نسخهٔ APK انتخاب سیم‌کارت را پشتیبانی نمی‌کند؛ ارسال با سیم‌کارت پیش‌فرض گوشی انجام می‌شود و ممکن است هزینه از سیم دیگری کسر شود.</div>'}<div class="mut">با تأیید، ارسال شروع می‌شود؛ بدون تأیید هیچ پیامکی ارسال نمی‌شود.</div><button type="button" class="btn big" id="cy">✅ تأیید و ارسال</button><button type="button" class="btn sec big" id="cn">انصراف</button>`,(b,c)=>{$('#cy',b).onclick=()=>{c();onYes()};$('#cn',b).onclick=c})}
 const SMSBridge={
  isNative(){return smsHas('sendSms')},
  canAutoSend(){return smsHas('sendBulkSmsFast')},
@@ -1892,7 +2313,7 @@ const SMSBridge={
   if(native&&!this.hasPermission()&&smsHas('requestSmsPermission')&&SMSX.pendingSingle){toast('ابتدا مجوز پیامک را تأیید کنید');return false}
   const log=smsLog(rec,phone,text,native?'pending':'opened');
   if(native){
-   if(this.hasPermission()){SMSX.waiters[phone]={id:log.id};try{smsNat().sendSms(phone,text);return true}catch(e){delete SMSX.waiters[phone];smsSetStatus(log.id,'opened')}}
+   if(this.hasPermission()){SMSX.waiters[phone]={id:log.id};try{smsNativeSend(phone,text);return true}catch(e){delete SMSX.waiters[phone];smsSetStatus(log.id,'opened')}}
    else if(smsHas('requestSmsPermission')){SMSX.pendingSingle={phone,text,id:log.id};smsNat().requestSmsPermission();return true}
    else smsSetStatus(log.id,'opened')
   }
@@ -1900,6 +2321,11 @@ const SMSBridge={
  }
 };
 window.SMSBridge=SMSBridge;
+function smsSweep(){const now=Date.now(),wt=Object.keys(SMSX.waiters).length;
+ if(SMSX.running&&SMSX.bulk){if(now-Math.max(SMSX.runStart||0,SMSX.lastEvt||0)>20000+SMSX.bulk.ids.length*2500)smsForceFinish()}
+ else if(SMSX.running&&SMSX.runStart&&now-SMSX.runStart>1800000)SMSX.running=false;
+ try{Store.all('sms').forEach(m=>{if(m.status!=='pending')return;const age=now-(m.ts||0);if(m.ts?age>(SMSX.running?600000:45000):(!SMSX.running&&!wt))smsSetStatus(m.id,'sent_u')})}catch(e){}}
+setInterval(smsSweep,5000);setTimeout(smsSweep,1500);
 const smsOnPerm=fn=>SMSX.hooks.add(fn);
 
 /* ─── callbackهایی که از جاوا (SmsBridge) صدا زده می‌شوند ─── */
@@ -1907,7 +2333,7 @@ window.onSmsPermission=function(status){
  const ps=SMSX.pendingSingle;SMSX.pendingSingle=null;
  if(status==='granted'){
   toast('مجوز پیامک داده شد');
-  if(ps){SMSX.waiters[ps.phone]={id:ps.id};try{smsNat().sendSms(ps.phone,ps.text)}catch(e){delete SMSX.waiters[ps.phone];smsSetStatus(ps.id,'opened');SMSBridge.openApp(ps.phone,ps.text)}}
+  if(ps){SMSX.waiters[ps.phone]={id:ps.id};try{smsNativeSend(ps.phone,ps.text)}catch(e){delete SMSX.waiters[ps.phone];smsSetStatus(ps.id,'opened');SMSBridge.openApp(ps.phone,ps.text)}}
  }else{
   toast('مجوز پیامک رد شد');
   if(ps){smsSetStatus(ps.id,'opened');SMSBridge.openApp(ps.phone,ps.text)}
@@ -1915,24 +2341,33 @@ window.onSmsPermission=function(status){
  SMSX.hooks.forEach(f=>{try{if(f()===false)SMSX.hooks.delete(f)}catch(e){SMSX.hooks.delete(f)}});
 };
 window.onSmsBulkStart=function(d){SMSX.ui&&SMSX.ui.start&&SMSX.ui.start((d&&d.total)||0)};
-window.onSmsBulkProgress=function(d){SMSX.ui&&SMSX.ui.progress&&SMSX.ui.progress(d||{})};
+window.onSmsBulkProgress=function(d){d=d||{};SMSX.ui&&SMSX.ui.progress&&SMSX.ui.progress(d);if(SMSX.bulk&&d.total&&d.current>=d.total){clearTimeout(SMSX.finT);SMSX.finT=setTimeout(()=>{if(SMSX.bulk)window.onSmsBulkComplete({ok:true,sent:d.total-(d.failed||0),failed:d.failed||0})},4000)}};
 window.onSmsBulkComplete=function(d){
- d=d||{};const b=SMSX.bulk;SMSX.bulk=null;SMSX.running=false;
+ d=d||{};clearTimeout(SMSX.finT);const b=SMSX.bulk;SMSX.bulk=null;SMSX.running=false;
  if(b)b.ids.forEach(id=>smsSetStatus(id,d.ok?((d.failed||0)>0?'check':'sent'):'failed'));
  SMSX.ui&&SMSX.ui.done&&SMSX.ui.done(d);
 };
 window.onSmsResult=function(d){
- d=d||{};let w=SMSX.waiters[d.phone];
- if(w)delete SMSX.waiters[d.phone];
- else if(!d.phone){const k=Object.keys(SMSX.waiters)[0];if(k){w=SMSX.waiters[k];delete SMSX.waiters[k]}}
+ d=d||{};const ph=d.phone?smsNorm(d.phone):'';let wk=null,w=null;
+ if(ph&&SMSX.waiters[ph])wk=ph;else if(d.phone&&SMSX.waiters[d.phone])wk=d.phone;
+ else if(ph)wk=Object.keys(SMSX.waiters).find(k=>smsNorm(k).slice(-10)===ph.slice(-10))||null;
+ else wk=Object.keys(SMSX.waiters)[0]||null;
+ if(wk){w=SMSX.waiters[wk];delete SMSX.waiters[wk]}
  if(w){smsSetStatus(w.id,d.ok?'sent':'failed');w.res&&w.res(!!d.ok)}
- else if(d.phone){const m=Store.all('sms').find(x=>x.phone===d.phone&&(x.status==='unknown'||x.status==='pending'));if(m)smsSetStatus(m.id,d.ok?'sent':'failed')}
+ else{const pend=Store.all('sms').filter(x=>x.status==='pending'||x.status==='unknown');const m=ph?pend.find(x=>smsNorm(x.phone).slice(-10)===ph.slice(-10)):pend[pend.length-1];if(m)smsSetStatus(m.id,d.ok?'sent':'failed')}
  if(!SMSX.running)toast(d.ok?'پیامک ارسال شد ✅':'ارسال ناموفق: '+(SMS_ERR[d.error]||d.error||'خطا'));
 };
+/* SMS-V10: ثبت رویدادهای APK و پایان‌دادن خودکار به ارسال‌های بی‌گزارش */
+SMSX.log=[];SMSX.lastEvt=0;
+const smsLogEvt=(n,d)=>{SMSX.lastEvt=Date.now();try{SMSX.log.push(new Date().toTimeString().slice(0,8)+' '+n+' '+JSON.stringify(d===undefined?null:d));if(SMSX.log.length>60)SMSX.log.shift()}catch(e){}};
+['onSmsBulkStart','onSmsBulkProgress','onSmsBulkComplete','onSmsResult','onSmsPermission'].forEach(n=>{const f=window[n];if(typeof f==='function')window[n]=function(d){smsLogEvt(n,d);return f.apply(this,arguments)}});
+function smsForceFinish(){if(!SMSX.running)return;const b=SMSX.bulk;SMSX.running=false;SMSX.bulk=null;clearTimeout(SMSX.finT);
+ if(b){b.ids.forEach(id=>smsSetStatus(id,'sent_u'));SMSX.ui&&SMSX.ui.done&&SMSX.ui.done({ok:true,sent:b.ids.length,unconfirmed:true})}}
+
 
 /* ─── ارسال جداگانه برای هر نفر (متن شخصی‌سازی‌شده) به‌صورت صف؛ هر پیام بعد از نتیجهٔ قبلی ─── */
 async function smsRunPersonal(list,fillOne,ui){
- SMSX.running=true;SMSX.stop=false;let sent=0,failed=0,unk=0;const delay=list.length>50?1500:800;
+ SMSX.running=true;SMSX.runStart=Date.now();SMSX.stop=false;let sent=0,failed=0,unk=0;const delay=list.length>50?1500:800;
  ui.start&&ui.start(list.length);
  for(let i=0;i<list.length;i++){
   if(SMSX.stop)break;
@@ -1940,9 +2375,9 @@ async function smsRunPersonal(list,fillOne,ui){
   const ok=await new Promise(res=>{
    const to=setTimeout(()=>{const w=SMSX.waiters[r.phone];if(w&&w.id===log.id)delete SMSX.waiters[r.phone];res(null)},25000);
    SMSX.waiters[r.phone]={id:log.id,res:v=>{clearTimeout(to);res(v)}};
-   try{smsNat().sendSms(r.phone,text)}catch(e){clearTimeout(to);delete SMSX.waiters[r.phone];smsSetStatus(log.id,'failed');res(false)}
+   try{smsNativeSend(r.phone,text)}catch(e){clearTimeout(to);delete SMSX.waiters[r.phone];smsSetStatus(log.id,'failed');res(false)}
   });
-  if(ok===true)sent++;else if(ok===false)failed++;else{unk++;smsSetStatus(log.id,'unknown')}
+  if(ok===true)sent++;else if(ok===false)failed++;else{unk++;smsSetStatus(log.id,'sent_u')}
   ui.progress&&ui.progress({current:i+1,total:list.length,failed:failed+unk});
   if(i<list.length-1)await new Promise(r=>setTimeout(r,delay));
  }
@@ -1953,7 +2388,7 @@ async function smsRunPersonal(list,fillOne,ui){
 /* ─── نوار وضعیت ارسال خودکار (مجوز / پشتیبانی) ─── */
 function smsPaintBanner(box,ctx){
  const auto=SMSBridge.isNative(),perm=SMSBridge.hasPermission();let cls='warn',html;
- if(auto&&perm){cls='ok';html='✅ ارسال خودکار فعال است؛ پیامک‌ها مستقیم از سیم‌کارت گوشی ارسال می‌شوند.'}
+ if(auto&&perm){cls='ok';{const _s=smsSim();html='✅ ارسال خودکار فعال است'+(smsSimOk(_s)?' · هزینه از سیم‌کارت <b>'+esc(smsSimName(_s))+'</b> محاسبه می‌شود.':'.<br>⚠️ سیم‌کارت هزینه هنوز در «تنظیمات پیامک» انتخاب نشده است؛ بدون آن ارسال خودکار انجام نمی‌شود.');if(!smsSimOk(_s))cls='warn'}}
  else if(auto)html='⚠️ مجوز ارسال پیامک داده نشده است.<br><button type="button" class="btn sm" data-smsx-perm>🔐 اجازهٔ ارسال پیامک</button>';
  else html=ctx==='single'?'📲 در این نسخه پیامک مستقیم ارسال نمی‌شود؛ برنامهٔ پیامک گوشی با متن آماده باز می‌شود و باید دکمهٔ ارسال را همان‌جا بزنید.':'📲 ارسال خودکار فقط در اپلیکیشن اندروید (APK) فعال است. در این نسخه پیامک هر نفر جداگانه در برنامهٔ پیامک گوشی باز می‌شود.';
  box.innerHTML=`<div class="smsx-note ${cls}">${html}</div>`;
@@ -1968,7 +2403,7 @@ function smsPreviewSheet(rec,text,opts){
   const ta=$('#smsxText',b),meta=$('#smsxMeta',b);
   const paint=()=>{meta.textContent=`${fa([...ta.value].length)} نویسه · ${fa(smsParts(ta.value))} بخش پیامک`};ta.oninput=paint;paint();
   smsPaintBanner($('#smsxBanner',b),'single');
-  $('#smsxSend',b).onclick=()=>{const t=ta.value.trim();if(!t)return toast('متن پیام خالی است');if(SMSBridge.sendOne({...rec,phone},t)){opts.onDone&&opts.onDone();close()}};
+  $('#smsxSend',b).onclick=()=>{const t=ta.value.trim();if(!t)return toast('متن پیام خالی است');const go=()=>{if(SMSBridge.sendOne({...rec,phone},t)){opts.onDone&&opts.onDone();close()}};if(SMSBridge.isNative()&&SMSBridge.hasPermission())smsCostSheet({count:1,totalParts:smsParts(t)},go);else go()};
   $('#smsxCopy',b).onclick=()=>{const t=ta.value.trim();if(!t)return toast('متن پیام خالی است');smsCopy(t,'متن کپی شد');close()};
   $('#smsxCancel',b).onclick=close;
  });
@@ -2009,14 +2444,14 @@ function smsBulkSheet(recs,text,group,opts){
    paintMeta();
    const au=$('#smsxAuto',btns);
    if(au)au.onclick=()=>{
-    const t=needText();if(!t)return;if(SMSX.running)return toast('ارسال قبلی هنوز تمام نشده');
-    const per=pers.checked,list=target(t,per),total=smsParts(smsFill(list[0],t,per))*list.length;
-    confirmSheet(`ارسال پیامک به ${fa(list.length)} نفر؟ حدود ${fa(total)} بخش پیامک ارسال می‌شود و هزینه طبق تعرفهٔ سیم‌کارت شما حساب می‌شود.`,()=>{
+    const t=needText();if(!t)return;if(SMSX.running&&SMSX.bulk&&Date.now()-Math.max(SMSX.runStart||0,SMSX.lastEvt||0)>20000)smsForceFinish();if(SMSX.running)return toast('ارسال قبلی هنوز تمام نشده');
+    const per=pers.checked,list=target(t,per),total=list.reduce((z,r)=>z+smsParts(smsFill(r,t,per)),0);
+    smsCostSheet({count:list.length,totalParts:total},()=>{
      au.disabled=true;SMSX.ui=ui;
      if(per){stopBtn.hidden=false;stopBtn.onclick=()=>{SMSX.stop=true;toast('بعد از پیام جاری متوقف می‌شود')};smsRunPersonal(list,r=>smsFill(r,t,true),ui)}
      else{
-      const msg=smsFill(list[0],t,false);SMSX.running=true;SMSX.bulk={ids:list.map(r=>smsLog(r,r.phone,msg,'pending').id)};ui.start(list.length);
-      try{smsNat().sendBulkSmsFast(JSON.stringify(list.map(r=>r.phone)),msg)}catch(e){SMSX.running=false;SMSX.bulk.ids.forEach(id=>smsSetStatus(id,'failed'));SMSX.bulk=null;prog.hidden=true;au.disabled=false;toast('خطا در ارسال — از حالت یکی‌یکی استفاده کنید')}
+      const msg=smsFill(list[0],t,false);SMSX.running=true;SMSX.runStart=Date.now();SMSX.bulk={ids:list.map(r=>smsLog(r,r.phone,msg,'pending').id)};ui.start(list.length);
+      try{smsNativeBulk(JSON.stringify(list.map(r=>r.phone)),msg)}catch(e){SMSX.running=false;SMSX.bulk.ids.forEach(id=>smsSetStatus(id,'failed'));SMSX.bulk=null;prog.hidden=true;au.disabled=false;toast('خطا در ارسال — از حالت یکی‌یکی استفاده کنید')}
      }
     });
    };
@@ -2036,11 +2471,16 @@ function smsBulkSheet(recs,text,group,opts){
 function smsSend(rs,text,group,opts){rs=(rs||[]).filter(r=>r&&r.phone&&smsValid(r.phone));if(!rs.length)return toast('شمارهٔ تلفن ندارد');
  if(rs.length===1&&!group)return smsPreviewSheet(rs[0],text,opts);
  return smsBulkSheet(rs,text,group,opts)}
-function smsSettings(){const tpl=Store.cfg('tpl',DEF_TPL);
- sheet('تنظیمات پیامک — متن‌های پیش‌فرض',tpl.map((t,i)=>`<label>نام الگو</label><input data-n="${i}" value="${esc(t.name)}"><label>متن (می‌توانی از {name} {date} {time} {amount} استفاده کنی)</label><textarea data-x="${i}">${esc(t.text)}</textarea>`).join('')+'<div class="row"><button class="btn g" id="sv">ذخیره</button><button class="btn sec g" id="ad">+ الگوی جدید</button></div>',(b,c)=>{
+function smsSettings(){const tpl=Store.cfg('tpl',DEF_TPL),sim=smsSim();
+ let sims=[];try{if(smsHas('getSimCards'))sims=JSON.parse(smsNat().getSimCards()||'[]')}catch(e){}
+ if(!sims.length)sims=[{slot:0,name:'سیم‌کارت ۱'},{slot:1,name:'سیم‌کارت ۲'}];
+ const simHtml=`<div class="card"><b>سیم‌کارت و تعرفهٔ ارسال</b><div class="mut">برای هر پیامک تکی یا گروهی، هزینه از همین سیم‌کارت و با همین تعرفه محاسبه می‌شود و پیش از ارسال به شما نشان داده می‌شود.</div><label>سیم‌کارت هزینه</label><select id="smsSimSlot"><option value="">— انتخاب نشده —</option>${sims.map(x=>`<option value="${esc(x.slot)}"${sim&&String(sim.slot)===String(x.slot)?' selected':''}>${esc(x.name||('سیم‌کارت '+(Number(x.slot)+1)))}${x.number?' · '+esc(x.number):''}</option>`).join('')}</select><label>نام نمایشی (اختیاری، مثلاً ایرانسل)</label><input id="smsSimLabel" value="${esc(sim&&sim.label||'')}"><label>تعرفهٔ هر بخش پیامک (تومان)</label><input id="smsSimPrice" inputmode="numeric" value="${sim&&sim.price?esc(sim.price):''}" placeholder="مثلاً ۱۲۰"></div>`;
+ sheet('تنظیمات پیامک',simHtml+tpl.map((t,i)=>`<label>نام الگو</label><input data-n="${i}" value="${esc(t.name)}"><label>متن (می‌توانی از {name} {date} {time} {amount} استفاده کنی)</label><textarea data-x="${i}">${esc(t.text)}</textarea>`).join('')+'<button type="button" class="btn sec big" id="dg">📋 کپی گزارش تشخیصی ارسال</button>'+'<div class="row"><button class="btn g" id="sv">ذخیره</button><button class="btn sec g" id="ad">+ الگوی جدید</button></div>',(b,c)=>{
   const rd=()=>tpl.map((t,i)=>({id:t.id,name:$(`[data-n="${i}"]`,b).value||'بدون نام',text:$(`[data-x="${i}"]`,b).value}));
-  $('#sv',b).onclick=()=>{Store.setCfg('tpl',rd());toast('ذخیره شد');c();App.refresh()};
-  $('#ad',b).onclick=()=>{Store.setCfg('tpl',[...rd(),{id:'t'+Date.now(),name:'الگوی جدید',text:''}]);c();smsSettings()}})}
+  $('#dg',b).onclick=()=>{let fn='none';try{const n=smsNat();fn=n?Object.keys(n).join(','):'none'}catch(e){}smsCopy('SMS-LOG\nnative: '+fn+'\n'+(SMSX.log.join('\n')||'(رویدادی از APK نرسیده)'),'گزارش کپی شد')};
+  const saveSim=()=>{const v=$('#smsSimSlot',b).value,price=Number(smsDigits($('#smsSimPrice',b).value).replace(/[^\d.]/g,''))||0;Store.setCfg('smsSim',v===''?null:{slot:Number(v),label:$('#smsSimLabel',b).value.trim(),price})};
+  $('#sv',b).onclick=()=>{const v=$('#smsSimSlot',b).value,price=Number(smsDigits($('#smsSimPrice',b).value).replace(/[^\d.]/g,''))||0;if(v!==''&&price<=0)return toast('تعرفهٔ هر بخش پیامک را وارد کنید');saveSim();Store.setCfg('tpl',rd());toast('ذخیره شد');c();App.refresh()};
+  $('#ad',b).onclick=()=>{saveSim();Store.setCfg('tpl',[...rd(),{id:'t'+Date.now(),name:'الگوی جدید',text:''}]);c();smsSettings()}})}
 function smsListEditorSheet(id){const lists=Store.cfg('smsLists',[]),old=lists.find(x=>String(x.id)===String(id)),people=Store.all('people').filter(p=>p.type!=='secretary'),selected=new Set((old?.members||[]).map(String)),rows=people.map(p=>`<button type="button" class="member-select${selected.has(String(p.id))?' selected':''}" data-sms-member="${esc(p.id)}" data-sms-gender="${esc(p.gender||'')}" data-sms-search="${esc((politeName(p)+' '+(p.phone||'')+' '+(p.gender==='male'?'آقا':p.gender==='female'?'خانم':'')).toLowerCase())}" aria-pressed="${selected.has(String(p.id))}"><span class="member-select-mark">${selected.has(String(p.id))?'✓':''}</span><span class="g"><b>${esc(politeName(p))}</b><span class="mut">${esc(TYPES[p.type]||'')} · ${esc(p.gender==='male'?'آقا':p.gender==='female'?'خانم':'—')} · ${esc(p.phone||'')}</span></span></button>`).join('');sheet(old?'ویرایش فهرست پیامکی':'فهرست پیامکی جدید',`<label>نام فهرست</label><input id="smsListName" value="${esc(old?.name||'')}" placeholder="مثلاً مراجعان دورهٔ پاییز"><label>فیلتر جنسیت</label><select id="smsListGenderFilter"><option value="">همه</option><option value="male">فقط آقا</option><option value="female">فقط خانم</option></select><label>جست‌وجوی عضو</label><input id="smsListSearch" type="search" placeholder="نام، تلفن یا آقا/خانم"><div class="card" id="smsListMembers">${rows||'<div class="empty">شخصی در دسترس نیست.</div>'}</div><div class="mut" id="smsListCount">${fa(selected.size)} نفر انتخاب شده</div><div class="row"><button class="btn g" id="saveSmsList">ذخیرهٔ فهرست</button>${old?'<button class="btn bad" id="deleteSmsList">حذف فهرست</button>':''}</div>`,(b,c)=>{const apply=()=>{const q=$('#smsListSearch',b).value.trim().toLowerCase();const g=$('#smsListGenderFilter',b)?.value||'';$$('[data-sms-member]',b).forEach(x=>{const matchQ=!q||(x.dataset.smsSearch||'').includes(q);const matchG=!g||(x.dataset.smsGender||'')===g;x.hidden=!(matchQ&&matchG)})};$('#smsListSearch',b).oninput=apply;const gf=$('#smsListGenderFilter',b);if(gf)gf.onchange=apply;$$('[data-sms-member]',b).forEach(btn=>btn.onclick=()=>{const key=String(btn.dataset.smsMember);if(selected.has(key))selected.delete(key);else selected.add(key);const yes=selected.has(key);btn.classList.toggle('selected',yes);btn.setAttribute('aria-pressed',String(yes));$('.member-select-mark',btn).textContent=yes?'✓':'';$('#smsListCount',b).textContent=fa(selected.size)+' نفر انتخاب شده'});$('#saveSmsList',b).onclick=()=>{const name=$('#smsListName',b).value.trim();if(!name)return toast('نام فهرست را وارد کنید.');const next={id:old?.id||'smslist-'+Date.now(),name,members:[...selected]};Store.setCfg('smsLists',old?lists.map(x=>String(x.id)===String(old.id)?next:x):[...lists,next]);toast('فهرست پیامکی ذخیره شد.');c();App.refresh()};const del=$('#deleteSmsList',b);if(del)del.onclick=()=>confirmSheet('فهرست پیامکی حذف شود؟ سوابق ارسال حذف نمی‌شوند.',()=>{Store.setCfg('smsLists',lists.filter(x=>String(x.id)!==String(old.id)));c();App.refresh()})})}
 function smsTab(el){const tpl=Store.cfg('tpl',DEF_TPL),ppl=Store.all('people'),gs=Store.all('groups'),lists=Store.cfg('smsLists',[]),to=tpl.map(t=>[t.id,t.name]),onlineDraft=Store.cfg('onlineSessionSmsDraft',null),lastBulk=Store.cfg('smsLastBulk',null);
  const categories=[['t:client','همهٔ مراجعان'],['t:client:male','مراجعان آقا'],['t:client:female','مراجعان خانم'],['t:therapist','همهٔ درمانگران'],['t:secretary','همهٔ منشی‌ها'],...gs.map(g=>['g:'+g.id,`${g.kind||'گروه'}: ${g.name}`]),...lists.map(l=>['l:'+l.id,'فهرست: '+l.name])],filters=[['all','همهٔ مراجعان'],['male','فقط آقا'],['female','فقط خانم'],['debt','مراجعان دارای بدهی'],['installment','دارندگان قسط/چک سررسیدشده'],['phone','دارای شمارهٔ تلفن'],['no-phone','بدون شمارهٔ تلفن']];
@@ -2056,7 +2496,7 @@ function smsTab(el){const tpl=Store.cfg('tpl',DEF_TPL),ppl=Store.all('people'),g
  $('#c1',el).onclick=()=>{const p=P();if(p&&p.phone)location.href='tel:'+p.phone;else toast('شماره ندارد')};
  $('#sg',el).onchange=paint;$('#smsClientFilter',el).onchange=paint;
  $('#s2',el).onclick=()=>{const text=$('#x2',el).value;if(!text.trim())return toast('متن پیام خالی است');smsSend(recipients().map(p=>({id:p.id,name:p.name,phone:p.phone,gender:p.gender,amount:Math.max(0,bal(p.id))})),text,true,{onDone:paintHistory})};
- $('#newSmsList',el).onclick=()=>smsListEditorSheet('');$('#ss',el).onclick=smsSettings;paint();paintHistory();
+ $('#newSmsList',el).onclick=()=>smsListEditorSheet('');$('#ss',el).onclick=smsSettings;paint();paintHistory();window.__smsHistRepaint=()=>{const h=$('#smsxHist',el);if(h&&h.isConnected)paintHistory()};
 }
 function apptAt(a){const[y,m,d]=jp(a.date),[g,mm,dd]=j2g(y,m,d),[h,mi]=String(a.time||'0:0').split(':').map(Number);return new Date(g,mm-1,dd,h,mi)}
 function dueRem(){const lead=+Store.cfg('lead',1440)*6e4,n=Date.now();return Store.all('appts').filter(a=>!a.rem&&apptAt(a)>n&&apptAt(a)-n<=lead)}
@@ -2109,8 +2549,8 @@ const attReasonName=code=>({cleaning:'تمیزکاری',client_visit:'مراجع
 const attAuditLabel=a=>(a?.segments||[a]).filter(Boolean).map((x,i)=>`بازهٔ ${fa(i+1)}: ${fa(x.in||'—')}–${fa(x.out||'در حال کار')} · مشمول حقوق ${durationLabel(workMin(x))}${x.approvalStatus==='pending'?` · در انتظار تأیید (${durationLabel(x.requestExtraMinutes||0)})`:x.approvalStatus==='approved'?` · اضافه‌کاری تأییدشده`:x.approvalStatus==='rejected'?` · اضافه‌کاری ردشده`:''}${x.reasonCode?' · علت '+attReasonName(x.reasonCode):''}${x.reasonText?' — '+esc(x.reasonText):''}`).join(' ؛ ');
 const shiftWindow=(pid,date)=>{const sc=schedFor(pid,date);return sc?{start:hm(sc.from),end:hm(sc.to)}:null};
 const inPersonAppointments=date=>Store.all('appts').filter(a=>String(a.date)===String(date)&&a.status!=='cancelled'&&!(a.done&&a.status==='cancelled')&&a.serviceMode!=='online');
-function plannedSessionWindow(date){const ap=inPersonAppointments(date);if(!ap.length)return null;const start=Math.min(...ap.map(a=>hm(a.time||'00:00')))-30,end=Math.max(...ap.map(a=>hm(a.time||'00:00')+(+a.durationMinutes||60)))+30;return{start:Math.max(0,start),end:Math.min(1440,end),appointments:ap}}
-function completedSessionWindow(date){const ap=inPersonAppointments(date).filter(a=>a.done||a.status==='done');if(!ap.length)return null;const start=Math.min(...ap.map(a=>hm(a.time||'00:00')))-30;let end=Math.max(...ap.map(a=>{let e=hm(a.end||'');if(!a.end)e=hm(a.time||'00:00')+(+a.durationMinutes||60);if(a.endDate&&a.endDate>date)e+=1440;return e}))+30;return{start:Math.max(0,start),end:Math.min(1440,end),appointments:ap}}
+function plannedSessionWindow(date){const ap=inPersonAppointments(date);if(!ap.length)return null;const before=Math.max(0,+Store.cfg('secPayBeforeFirst',30)||0),after=Math.max(0,+Store.cfg('secPayAfterLast',30)||0);const start=Math.min(...ap.map(a=>hm(a.time||'00:00')))-before,end=Math.max(...ap.map(a=>hm(a.time||'00:00')+(+a.durationMinutes||60)))+after;return{start:Math.max(0,start),end:Math.min(1440,end),appointments:ap}}
+function completedSessionWindow(date){const ap=inPersonAppointments(date).filter(a=>a.done||a.status==='done');if(!ap.length)return null;const before=Math.max(0,+Store.cfg('secPayBeforeFirst',30)||0),after=Math.max(0,+Store.cfg('secPayAfterLast',30)||0);const start=Math.min(...ap.map(a=>hm(a.time||'00:00')))-before;let end=Math.max(...ap.map(a=>{let e=hm(a.end||'');if(!a.end)e=hm(a.time||'00:00')+(+a.durationMinutes||60);if(a.endDate&&a.endDate>date)e+=1440;return e}))+after;return{start:Math.max(0,start),end:Math.min(1440,end),appointments:ap}}
 function rawAttendanceMinutes(a,now=T()){if(!a?.in)return 0;const start=hm(a.in),date=String(a.date||''),end=a.out?hm(a.out):(date===now.key?hm(now.time):start);return Math.max(0,end-start)}
 function attendanceEndForPolicy(a,now=T()){if(a?.out)return hm(a.out);const start=hm(a?.in||'00:00'),date=String(a?.date||'');if(date===now.key)return hm(now.time);const regular=shiftWindow(a.pid,date),session=completedSessionWindow(date)||plannedSessionWindow(date);return Math.max(start,regular?.end||0,session?.end||0)}
 function overlapMinutes(start,end,windows){const ranges=(windows||[]).filter(w=>w&&Number.isFinite(w.start)&&Number.isFinite(w.end)&&w.end>w.start).map(w=>[Math.max(start,w.start),Math.min(end,w.end)]).filter(([a,b])=>b>a).sort((a,b)=>a[0]-b[0]);let total=0,lo=null,hi=null;for(const [a,b]of ranges){if(lo===null){lo=a;hi=b}else if(a<=hi)hi=Math.max(hi,b);else{total+=hi-lo;lo=a;hi=b}}if(lo!==null)total+=hi-lo;return Math.max(0,total)}
@@ -2144,14 +2584,14 @@ function managerAppointmentsHTML(rows,order='therapist'){
 }
 function paintDashboardAttendanceApproval(host){if(!host)return;const month=T().month,rows=Store.all('att').filter(a=>(a.date||'').startsWith(month)&&['pending','needs_reason','approved','rejected'].includes(a.approvalStatus)).sort((a,b)=>{const ap=['pending','needs_reason'].includes(a.approvalStatus)?0:1,bp=['pending','needs_reason'].includes(b.approvalStatus)?0:1;return ap-bp||(b.requestSubmittedAt||b.inAt||0)-(a.requestSubmittedAt||a.inAt||0)});host.innerHTML=`<div class="card"><div class="row"><div class="g"><b>درخواست‌های تأیید حقوق اضافه</b><div class="mut">درخواست‌های باز و تصمیم‌های همین ماه؛ پس از ثبت خروج، دکمه‌های تصمیم‌گیری فعال می‌شوند.</div></div><span class="${rows.length?'warn':'ok'}">${fa(rows.length)} مورد</span><button type="button" class="btn sec sm" data-refresh-att-queue>تازه‌سازی</button></div>${rows.length?rows.map(a=>{const p=Store.all('people').find(x=>String(x.id)===String(a.pid))||{},pending=['pending','needs_reason'].includes(a.approvalStatus),ready=a.approvalStatus==='pending'&&!!a.out,decision=a.approvalStatus==='approved'?'تأیید شد؛ به حقوق افزوده می‌شود':a.approvalStatus==='rejected'?'رد شد؛ در حقوق محاسبه نمی‌شود':'';return `<div class="card att-approval-item"><b>${esc(p.name||'منشی')} · ${fa(a.date)}</b><div class="mut">ورود ${fa(a.in||'—')} · خروج ${fa(a.out||'ثبت‌نشده')} · اضافهٔ درخواستی ${durationLabel(a.requestExtraMinutes||0)} · علت ${esc(a.reasonCode==='other'?(a.reasonText||'—'):attReasonName(a.reasonCode))} · جلسه‌های حضوری: ${attendanceSessionsLabel(a.date)}</div>${ready?`<div class="row"><button type="button" class="btn sm" data-dash-att-approve="${esc(a.id)}">تأیید و محاسبهٔ حقوق اضافه</button><button type="button" class="btn bad sm" data-dash-att-reject="${esc(a.id)}">رد درخواست</button></div>`:pending?`<div class="mut">${a.approvalStatus==='needs_reason'?'در انتظار تکمیل دلیل توسط منشی':'در انتظار ثبت خروج منشی؛ هنوز امکان تصمیم‌گیری نیست.'}</div>`:`<div class="ok">${decision}</div>`}</div>`}).join(''):'<div class="mut">در این ماه درخواست باز یا تصمیم ثبت‌شده‌ای نیست.</div>'}</div>`;$$('[data-dash-att-approve]',host).forEach(b=>b.onclick=()=>decideAttendanceRequest(b.dataset.dashAttApprove,'approved'));$$('[data-dash-att-reject]',host).forEach(b=>b.onclick=()=>decideAttendanceRequest(b.dataset.dashAttReject,'rejected'));const refresh=$('[data-refresh-att-queue]',host);if(refresh)refresh.onclick=()=>{Store.refresh('att');Store.refresh('people');App.refresh()}}
 
-function dashTab(el){
+function dashTabLegacy(el){
  const now=T(),tx=Store.all('tx'),appts=Store.all('appts'),att=Store.all('att'),people=Store.all('people');
  const mtx=tx.filter(t=>(t.date||'').startsWith(now.month));
  const sum=(rows,k)=>rows.filter(t=>t.kind===k).reduce((z,t)=>z+(+t.amount||0),0);
  const monthDebt=sum(mtx,'charge')-sum(mtx,'discount'),monthPay=sum(mtx,'pay'),monthExpense=sum(mtx,'expense');
  const totalDebt=people.reduce((z,p)=>z+Math.max(0,bal(p.id)),0),todayPresent=att.filter(a=>a.date===now.key&&!a.out).length;
  const sections=TABS.filter(t=>t.id!=='dash');let appointmentOrder='therapist';
- el.innerHTML=`<div id="adminNotices"></div><div id="dashAttendanceApproval"></div><div class="card dash-welcome"><div class="row"><div class="g"><b>داشبورد نظارتی مدیریت</b><div class="mut">نمای فشردهٔ وضعیت مالی، برنامه‌ها، مراجعان و ورود و خروج منشی‌ها</div></div><span class="dash-date">${fa(now.key)}</span></div></div>
+ el.innerHTML=`<div id="adminNotices"></div><div id="dashAttendanceApproval"></div><div class="card dash-welcome"><div class="row"><div class="g"><b>خانه</b><div class="mut">نمای فشردهٔ وضعیت مالی، برنامه‌ها، مراجعان و ورود و خروج منشی‌ها</div></div><span class="dash-date">${fa(now.key)}</span></div></div>
  <div class="grid dash-kpis"><div class="card stat"><b>${fa(appts.filter(a=>a.date===now.key).length)}</b><span>نوبت‌های امروز</span></div><div class="card stat"><b>${fa(todayPresent)}</b><span>منشی حاضر در دفتر</span></div><div class="card stat fin-stat-debt"><b>${moneyShort(totalDebt)}</b><span>بدهی خالص اشخاص</span></div><div class="card stat"><b>${fa(people.length)}</b><span>اشخاص ثبت‌شده</span></div></div>
  <div class="grid dash-kpis"><div class="card stat fin-stat-debt"><b>${moneyShort(monthDebt)}</b><span>بدهی‌های این ماه (پس از تخفیف)</span></div><div class="card stat fin-stat-paid"><b>${moneyShort(monthPay)}</b><span>پرداختی این ماه</span></div><div class="card stat fin-stat-expense"><b>${moneyShort(monthExpense)}</b><span>هزینه‌های این ماه</span></div><div class="card stat"><b>${fa(mtx.filter(t=>t.kind==='charge'&&t.apptId).length)}</b><span>جلسات ثبت‌شدهٔ این ماه</span></div></div>
  <div class="card"><b>دسترسی سریع به همهٔ بخش‌ها</b><div class="dash-links">${sections.map(t=>`<button class="btn sec sm" data-tab-shortcut="${t.id}">${t.icon} ${esc(t.title)}</button>`).join('')}</div></div>
@@ -2223,19 +2663,22 @@ function therTab(el){
  const months=[...new Set([T().month,...tx.filter(t=>t.tid&&['charge','discount'].includes(t.kind)).map(t=>(t.date||'').slice(0,7)).filter(Boolean)])].sort((a,b)=>b.localeCompare(a));
  let selectedMonth=T().month;
  const calc=p=>{
-  const pct=therapistPercentForMonth(p.id,selectedMonth),rate=+Store.cfg('rate_'+p.id,0);
+  const pct=therapistPercentForMonth(p.id,selectedMonth),rate=+Store.cfg('rate_'+p.id,0),rateHour=+Store.cfg('rate_hour_'+p.id,0)||rate*60||0,rateMin=+Store.cfg('rate_min_'+p.id,0)||rate||0,rateHoursUntil=+Store.cfg('rate_hours_'+p.id,1);
   const rows=tx.filter(t=>t.tid===p.id&&(t.date||'').startsWith(selectedMonth)&&t.kind==='charge'&&!t.groupId);
   const discounts=tx.filter(t=>t.tid===p.id&&(t.date||'').startsWith(selectedMonth)&&t.kind==='discount'&&!t.groupId);
   const gross=rows.reduce((z,t)=>z+(t.planId?(+t.planFee||0):(+t.amount||0)),0),discount=discounts.reduce((z,t)=>z+(+t.amount||0),0),net=Math.max(0,gross-discount),fixed=rows.filter(t=>t.incomeSplitMode==='therapist100').reduce((z,t)=>z+(+t.planFee||0),0);
   const share=fixed+Math.round(Math.max(0,net-fixed)*pct/100),center=Math.max(0,net-share),minutes=rows.reduce((z,t)=>z+(t.minutes||0),0);
-  return{pct,rate,gross,discount,net,share,center,minutes,sessions:rows.length};
+  return{pct,rate,rateHour,rateMin,rateHoursUntil,gross,discount,net,share,center,minutes,sessions:rows.length};
  };
  el.innerHTML=`<button type="button" class="btn big" id="addTherapist">+ تعریف درمانگر جدید</button><div class="card"><b>درآمد و سهم درمانگران به تفکیک ماه</b><div class="mut">مبالغ بر اساس جلسات ثبت‌شده و تخفیف‌ها محاسبه می‌شوند. نرخ دقیقه‌ای و درصد سهم هر درمانگر جداگانه قابل تنظیم است؛ جلسهٔ دارای طرح درمانی، با وجود نمایش درصد عادی، مبلغ ثابت ثبت‌شده را ۱۰۰٪ به درمانگر می‌رساند.</div><label>ماه گزارش</label><select id="therMonth">${opt(months.map(m=>[m,fa(m)]),selectedMonth)}</select></div><div id="therCards"></div>`;
  $('#addTherapist',el).onclick=()=>therapistEditorSheet('');
  const paint=()=>{
   const cards=th.map(p=>{const c=calc(p);return `<div class="card" data-id="${p.id}">
    <div class="row" style="margin-bottom:8px"><div class="g"><b>${esc(p.name)} · <span class="therapist-chip" style="--therapist-color:${therapistColor(p.id)}"><i></i>رنگ اختصاصی</span></b><div class="mut">کد ملی ${esc(p.nationalId||'—')} · کد نظام ${esc(p.systemCode||'—')} · ${esc(p.phone||'')} · ${fa(c.sessions)} جلسه · ${durationLabel(c.minutes)}</div><div class="mut">حوزه: ${esc(p.specialty||'—')} · روزهای حضور: ${esc((p.attendanceDays||[]).map(x=>WEEKDAY_LABELS[+x]||x).join('، ')||'ثبت نشده')}</div></div><label class="ther-color-control">رنگ<input type="color" data-ther-color="${p.id}" value="${therapistColor(p.id)}" aria-label="رنگ ${esc(p.name)}"></label></div>
-   <div class="row" style="margin-bottom:8px"><div class="g"><label>درصد سهم درمانگر · این ماه</label><input type="number" min="0" max="100" data-pct="${p.id}" value="${c.pct}" style="margin:0"></div><div class="g"><label>درصد سهم مرکز · این ماه</label><input type="number" min="0" max="100" data-center-pct="${p.id}" value="${100-c.pct}" style="margin:0"></div><div class="g"><label>نرخ هر دقیقه (تومان)</label><input type="text" inputmode="numeric" data-rate="${p.id}" data-money="1" data-k="rate_${p.id}" value="${c.rate?fa(c.rate.toLocaleString('en-US')):''}" style="margin:0"><div class="mut" data-preview="rate_${p.id}" style="margin-top:4px"></div></div></div>
+   <div class="row" style="margin-bottom:8px"><div class="g"><label>درصد سهم درمانگر · این ماه</label><input type="number" min="0" max="100" data-pct="${p.id}" value="${c.pct}" style="margin:0"></div><div class="g"><label>درصد سهم مرکز · این ماه</label><input type="number" min="0" max="100" data-center-pct="${p.id}" value="${100-c.pct}" style="margin:0"></div><div class="g"><label>نرخ ساعتی (تومان)</label><input type="text" inputmode="numeric" data-rate-hour="${p.id}" data-money="1" data-k="rate_hour_${p.id}" value="${c.rateHour?fa(Number(c.rateHour).toLocaleString('en-US')):''}" style="margin:0"><div class="mut" data-preview="rate_hour_${p.id}" style="margin-top:4px"></div></div>
+<div class="g"><label>تا چند ساعت اول ساعتی حساب شود</label><input type="number" min="0" step="0.5" data-rate-hours="${p.id}" data-k="rate_hours_${p.id}" value="${c.rateHoursUntil??1}" style="margin:0"></div>
+<div class="g"><label>نرخ هر دقیقه بعد از آن (تومان)</label><input type="text" inputmode="numeric" data-rate-min="${p.id}" data-money="1" data-k="rate_min_${p.id}" value="${c.rateMin?fa(Number(c.rateMin).toLocaleString('en-US')):''}" style="margin:0"><div class="mut" data-preview="rate_min_${p.id}" style="margin-top:4px"></div></div>
+<div class="g"><label>نرخ دقیقه (سازگاری قدیم)</label><input type="text" inputmode="numeric" data-rate="${p.id}" data-money="1" data-k="rate_${p.id}" value="${c.rate?fa(c.rate.toLocaleString('en-US')):''}" style="margin:0"><div class="mut" data-preview="rate_${p.id}" style="margin-top:4px">اگر فقط این پر باشد، مثل قبل دقیقه‌ای حساب می‌شود</div></div></div>
    <div class="grid therapist-month-stats"><div class="card"><span class="mut">هزینهٔ جلسات</span><b>${moneyShort(c.gross)}</b></div><div class="card fin-stat-debt"><span class="mut">تخفیف‌ها</span><b>${moneyShort(c.discount)}</b></div><div class="card"><span class="mut">درآمد مشمول سهم</span><b>${moneyShort(c.net)}</b></div><div class="card fin-stat-paid"><span class="mut">سهم درمانگر (درصد پایه ${fa(c.pct)}٪)</span><b>${moneyShort(c.share)}</b></div><div class="card"><span class="mut">سهم مرکز</span><b>${moneyShort(c.center)}</b></div></div>
    <div class="row"><button type="button" class="btn sec sm g" data-edit-ther="${p.id}">ویرایش مشخصات</button><button type="button" class="btn sec sm g" data-copy-ther-report="${p.id}">کپی گزارش کار</button><button type="button" class="btn sec sm g" data-download-ther-report="${p.id}">دریافت گزارش متنی</button><button type="button" class="btn sec sm g" data-print-ther-report="${p.id}">چاپ / PDF</button></div>
   </div>`}).join('');
@@ -2252,12 +2695,23 @@ function therTab(el){
   if(d.pct){Store.setCfg(`pct_${d.pct}_${selectedMonth}`,Math.max(0,Math.min(100,+e.target.value||0)));toast('درصد سهم درمانگر و مرکز برای این ماه ذخیره شد');paint()}
   else if(d.centerPct){Store.setCfg(`pct_${d.centerPct}_${selectedMonth}`,100-Math.max(0,Math.min(100,+e.target.value||0)));toast('درصد سهم مرکز و درمانگر برای این ماه ذخیره شد');paint()}
   else if(d.rate){Store.setCfg('rate_'+d.rate,parseMoneyValue(e.target.value));toast('نرخ دقیقه‌ای ذخیره شد');paint()}
+  else if(d.rateHour){Store.setCfg('rate_hour_'+d.rateHour,parseMoneyValue(e.target.value));toast('نرخ ساعتی ذخیره شد');paint()}
+  else if(d.rateMin){Store.setCfg('rate_min_'+d.rateMin,parseMoneyValue(e.target.value));toast('نرخ دقیقه‌ای بعد از سقف ساعتی ذخیره شد');paint()}
+  else if(d.rateHours){Store.setCfg('rate_hours_'+d.rateHours,Math.max(0,+e.target.value||0));toast('سقف ساعتی ذخیره شد');paint()}
   else if(d.therColor){Store.setCfg('therColor_'+d.therColor,e.target.value);toast('رنگ درمانگر ذخیره شد');paint()}
  };
  paint();
 }
 function staffTab(el){const sec=Store.all('people').filter(p=>p.type==='secretary'),mo=Store.cfg('secretaryPayrollMonth',T().month),payMonths=[...new Set([T().month,mo,...Store.all('att').map(a=>(a.date||'').slice(0,7)).filter(Boolean),...Store.all('tx').filter(t=>t.kind==='expense'&&(t.salaryForSecretary||t.expenseClass==='secretary_salary')).map(t=>(t.date||'').slice(0,7)).filter(Boolean)])].sort((a,b)=>b.localeCompare(a));
- el.innerHTML=`<button class="btn big" id="addSecretary">+ منشی جدید</button><div class="mut" style="margin:8px 0 12px">منشی را اینجا با نام و مشخصات تعریف کنید. لایسنس ورود هر منشی توسط مدیر سیستم ساخته و به شما داده می‌شود؛ از این پنل لایسنس صادر نمی‌شود.</div><div class="card"><b>تنظیمات نظارتی</b><label>تلورانس تأخیر/تعجیل</label><input type="number" data-g="tol" value="${Store.cfg('tol',10)}"><div class="mut" id="secretaryTolerancePreview">${durationLabel(Store.cfg('tol',10))}</div><label>ساعت ارسال گزارش کار روزانهٔ منشی‌ها</label><input type="time" data-g="rep" value="${Store.cfg('rep','20:00')}"><button class="btn sec sm" id="rp">گزارش کامل ورود و خروج</button><div class="mut">ارسال خودکار در ساعت تعیین‌شده با اتصال به Edge Functions فعال می‌شود.</div></div><div class="card"><b>حقوق منشی‌ها</b><label for="secretaryPayrollMonth">ماه محاسبهٔ حقوق</label><select id="secretaryPayrollMonth">${opt(payMonths.map(m=>[m,fa(m)]),mo)}</select><div class="mut">حقوق ساعتی، ساعات ثبت‌شده و هزینه‌های افزوده‌شده برای ماه انتخاب‌شده محاسبه می‌شوند.</div></div>`+
+ el.innerHTML=`<button class="btn big" id="addSecretary">+ منشی جدید</button><div class="mut" style="margin:8px 0 12px">منشی را اینجا با نام و مشخصات تعریف کنید. لایسنس ورود هر منشی توسط مدیر سیستم ساخته و به شما داده می‌شود؛ از این پنل لایسنس صادر نمی‌شود.</div><div class="card"><b>تنظیمات نظارتی</b><label>تلورانس تأخیر/تعجیل (دقیقه)</label><input type="number" data-g="tol" value="${Store.cfg('tol',10)}"><div class="mut" id="secretaryTolerancePreview">${durationLabel(Store.cfg('tol',10))}</div>
+<div class="card" style="margin-top:10px;border:1px solid var(--line)"><b>حضور خارج از ساعت کاری (کنار جلسات)</b>
+<div class="mut">اگر منشی برای جلسات، خارج از شیفت خودش وارد شده باشد، فقط بازهٔ زیر در حقوق لحاظ می‌شود.</div>
+<label>چند دقیقه قبل از اولین جلسهٔ روز</label>
+<input type="number" min="0" max="240" data-g="secPayBeforeFirst" value="${Store.cfg('secPayBeforeFirst',30)}">
+<label>چند دقیقه بعد از آخرین جلسهٔ روز</label>
+<input type="number" min="0" max="240" data-g="secPayAfterLast" value="${Store.cfg('secPayAfterLast',30)}">
+<div class="mut">مثال: ۳۰ یعنی از نیم‌ساعت قبل از اولین نوبت تا نیم‌ساعت بعد از آخرین نوبت.</div>
+</div><div class="mut">گزارش‌های حضور به‌خاطر همگام‌سازی آنلاین به‌صورت خودکار در دسترس هستند؛ ارسال زمان‌بندی‌شدهٔ جداگانه حذف شده است.</div></div><div class="card"><b>حقوق منشی‌ها</b><label for="secretaryPayrollMonth">ماه محاسبهٔ حقوق</label><select id="secretaryPayrollMonth">${opt(payMonths.map(m=>[m,fa(m)]),mo)}</select><div class="mut">حقوق ساعتی، ساعات ثبت‌شده و هزینه‌های افزوده‌شده برای ماه انتخاب‌شده محاسبه می‌شوند.</div></div>`+
  (sec.map(p=>{const sc=Store.cfg('sch_'+p.id,{from:'09:00',to:'17:00'}),w=+Store.cfg('wage_'+p.id,0),mm=monthMin(p.id,mo),expenseRows=Store.all('tx').filter(t=>t.kind==='expense'&&(t.salaryForSecretary||t.expenseClass==='secretary_salary')&&String(t.secretaryId||t.pid)===String(p.id)&&(t.date||'').startsWith(mo)),expenseTotal=expenseRows.reduce((z,t)=>z+(+t.amount||0),0),basePay=Math.round(mm/60*w),totalPay=basePay+expenseTotal;
   return `<div class="card" data-id="${p.id}"><div class="row"><b class="g">${esc(p.name)}</b><button type="button" class="btn sec sm" data-edit-secretary="${p.id}">ویرایش مشخصات</button><button type="button" class="btn bad sm" data-delete-secretary="${p.id}">حذف منشی</button></div><div class="mut">تلفن: ${esc(p.phone||'ثبت نشده')}</div><div class="mut" style="direction:ltr;text-align:right">لایسنس منشی: ${esc(p.secretaryLicense||'-')}</div><div class="mut" style="direction:ltr;text-align:right">لایسنس ورود و خروج: ${esc(p.attendanceLicense||'-')}</div><div class="mut" style="margin:6px 0 8px">لایسنس منشی و ورود و خروج فقط توسط مدیر سیستم تعریف می‌شود؛ از پنل مدیریت قابل صدور نیست.</div><div class="row"><div class="g"><label>از ساعت</label><input type="time" data-sch="from" data-pid="${p.id}" value="${sc.from}"></div><div class="g"><label>تا ساعت</label><input type="time" data-sch="to" data-pid="${p.id}" value="${sc.to}"></div></div><label>روزهای کاری منشی</label><div class="secretary-workdays" style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px">${WEEKDAY_LABELS.map((day,i)=>`<button type="button" class="weekday-choice${(Array.isArray(sc.days)?sc.days.map(Number):[0,1,2,3,4,5]).includes(i)?' selected':''}" data-workday="${i}" data-pid="${p.id}" aria-pressed="${(Array.isArray(sc.days)?sc.days.map(Number):[0,1,2,3,4,5]).includes(i)}">${day}</button>`).join('')}</div><label>حقوق ساعتی (تومان)</label><input type="text" inputmode="numeric" data-money="1" data-k="wage_${p.id}" data-wage="1" data-pid="${p.id}" value="${w?fa(Number(w).toLocaleString('en-US')):''}"><div class="mut" data-preview="wage_${p.id}" style="margin:-6px 0 10px"></div><div>ساعت کارکرد این ماه: <b>${durationLabel(mm)}</b></div><div class="mut">حقوق پایهٔ این ماه: ${money(basePay)} · هزینه‌های افزوده‌شده: ${money(expenseTotal)}</div><div class="ok"><b>حقوق قابل پرداخت: ${money(totalPay)}</b></div>${expenseRows.length?`<details class="card"><summary>ریز هزینه‌ها (${fa(expenseRows.length)})</summary>${expenseRows.map(x=>`<div class="row"><span class="g">${fa(x.date)} · ${esc(x.title)}${x.description?' · '+esc(x.description):''}</span><b>${money(x.amount)}</b></div>`).join('')}</details>`:''}<div class="row"><button class="btn sec sm g" data-o="${p.id}">تغییر لحظه‌ای</button><button class="btn sec sm g" data-l="${p.id}">سوابق حضور</button></div></div>`}).join('')||'<div class="empty">منشی‌ای تعریف نشده. در بخش اشخاص با نقش «منشی» اضافه کن.</div>')+
  `<h4>تغییرات لحظه‌ای ثبت‌شده</h4>`+(Store.all('ovr').map(o=>`<div class="card row"><span class="g">${esc(pname(o.pid))} · ${fa(o.date)}<div class="mut">${o.off?'حضور لازم نیست':fa(o.from)+' تا '+fa(o.to)}</div></span><button class="btn bad sm" data-xo="${o.id}">✕</button></div>`).join('')||'<div class="mut">—</div>')+
@@ -2309,7 +2763,7 @@ function staffTab(el){const sec=Store.all('people').filter(p=>p.type==='secretar
  });
 
  $('#secretaryPayrollMonth',el).onchange=e=>{Store.setCfg('secretaryPayrollMonth',e.target.value);App.refresh()};const tolControl=$('[data-g="tol"]',el);tolControl.oninput=()=>$('#secretaryTolerancePreview',el).textContent=durationLabel(tolControl.value);el.onchange=e=>{const t=e.target,d=t.dataset;if(d.g)Store.setCfg(d.g,t.type==='number'?+t.value:t.value);else if(d.sch){const w=t.closest('.card'),previous=Store.cfg('sch_'+d.pid,{from:'09:00',to:'17:00',days:[0,1,2,3,4,5]});Store.setCfg('sch_'+d.pid,{...previous,from:$('[data-sch=from]',w).value,to:$('[data-sch=to]',w).value})}else if(d.wage)Store.setCfg('wage_'+d.pid,parseMoneyValue(t.value));else return;toast('ذخیره شد');if(d.wage)App.refresh()};$$('[data-workday]',el).forEach(btn=>btn.onclick=()=>{const pid=btn.dataset.pid,card=btn.closest('[data-id]'),days=Array.from(card.querySelectorAll('[data-workday].selected')).map(x=>+x.dataset.workday);if(btn.classList.contains('selected')&&days.length===1)return toast('برای منشی دست‌کم یک روز کاری انتخاب کنید.');btn.classList.toggle('selected');btn.setAttribute('aria-pressed',String(btn.classList.contains('selected')));const chosen=Array.from(card.querySelectorAll('[data-workday].selected')).map(x=>+x.dataset.workday),previous=Store.cfg('sch_'+pid,{from:'09:00',to:'17:00',days:[0,1,2,3,4,5]});Store.setCfg('sch_'+pid,{...previous,days:chosen});toast('روزهای کاری منشی ذخیره شد.')});
- $('#rp',el).onclick=()=>App.goto('attendance');
+ const rpBtn=$('#rp',el);if(rpBtn)rpBtn.onclick=()=>App.goto('attendance');
  $$('[data-o]',el).forEach(b=>b.onclick=()=>form('تغییر لحظه‌ای — '+pname(b.dataset.o),[{k:'date',l:'تاریخ شمسی',v:T().key},{k:'off',l:'وضعیت',t:'select',o:[['','ساعت جدید'],['1','حضور لازم نیست']]},{k:'from',l:'از ساعت',t:'time',v:'09:00'},{k:'to',l:'تا ساعت',t:'time',v:'17:00'}],v=>{Store.add('ovr',{...v,pid:b.dataset.o});toast('اعمال شد');App.refresh()}));
  $$('[data-xo]',el).forEach(b=>b.onclick=()=>{Store.del('ovr',b.dataset.xo);App.refresh()});
  $$('[data-l]',el).forEach(b=>b.onclick=()=>{const pid=b.dataset.l;sheet('سوابق حضور — '+pname(pid),Store.all('att').filter(a=>a.pid===pid).map(a=>`<div class="row" style="padding:5px 0;border-top:1px solid var(--line)"><span class="g">${fa(a.date)}<div class="mut">${attAuditLabel(a)}</div></span><button class="btn bad sm" data-da="${a.id}">✕</button></div>`).join('')||'<div class="empty">سابقه‌ای نیست.</div>',(bx,c)=>$$('[data-da]',bx).forEach(x=>x.onclick=()=>{Store.del('att',x.dataset.da);c();App.refresh()}))});
@@ -2414,7 +2868,37 @@ function psychologyClubAdminTab(el){
 }
 function welfareTab(el){const all=Store.all('tx').filter(t=>t.kind==='org_receivable'&&t.orgId==='behzisti'),months=[...new Set([T().month,...all.map(t=>(t.date||'').slice(0,7)).filter(Boolean)])].sort((a,b)=>b.localeCompare(a));el.innerHTML=`<div class="card"><b>بهزیستی · مطالبات یاری‌برگ</b><div class="mut">هر تخفیف یاری‌برگیِ اعمال‌شده در جلسه به‌عنوان طلب مرکز از سازمان ثبت می‌شود؛ این گزارش فقط‌خواندنی است.</div><label>ماه</label><select id="welfareMonth">${opt([['all','همهٔ ماه‌ها'],...months.map(m=>[m,fa(m)])],T().month)}</select></div><div id="welfareStats" class="grid"></div><div id="welfareRows" class="lst"></div>`;const render=()=>{const mo=$('#welfareMonth',el).value,rows=all.filter(t=>mo==='all'||(t.date||'').startsWith(mo)).sort((a,b)=>(b.date||'').localeCompare(a.date||'')),total=rows.filter(t=>t.status==='due').reduce((z,t)=>z+(+t.amount||0),0),patients=new Set(rows.map(t=>String(t.pid))).size;$('#welfareStats',el).innerHTML=`<div class="card stat fin-stat-debt"><b>${money(total)}</b><span>طلب پرداخت‌نشده از بهزیستی</span></div><div class="card stat"><b>${fa(rows.length)}</b><span>تعداد دفعات یاری‌برگ</span></div><div class="card stat"><b>${fa(patients)}</b><span>مراجعان استفاده‌کننده</span></div>`;$('#welfareRows',el).innerHTML=rows.length?rows.map(t=>{const charge=Store.all('tx').find(x=>String(x.id)===String(t.chargeId)),appt=Store.all('appts').find(x=>String(x.id)===String(t.apptId));return `<div class="card" data-welfare-person="${esc(t.pid)}"><div class="row"><div class="g"><b>${esc(pname(t.pid))} · پروندهٔ شمارهٔ ${fa((Store.all('people').find(p=>String(p.id)===String(t.pid))||{}).fileNo||'—')}</b><div class="mut">${fa(t.date)} · ${therapistColorChip(t.tid)} · ${appt?(appt.serviceMode==='online'?`جلسهٔ آنلاین ${fa(appt.date)} · مدت ${durationLabel(charge?.minutes||0)}`:`جلسهٔ حضوری ${fa(appt.startDate||appt.date)} ${fa(appt.start||appt.time)}–${fa(appt.end||'—')}`):'جلسهٔ ثبت‌شده'} · تخفیف یاری‌برگ</div><div class="mut">${esc(charge?.title||'جلسه مشاوره')} · ${durationLabel(charge?.minutes||0)} · سازمان: بهزیستی · وضعیت: ${t.status==='due'?'طلب پرداخت‌نشده':'ثبت‌شده'}</div></div><b>${money(t.amount)}</b></div></div>`}).join(''):'<div class="empty">برای این فیلتر طلبی ثبت نشده است.</div>';$$('[data-welfare-person]',el).forEach(x=>x.onclick=()=>personSheet(x.dataset.welfarePerson,{admin:true}))};$('#welfareMonth',el).onchange=render;render()}
 
-const TABS=[{id:'dash',title:'داشبورد',icon:'🔔',render:dashTab},{id:'people',title:'مراجعین',icon:'👥',render:el=>peopleTab(el,{admin:1})},{id:'groups',title:'گروه‌ها و کارگاه‌ها',icon:'🧩',render:groupsTab},{id:'plans',title:'طرح‌های درمانی',icon:'🧾',render:treatmentPlansTab},{id:'psychclub',title:'باشگاه روانشناسی',icon:'🎓',render:psychologyClubAdminTab},{id:'tx',title:'مالی',icon:'💰',render:el=>txTab(el,{admin:1})},{id:'ther',title:'درمانگران',icon:'🧑‍⚕️',render:therTab},{id:'staff',title:'تنظیمات منشی‌ها',icon:'🗂️',render:staffTab},{id:'welfare',title:'مطالبات بهزیستی',icon:'🤝',render:welfareTab},{id:'cal',title:'برنامه‌ها',icon:'📅',render:el=>calTab(el,{admin:1})},{id:'sms',title:'پیامک',icon:'✉️',render:smsTab},{id:'set',title:'تنظیمات',icon:'⚙️',render:setTab},{id:'centers',title:'مراکز',icon:'🏥',render:centersTab}];
+const UI_IC={cal:'<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>',mail:'<rect x="3" y="5.5" width="18" height="13" rx="3"/><path d="m4 8 8 5.5L20 8"/>',check:'<rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8.5 12.2 2.4 2.4 4.6-5"/>',clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',users:'<circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19c.5-3.4 2.7-5 5.5-5s5 1.6 5.5 5"/><circle cx="17" cy="9.5" r="2.4"/><path d="M16.5 14.2c2.2.1 3.6 1.4 4 4"/>',group:'<circle cx="12" cy="8" r="3"/><circle cx="5.5" cy="10" r="2.2"/><circle cx="18.5" cy="10" r="2.2"/><path d="M6.5 19c.4-3 2.4-4.6 5.5-4.6s5.1 1.600 5.500 4.600"/>',steth:'<path d="M6 3v6a4 4 0 0 0 8 0V3"/><path d="M10 13v1.500a4.500 4.500 0 0 0 9 0V13"/><circle cx="19" cy="11" r="2"/>',wallet:'<path d="M4 7.500A2.500 2.500 0 0 1 6.500 5H18v3"/><rect x="3.500" y="7.500" width="17" height="12" rx="3"/><circle cx="16.500" cy="13.500" r="1.200"/>',receipt:'<path d="M6 3.500h12v17l-3-1.800-3 1.800-3-1.800-3 1.800z"/><path d="M9 8.500h6M9 12h6"/>',cap:'<path d="m3 9 9-4.500L21 9l-9 4.500z"/><path d="M7 11.500V16c1.500 1.500 3 2 5 2s3.500-.5 5-2v-4.500"/>',sms:'<path d="M4 6.500A2.500 2.500 0 0 1 6.500 4h11A2.500 2.500 0 0 1 20 6.500v7a2.500 2.500 0 0 1-2.500 2.500H11l-4.500 3.500V16h0A2.500 2.500 0 0 1 4 13.500z"/>',gear:'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>'};
+const uiSvg=n=>`<svg viewBox="0 0 24 24" aria-hidden="true">${UI_IC[n]||''}</svg>`;
+
+UI_IC.clip='<rect x="5" y="4" width="14" height="17" rx="3"/><path d="M9 4.5h6M8.5 11h7M8.5 15h5"/>';
+UI_IC.heart='<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.600A4 4 0 0 1 19 10c0 5.600-7 10-7 10z"/>';
+UI_IC.build='<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 8h2M13 8h2M9 12h2M13 12h2M10 21v-4h4v4"/>';
+UI_IC.sliders='<path d="M5 6h8M17 6h2M5 12h2M11 12h8M5 18h10"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>';
+
+function dashTab(el){
+ const now=T(),statusOf=a=>a.status==='cancelled'?'cancelled':(a.done||a.status==='done')?'done':a.status==='in_progress'?'in_progress':'scheduled';
+ const all=Store.all('appts').filter(a=>statusOf(a)!=='cancelled');
+ const today=all.filter(a=>String(a.date||'')===now.key).sort((a,b)=>String(a.time||'').localeCompare(String(b.time||'')));
+ const open=today.filter(a=>statusOf(a)!=='done'),next=open.find(a=>String(a.time||'')>=now.time)||open[0];
+ const unread=Store.all('notifs').filter(n=>n.recipient==='admin'&&!n.read).length;
+ const present=Store.all('att').filter(a=>a.date===now.key&&!a.out).length;
+ const [y,m,d]=jp(now.key),w0=wd(y,m,d);
+ const addDays=n=>{let yy=y,mm=m,dd=d+n;while(dd>dim(yy,mm)){dd-=dim(yy,mm);mm++;if(mm>12){mm=1;yy++}}while(dd<1){mm--;if(mm<1){mm=12;yy--}dd+=dim(yy,mm)}return[yy,mm,dd]};
+ const week=['ش','ی','د','س','چ','پ','ج'].map((nm,i)=>{const[yy,mm,dd]=addDays(i-w0),k=jk(yy,mm,dd),c=all.filter(a=>String(a.date||'')===k).length;return`<div class="${k===now.key?'on':''}">${nm}<b>${fa(dd)}</b><i>${c?fa(c)+' نوبت':''}</i></div>`}).join('');
+ const icons={people:'users',groups:'group',plans:'clip',psychclub:'cap',tx:'wallet',ther:'steth',staff:'sliders',welfare:'heart',cal:'cal',sms:'sms',set:'gear',centers:'build'};
+ const tiles=TABS.filter(t=>t.id!=='dash').map(t=>[t.id,t.title,icons[t.id]||'grid']);
+ el.innerHTML=`<div class="ui-strip"><div>${uiSvg('cal')}<b>${fa(today.length)}</b><span>نوبت امروز</span></div><div>${uiSvg('users')}<b>${fa(present)}</b><span>منشی حاضر</span></div><div>${uiSvg('mail')}<b>${fa(unread)}</b><span>پیام جدید</span></div><div>${uiSvg('clock')}<b>${fa(next?next.time||'—':'—')}</b><span>زمان بعدی</span></div></div>
+ <div class="ui-next"><small>جلسهٔ بعدی</small>${next?`<h3>${esc(pname(next.pid))}</h3><div class="t">${esc(pname(next.tid))} · ${fa(next.time||'—')} · امروز ${fa(now.key)}</div><button class="btn sm" data-home-go="cal">مشاهدهٔ برنامه‌ها</button>`:`<h3>جلسهٔ بعدی‌ای برای امروز نیست</h3><div class="t">امروز ${fa(now.key)}</div><button class="btn sm" data-home-go="cal">برنامه‌ها</button>`}</div>
+ <div class="ui-tiles">${tiles.map(([id,t,i])=>`<button class="ui-tile" data-home-go="${id}">${uiSvg(i)}<span>${esc(t)}</span></button>`).join('')}</div>
+ <div class="card"><div class="ui-sec-h"><b>تقویم کاری هفته</b><button data-home-go="cal">مشاهدهٔ همه</button></div><div class="ui-week">${week}</div></div>
+ <div class="card"><div class="ui-sec-h"><b>نوبت‌های امروز</b><button data-home-go="cal">مشاهدهٔ همه</button></div>${today.length?today.slice(0,6).map(a=>`<div class="ui-todo"><span class="tm">${fa(a.time||'—')}</span><span class="dot"></span><div class="g" style="flex:1"><b>${esc(pname(a.pid))}</b><div class="mut">${esc(pname(a.tid))}</div></div><span class="mut">${statusOf(a)==='done'?'پایان‌یافته':statusOf(a)==='in_progress'?'در حال برگزاری':'در انتظار'}</span></div>`).join(''):'<div class="empty" style="padding:18px;text-align:center">برای امروز نوبتی ثبت نشده است.</div>'}</div>
+ <div id="dashLegacy" class="dash-legacy"></div>`;
+ $$('[data-home-go]',el).forEach(b=>b.onclick=()=>App.goto(b.dataset.homeGo));
+ dashTabLegacy($('#dashLegacy',el));
+}
+
+const TABS=[{id:'dash',title:'خانه',icon:'🔔',render:dashTab},{id:'people',title:'مراجعین',icon:'👥',render:el=>peopleTab(el,{admin:1})},{id:'groups',title:'گروه‌ها و کارگاه‌ها',icon:'🧩',render:groupsTab},{id:'plans',title:'طرح‌های درمانی',icon:'🧾',render:treatmentPlansTab},{id:'psychclub',title:'باشگاه روانشناسی',icon:'🎓',render:psychologyClubAdminTab},{id:'tx',title:'مالی',icon:'💰',render:el=>txTab(el,{admin:1})},{id:'ther',title:'درمانگران',icon:'🧑‍⚕️',render:therTab},{id:'staff',title:'تنظیمات منشی‌ها',icon:'🗂️',render:staffTab},{id:'welfare',title:'مطالبات بهزیستی',icon:'🤝',render:welfareTab},{id:'cal',title:'برنامه‌ها',icon:'📅',render:el=>calTab(el,{admin:1})},{id:'sms',title:'پیامک',icon:'✉️',render:smsTab},{id:'set',title:'تنظیمات',icon:'⚙️',render:setTab},{id:'centers',title:'مراکز',icon:'🏥',render:centersTab}];
 function setTab(el){const tabs=orderTabs(TABS);
  el.innerHTML=`<div class="card"><b>ترتیب‌بندی بخش‌ها</b>${tabs.map((t,i)=>`<div class="row" style="padding:4px 0"><span class="g">${t.icon} ${t.title}</span><button class="btn sec sm" data-u="${i}">▲</button><button class="btn sec sm" data-d="${i}">▼</button></div>`).join('')}</div>
  <div class="card"><b>تنظیمات مالی و تأخیر مراجعان</b><div class="mut">مهلت عادی تأخیر برای شروع جلسه؛ اگر درمانگر در جلسهٔ قبلی بماند و از زمان بعدی عبور کند، مهلت جداگانه از پایان واقعی جلسه محاسبه می‌شود.</div><label>حد تأخیر عادی مراجعان</label><input id="clientLateTolerance" type="number" min="0" max="120" step="1" value="${Store.cfg('clientLateTolerance',15)}"><div class="mut" id="clientLateTolerancePreview">${durationLabel(Store.cfg('clientLateTolerance',15))}</div><label>مهلت بعد از پایان واقعی جلسهٔ قبلی همان درمانگر</label><input id="clientLateOverrunGrace" type="number" min="0" max="120" step="1" value="${Store.cfg('clientLateOverrunGrace',10)}"><div class="mut" id="clientLateOverrunGracePreview">${durationLabel(Store.cfg('clientLateOverrunGrace',10))}</div><label>تخفیف ثابت هر بار استفاده از یاری‌برگ (تومان)</label><input id="welfareAidDiscount" type="text" inputmode="numeric" data-money="1" data-k="welfareAidDiscount" value="${Store.cfg('welfareAidDiscount',0)?fa(Number(Store.cfg('welfareAidDiscount',0)).toLocaleString('en-US')):''}"><div class="mut" data-preview="welfareAidDiscount" style="margin:-6px 0 10px"></div><div class="mut">اگر مبلغ یاری‌برگ صفر باشد، انتخاب آن برای منشی غیرفعال است. هر مراجع حداکثر ۴ بار می‌تواند استفاده کند.</div><button class="btn sec big" id="saveClinicControls">ذخیرهٔ تنظیمات</button></div>
@@ -2977,4 +3461,861 @@ setInterval(()=>{const now=T();for(const a of Store.all('att'))if(!a.out&&String
   }
 })();
 </script>
-</body></html>
+<style id="clinic-ui-v2">
+/* ===== CLINIC-UI-V2 : unified visual layer (appearance only) ===== */
+/* palette moved to v4 */
+/* palette moved to v4 */
+
+html body{background:var(--bg)!important;color:var(--ink);font-family:Vazirmatn,"IRANSans",Tahoma,system-ui,sans-serif;
+  background-image:radial-gradient(900px 420px at 85% -80px,color-mix(in srgb,var(--accent) 16%,transparent),transparent 70%),
+  radial-gradient(700px 400px at -10% 30%,color-mix(in srgb,var(--accent) 9%,transparent),transparent 70%)!important;
+  background-attachment:fixed!important;padding-bottom:calc(104px + env(safe-area-inset-bottom))!important}
+html body main{max-width:1180px;padding:16px 14px 20px}
+
+/* header */
+html body header.top{background:linear-gradient(135deg,var(--hero1),var(--hero2))!important;color:#fff;border-radius:0 0 28px 28px;
+  padding:calc(14px + env(safe-area-inset-top)) 16px 16px;box-shadow:0 14px 34px rgba(var(--shadow-rgb),.28);position:sticky;top:0;z-index:30;gap:10px;flex-wrap:wrap}
+html body header.top h1{font-size:18px;font-weight:800;color:#fff}
+html body header.top .sub{display:inline-block;font-size:11.5px;background:rgba(255,255,255,.16);padding:2px 10px;border-radius:99px;margin:4px 0 0;opacity:1;color:#fff}
+html body header.top .menu-trigger,html body header.top .theme-toggle,html body header.top .ui-ic{
+  border:0;background:rgba(255,255,255,.14)!important;color:#fff!important;width:42px;height:42px;min-height:42px;border-radius:14px;
+  display:inline-flex;align-items:center;justify-content:center;padding:0;font-size:18px;cursor:pointer;position:relative;backdrop-filter:blur(8px);transition:background .15s,transform .1s}
+html body header.top .theme-toggle .theme-toggle-label{display:none}
+html body header.top .menu-trigger:hover,html body header.top .theme-toggle:hover,html body header.top .ui-ic:hover{background:rgba(255,255,255,.26)!important}
+html body header.top .ui-ic svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+html body header.top .ui-badge{position:absolute;top:-4px;inset-inline-start:-4px;min-width:19px;height:19px;border-radius:99px;background:#FF4D5E;color:#fff;font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid var(--hero1)}
+html body header.top .ui-hello{flex:1 0 100%;order:5;display:flex;align-items:center;gap:12px;margin-top:6px}
+html body header.top .ui-avatar{width:50px;height:50px;border-radius:50%;background:linear-gradient(135deg,var(--av1),var(--av2));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;border:3px solid rgba(255,255,255,.35);position:relative;flex:0 0 auto}
+html body header.top .ui-avatar::after{content:"";position:absolute;bottom:0;inset-inline-start:0;width:12px;height:12px;border-radius:50%;background:#34D399;border:2px solid var(--hero1)}
+html body header.top .ui-hello b{display:block;font-size:17px}
+html body header.top .ui-hello span{font-size:12.5px;opacity:.82}
+html body header.top .top-center-name{font-size:11px;opacity:.85}
+html body header.top a{background:rgba(255,255,255,.16);color:#fff}
+.center-context{margin:12px 14px 0!important;border-radius:16px!important;background:var(--card)!important;border:1px solid var(--line)!important;box-shadow:var(--shadow-sm)}
+
+/* cards */
+html body .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow-sm)}
+html body .card:hover{box-shadow:var(--shadow)}
+html body .stat{border-radius:20px;border:1px solid var(--line);background:linear-gradient(180deg,var(--card),color-mix(in srgb,var(--pri-soft) 55%,var(--card)))}
+html body .stat::before{inset:0 0 auto 0;width:auto;height:4px;border-radius:0;background:linear-gradient(90deg,var(--accent),var(--pri));opacity:.9}
+html body .stat b{color:var(--pri2);font-size:21px;font-weight:800}
+html[data-theme="dark"] body .stat b,html[data-theme="dark"] .stat b{color:var(--ink)}
+html body .grid{gap:12px}
+html body .mut{color:var(--mut)}
+html body h4,html body h3{color:var(--ink)}
+html body .empty{border:1.5px dashed var(--line-2);border-radius:18px;background:color-mix(in srgb,var(--pri-soft) 40%,transparent);color:var(--mut)}
+
+/* buttons */
+html body .btn{background:linear-gradient(135deg,var(--pri),color-mix(in srgb,var(--pri) 72%,#000 28%));color:#fff;border-radius:14px;font-weight:700;
+  box-shadow:0 6px 16px color-mix(in srgb,var(--pri) 30%,transparent);transition:transform .08s,filter .15s,box-shadow .15s}
+html[data-theme="dark"] body .btn{color:var(--on-pri)}
+html body .btn:hover{filter:brightness(1.08)}
+html body .btn:focus-visible,html body input:focus-visible,html body select:focus-visible,html body textarea:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 45%,transparent);outline-offset:2px}
+html body .btn:disabled,html body .btn[disabled]{opacity:.45;cursor:not-allowed;box-shadow:none;filter:grayscale(.4)}
+html body .btn.sec{background:var(--pri-soft);color:var(--pri);box-shadow:none;border:1px solid var(--line)}
+html[data-theme="dark"] body .btn.sec{color:var(--ink)}
+html body .btn.bad{background:linear-gradient(135deg,#E5564E,#C23A32);color:#fff}
+
+/* forms */
+html body input,html body select,html body textarea{background:color-mix(in srgb,var(--pri-soft) 35%,var(--card));border:1.5px solid var(--line);border-radius:14px;color:var(--ink);padding:12px 14px}
+html body input:focus,html body select:focus,html body textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent);background:var(--card)}
+html body input::placeholder{color:color-mix(in srgb,var(--mut) 70%,transparent)}
+html body label{color:var(--mut);font-weight:600}
+
+/* tables */
+html body table{border-collapse:separate;border-spacing:0;width:100%;background:var(--card);border-radius:16px;overflow:hidden;border:1px solid var(--line)}
+html body th{background:color-mix(in srgb,var(--pri-soft) 70%,var(--card));color:var(--mut);font-size:12px;padding:10px 12px;text-align:start}
+html body td{padding:11px 12px;border-top:1px solid var(--line)}
+html body tr:hover td{background:color-mix(in srgb,var(--pri-soft) 40%,transparent)}
+
+/* sheets / modals */
+html body .ov{background:rgba(var(--ov-rgb),.55);backdrop-filter:blur(4px)}
+html body .sh{background:var(--card);border-radius:28px 28px 0 0;box-shadow:0 -20px 50px rgba(var(--ov-rgb),.3);border:1px solid var(--line)}
+@media(min-width:760px){html body .ov{align-items:center;justify-content:center}html body .sh{border-radius:28px;max-width:560px;width:92%}}
+
+/* dock */
+.clinic-dock{position:fixed;inset:auto 10px calc(10px + env(safe-area-inset-bottom)) 10px;z-index:40;display:flex;align-items:flex-end;justify-content:space-around;
+  background:var(--glass);backdrop-filter:blur(18px) saturate(1.4);-webkit-backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:30px;
+  padding:8px 6px 8px;box-shadow:0 14px 40px rgba(var(--shadow-rgb),.22);max-width:640px;margin:0 auto}
+.clinic-dock button{flex:1 1 0;min-width:0;border:0;background:none;color:var(--mut);font:inherit;font-size:10.5px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:6px 2px;cursor:pointer;border-radius:18px;line-height:1.35;text-align:center;transition:color .15s,background .15s}
+.clinic-dock button svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round}
+.clinic-dock button.on{color:var(--pri)}
+html[data-theme="dark"] .clinic-dock button.on{color:#fff}
+.clinic-dock button.on svg{stroke-width:2.1}
+.clinic-dock button.on::after{content:"";width:5px;height:5px;border-radius:50%;background:currentColor;margin-top:-1px}
+.clinic-dock button.center{flex:0 0 74px;margin-top:-34px;color:var(--pri)}
+.clinic-dock button.center .ci{width:60px;height:60px;border-radius:50%;background:linear-gradient(145deg,var(--accent),var(--pri2));color:#fff;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 10px 24px rgba(var(--shadow-rgb),.45),0 0 0 6px var(--bg);transition:transform .12s}
+.clinic-dock button.center:active .ci{transform:scale(.94)}
+.clinic-dock button.center svg{stroke:#fff;width:27px;height:27px}
+.clinic-dock button.center.on::after{display:none}
+.clinic-dock button:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 50%,transparent)}
+.clinic-dock .dlab{display:block}
+
+/* desktop: RTL sidebar */
+@media(min-width:1024px){
+  html body{padding-bottom:30px!important;padding-inline-start:260px}
+  .clinic-dock{inset:0 0 0 auto;max-width:none;width:248px;margin:0;border-radius:0;border-width:0 0 0 1px;flex-direction:column;justify-content:flex-start;align-items:stretch;padding:96px 14px 20px;gap:6px;
+    background:linear-gradient(180deg,var(--hero1),var(--hero1));backdrop-filter:none;box-shadow:-10px 0 40px rgba(var(--shadow-rgb),.18)}
+  .clinic-dock::before{content:attr(data-brand);position:absolute;top:26px;inset-inline:18px;color:#fff;font-weight:800;font-size:17px}
+  .clinic-dock button{flex:0 0 auto;flex-direction:row;gap:12px;font-size:14px;padding:12px 14px;color:var(--dock-ink);border-radius:14px;justify-content:flex-start;text-align:start}
+  .clinic-dock button.on{background:rgba(255,255,255,.14);color:#fff}
+  .clinic-dock button.on::after{display:none}
+  .clinic-dock button:hover{background:rgba(255,255,255,.08)}
+  .clinic-dock button.center{flex:0 0 auto;margin:0;order:-1;color:var(--dock-ink)}
+  .clinic-dock button.center .ci{width:24px;height:24px;background:none;box-shadow:none;border-radius:0}
+  .clinic-dock button.center svg{width:24px;height:24px}
+  html body header.top{border-radius:0 0 24px 24px}
+}
+@media(min-width:760px){html body .grid{grid-template-columns:repeat(4,1fr)}html body main{padding:22px 24px}}
+@media(max-width:380px){.clinic-dock button{font-size:9.5px}.clinic-dock button svg{width:22px;height:22px}}
+nav.tabs{display:none!important}
+
+/* home page widgets */
+.ui-strip{display:grid;grid-template-columns:repeat(4,1fr);background:var(--glass);backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:24px;padding:14px 6px;box-shadow:var(--shadow-sm);margin-bottom:14px}
+.ui-strip div{text-align:center;padding:2px 4px;border-inline-start:1px solid var(--line)}.ui-strip div:first-child{border:0}
+.ui-strip svg{width:24px;height:24px;stroke:var(--pri);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ui-strip b{display:block;font-size:20px;color:var(--pri2);line-height:1.3}html[data-theme="dark"] .ui-strip b{color:var(--ink)}
+.ui-strip span{font-size:11.5px;color:var(--mut)}
+.ui-next{background:linear-gradient(135deg,var(--hero1),var(--hero2));color:#fff;border-radius:24px;padding:18px 20px;margin-bottom:14px;box-shadow:0 14px 34px rgba(var(--shadow-rgb),.28);position:relative;overflow:hidden}
+.ui-next::after{content:"";position:absolute;inset-inline-end:-40px;bottom:-60px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.08)}
+.ui-next small{opacity:.8;font-size:12px}.ui-next h3{margin:4px 0;color:#fff;font-size:18px}.ui-next .t{font-size:14px;opacity:.9}
+.ui-next .btn{margin-top:12px;background:rgba(255,255,255,.2);color:#fff;box-shadow:none;backdrop-filter:blur(6px)}
+.ui-tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.ui-tile{border:1px solid var(--line);background:linear-gradient(160deg,var(--card),color-mix(in srgb,var(--pri-soft) 70%,var(--card)));border-radius:22px;padding:16px 8px;display:flex;flex-direction:column;align-items:center;gap:8px;
+  color:var(--ink);font:inherit;font-size:13px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm);transition:transform .1s,box-shadow .15s}
+.ui-tile:hover{transform:translateY(-2px);box-shadow:var(--shadow)}.ui-tile:active{transform:scale(.97)}
+.ui-tile svg{width:30px;height:30px;stroke:var(--pri);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+html[data-theme="dark"] .ui-tile svg{stroke:#fff}
+.ui-week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-top:10px}
+.ui-week div{text-align:center;border-radius:14px;padding:8px 2px;background:color-mix(in srgb,var(--pri-soft) 70%,transparent);font-size:11px;color:var(--mut)}
+.ui-week div b{display:block;font-size:15px;color:var(--ink)}.ui-week div i{display:block;font-style:normal;font-size:10px;color:var(--accent);min-height:14px}
+.ui-week div.on{background:linear-gradient(160deg,var(--pri2),var(--pri));color:#fff}.ui-week div.on b,.ui-week div.on i{color:#fff}
+.ui-todo{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;background:color-mix(in srgb,var(--pri-soft) 45%,transparent);margin-top:8px}
+.ui-todo .tm{font-size:12px;color:var(--mut);min-width:46px}.ui-todo .dot{width:9px;height:9px;border-radius:50%;background:var(--accent)}
+.ui-sec-h{display:flex;align-items:center;justify-content:space-between;margin:0 0 4px}.ui-sec-h b{font-size:16px}.ui-sec-h button{border:0;background:none;color:var(--accent);font:inherit;font-size:12.5px;cursor:pointer}
+@media(min-width:760px){.ui-tiles{grid-template-columns:repeat(6,1fr)}}
+
+/* license / login gate */
+#clinicCloudGate,.cloud-gate{background:linear-gradient(160deg,var(--hero1),var(--hero2))!important}
+
+[hidden]{display:none!important}
+html body header.top,html body header.top h1,html body header.top .sub,html body header.top .ui-hello,html body header.top .ui-hello *,html body header.top .ui-avatar,html body header.top .top-center-name{color:#fff!important}
+html body header.top h1{text-shadow:none;flex:1 1 auto}
+html body header.top .sub:empty{display:none}
+html body header.top .sub{background:rgba(255,255,255,.16)!important;border:0!important}
+html body header.top .ui-hello span{opacity:.85}
+
+html body header.top h1{flex:1 1 0;min-width:0;text-align:start}
+html body .att-clock{background:linear-gradient(135deg,var(--hero1),var(--hero2))!important;color:#fff!important;border:0;box-shadow:0 14px 34px rgba(var(--shadow-rgb),.28)}
+html body .att-clock *{color:#fff!important}
+html body .btn.big{border-radius:18px;background:linear-gradient(135deg,var(--pri),var(--pri2))!important;color:#fff!important}
+html body .btn.big.sec{background:var(--pri-soft)!important;color:var(--pri)!important}
+html body .btn.big.bad{background:linear-gradient(135deg,#E5564E,#C23A32)!important}
+
+html body .btn:not(.sec):not(.bad),html[data-theme="light"] body .btn:not(.sec):not(.bad),html[data-theme="dark"] body .btn:not(.sec):not(.bad){background:linear-gradient(135deg,var(--pri),var(--pri2))!important;color:#fff!important;box-shadow:0 6px 16px color-mix(in srgb,var(--pri) 28%,transparent)!important}
+html[data-theme="dark"] body .btn:not(.sec):not(.bad){background:linear-gradient(135deg,var(--btn1),var(--btn2))!important}
+html body .btn:not(.sec):not(.bad):hover{filter:brightness(1.1)}
+html body .btn:disabled,html body .btn[disabled]{opacity:.45!important;box-shadow:none!important}
+html body .btn.sec{background:var(--pri-soft)!important;color:var(--pri)!important}
+html[data-theme="dark"] body .btn.sec{color:var(--ink)!important}
+html body .btn.bad{background:linear-gradient(135deg,#E5564E,#C23A32)!important;color:#fff!important}
+html body .ui-next .btn{background:rgba(255,255,255,.22)!important;box-shadow:none!important}
+html body header.top .menu-trigger,html body header.top .theme-toggle{background:rgba(255,255,255,.16)!important;border:0!important;color:#fff!important}
+html body .stat b,html body .ui-strip b{color:var(--pri2)}
+html[data-theme="dark"] body .stat b,html[data-theme="dark"] body .ui-strip b{color:var(--ink)}
+html body header.top .theme-toggle{width:42px!important;min-width:42px;padding:0!important;overflow:hidden}
+
+</style><script id="clinic-ui-v2-shell">
+/* CLINIC-UI-V2 shell: هدر خوش‌آمدگویی + نوار پایین؛ فقط ظاهر. ناوبری از همان App.goto قبلی انجام می‌شود */
+(function(){
+ if(window.__clinicUiV2)return;window.__clinicUiV2=1;
+ const role=window.CLINIC_PANEL_ROLE||'admin';
+ const gA=()=>{try{return App}catch(e){return null}};
+ const P=(d)=>`<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
+ const I={
+  home:'<path d="M4 11.200 12 4.500l8 6.700V19a1.500 1.500 0 0 1-1.500 1.500H15v-5.500H9v5.500H5.500A1.500 1.500 0 0 1 4 19z"/>',
+  wallet:'<path d="M4 7.500A2.500 2.500 0 0 1 6.500 5H18v3"/><rect x="3.500" y="7.500" width="17" height="12" rx="3"/><circle cx="16.500" cy="13.500" r="1.200"/>',
+  cal:'<rect x="3.500" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.500 10h17"/>',
+  sliders:'<path d="M5 6h8M17 6h2M5 12h2M11 12h8M5 18h10M19 18h0"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
+  steth:'<path d="M6 3v6a4 4 0 0 0 8 0V3"/><path d="M10 13v1.500a4.500 4.500 0 0 0 9 0V13"/><circle cx="19" cy="11" r="2"/>',
+  users:'<circle cx="9" cy="8.500" r="3.200"/><path d="M3.500 19c.5-3.400 2.700-5 5.500-5s5 1.600 5.500 5"/><circle cx="17" cy="9.500" r="2.400"/><path d="M16.500 14.200c2.200.1 3.600 1.400 4 4"/>',
+  check:'<rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8.500 12.200 2.400 2.400 4.600-5"/>',
+  group:'<circle cx="12" cy="8" r="3"/><circle cx="5.500" cy="10" r="2.200"/><circle cx="18.500" cy="10" r="2.200"/><path d="M6.500 19c.4-3 2.400-4.600 5.500-4.600s5.100 1.600 5.500 4.600"/>',
+  bell:'<path d="M6 16.500V11a6 6 0 0 1 12 0v5.500l1.500 2h-15z"/><path d="M10 21h4"/>',
+  gear:'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+  grid:'<rect x="4" y="4" width="6.500" height="6.500" rx="2"/><rect x="13.500" y="4" width="6.500" height="6.500" rx="2"/><rect x="4" y="13.500" width="6.500" height="6.500" rx="2"/><rect x="13.500" y="13.500" width="6.500" height="6.500" rx="2"/>'};
+ /* ترتیب در DOM: راست → چپ (RTL) */
+ const DOCK={
+  admin:{brand:'پنل مدیریت',home:'dash',settings:'set',items:[['tx','مالی','wallet'],['cal','برنامه‌ها','cal'],['dash','خانه','home','center'],['staff','تنظیمات منشی‌ها','sliders'],['ther','درمانگران','steth']]},
+  secretary:{brand:'پنل منشی',home:'home',settings:'settings',items:[['people','مراجعین','users'],['sessions','ثبت جلسه','check'],['home','خانه','home','center'],['groups','گروه‌ها و کارگاه‌ها','group'],['planning','برنامه‌ریزی','cal']]},
+  attendance:{brand:'ورود و خروج',home:'now',settings:null,items:[]}}[role]||{items:[]};
+ const todayKey=()=>{try{return fa(T().key)}catch(e){return''}};
+ function who(){
+  try{
+   if(role==='secretary'){const id=activeSecretaryId(),p=Store.all('people').find(x=>String(x.id)===String(id));return p&&p.name?p.name:'منشی عزیز'}
+   if(role==='admin')return 'مدیر محترم';
+  }catch(e){}
+  return 'کاربر گرامی';
+ }
+ function unread(){
+  try{
+   const rec=role==='admin'?'admin':role==='secretary'?'secretary:'+activeSecretaryId():null;
+   if(!rec)return 0;return Store.all('notifs').filter(n=>n.recipient===rec&&!n.read).length;
+  }catch(e){return 0}
+ }
+ function enhanceHeader(){
+  const h=document.querySelector('header.top');if(!h||h.querySelector('.ui-hello'))return;
+  const nm=who();
+  const hello=document.createElement('div');hello.className='ui-hello';
+  hello.innerHTML=`<div class="ui-avatar">${nm.trim().charAt(0)==='م'&&role==='admin'?'م':nm.trim().replace(/^(خانم|آقا)\s+/,'').charAt(0)}</div><div><b>سلام، ${nm}</b><span>${role==='attendance'?'ثبت ورود و خروج امروز':'امروز '+todayKey()+' · روزی پربار در پیش دارید'}</span></div>`;
+  h.append(hello);
+  if(DOCK.settings){
+   const g=document.createElement('button');g.type='button';g.className='ui-ic';g.id='uiGear';g.setAttribute('aria-label','تنظیمات');g.innerHTML=P(I.gear);
+   g.onclick=()=>gA()&&gA().goto&&gA().goto(DOCK.settings);h.insertBefore(g,h.querySelector('.theme-toggle')||null);
+   const b=document.createElement('button');b.type='button';b.className='ui-ic';b.id='uiBell';b.setAttribute('aria-label','اعلان‌ها');b.innerHTML=P(I.bell)+'<span class="ui-badge" hidden></span>';
+   b.onclick=()=>{if(!(gA()&&gA().goto))return;gA().goto(DOCK.home);setTimeout(()=>{const t=document.querySelector('#adminNotices,#homeNotices,#sessionNotices,#attNotices');if(t)t.scrollIntoView({behavior:'smooth',block:'start'})},250)};
+   h.insertBefore(b,g);
+  }
+  const mt=h.querySelector('.menu-trigger');if(mt){mt.innerHTML=P(I.grid);mt.title='همهٔ بخش‌ها'}
+ }
+ function paintBadge(){
+  const b=document.querySelector('#uiBell .ui-badge');if(!b)return;const n=unread();b.hidden=!n;b.textContent=n>99?'۹۹+':fa(n);
+  const hello=document.querySelector('.ui-hello b');if(hello)hello.textContent='سلام، '+who();
+ }
+ function syncDock(){
+  const cur=gA()&&gA().cur;document.querySelectorAll('.clinic-dock button').forEach(b=>{const on=b.dataset.go===cur;b.classList.toggle('on',on);if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+  const sl=document.getElementById('sectionLabel');
+ }
+ function buildDock(){
+  if(!DOCK.items.length||document.querySelector('.clinic-dock')||!document.getElementById('view'))return;
+  const n=document.createElement('nav');n.className='clinic-dock';n.dataset.brand=DOCK.brand;n.setAttribute('aria-label','ناوبری اصلی');
+  DOCK.items.forEach(([id,label,ic,kind])=>{
+   const b=document.createElement('button');b.type='button';b.dataset.go=id;if(kind)b.className=kind;b.setAttribute('aria-label',label);
+   b.innerHTML=(kind==='center'?`<span class="ci">${P(I[ic])}</span>`:P(I[ic]))+`<span class="dlab">${label}</span>`;
+   b.onclick=()=>{if(gA()&&gA().goto){gA().goto(id);syncDock();window.scrollTo({top:0,behavior:'smooth'})}};
+   n.append(b);
+  });
+  document.body.append(n);syncDock();
+ }
+ let viewObs=null,viewEl=null;
+ function watchView(){
+  const v=document.getElementById('view');if(!v||v===viewEl)return;viewEl=v;if(viewObs)viewObs.disconnect();
+  viewObs=new MutationObserver(()=>{syncDock();paintBadge()});viewObs.observe(v,{childList:true});
+ }
+ function ensure(){enhanceHeader();buildDock();watchView();syncDock();paintBadge()}
+ new MutationObserver(()=>{if(!document.querySelector('.clinic-dock')&&DOCK.items.length||!document.querySelector('.ui-hello')||document.getElementById('view')!==viewEl)ensure()}).observe(document.body,{childList:true});
+ ensure();setInterval(paintBadge,5000);
+})();
+
+</script><style id="clinic-ui-v5">
+/* ===== CLINIC-UI-V5 : پایداری اسکرول + کارت درمانگر + صیقل ===== */
+html,body{overscroll-behavior-y:none;overscroll-behavior:none contain}
+html{scroll-behavior:auto}
+html body #view{overflow-anchor:none}
+html body *{-webkit-tap-highlight-color:transparent}
+
+/* --- کارت درمانگر --- */
+html body .card:has(>.therapist-month-stats){padding:18px 16px 16px;border-radius:26px;overflow:hidden;position:relative}
+html body .card:has(>.therapist-month-stats)::before{content:"";position:absolute;inset:0 0 auto 0;height:5px;background:linear-gradient(90deg,var(--therapist-accent,var(--accent)),var(--pri2))}
+html body .card:has(>.therapist-month-stats)>.row:nth-child(1){align-items:flex-start;gap:12px;padding-bottom:14px;border-bottom:1px dashed var(--line);margin-bottom:16px!important;flex-wrap:nowrap}
+html body .card:has(>.therapist-month-stats)>.row:nth-child(1) b{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-size:17px;line-height:1.6;color:var(--ink)}
+html body .card:has(>.therapist-month-stats)>.row:nth-child(1) .mut{font-size:12.5px;line-height:2;margin-top:2px}
+html body .ther-color-control{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:11px;color:var(--mut);flex:0 0 auto}
+html body .ther-color-control input[type=color]{width:46px;height:46px;padding:3px;border-radius:50%;border:2px solid var(--line-2,var(--line));background:var(--card);cursor:pointer}
+html body .therapist-chip{font-size:11px;padding:3px 10px;border-radius:99px;background:color-mix(in srgb,var(--therapist-color,var(--accent)) 14%,var(--card));border:1px solid color-mix(in srgb,var(--therapist-color,var(--accent)) 35%,transparent);color:var(--ink);font-weight:700}
+html body .card:has(>.therapist-month-stats)>.row:nth-child(2){display:grid!important;grid-template-columns:1fr 1fr;gap:10px;position:relative;padding-top:30px;margin-bottom:6px!important}
+html body .card:has(>.therapist-month-stats)>.row:nth-child(2)::before{content:"سهم و نرخ‌گذاری";position:absolute;top:0;inset-inline-start:2px;font-weight:800;font-size:13px;color:var(--pri)}
+html[data-theme="dark"] body .card:has(>.therapist-month-stats)>.row:nth-child(2)::before{color:var(--ink)}
+html body .card:has(>.therapist-month-stats)>.row:nth-child(2)>.g{min-width:0;background:color-mix(in srgb,var(--pri-soft) 60%,var(--card));border:1px solid var(--line);border-radius:18px;padding:10px 12px 12px}
+html body .card:has(>.therapist-month-stats)>.row:nth-child(2)>.g label{display:block;font-size:11.5px;line-height:1.55;min-height:36px;margin:0 0 6px;color:var(--mut)}
+html body .card:has(>.therapist-month-stats)>.row:nth-child(2)>.g input{width:100%;height:44px;text-align:center;font-weight:800;font-size:16px;background:var(--card);border-radius:14px}
+html body .card:has(>.therapist-month-stats)>.row:nth-child(2)>.g .mut{text-align:center;font-size:11px}
+html body .therapist-month-stats{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;margin:16px 0 14px}
+html body .therapist-month-stats>.card{padding:12px 14px!important;border-radius:18px!important;margin:0!important;box-shadow:none!important;border:1px solid var(--line);background:color-mix(in srgb,var(--pri-soft) 45%,var(--card))!important;display:flex;flex-direction:column;gap:4px;min-height:0}
+html body .therapist-month-stats>.card .mut{font-size:11.5px}
+html body .therapist-month-stats>.card b{font-size:15.5px;color:var(--ink)}
+html body .therapist-month-stats>.fin-stat-debt b{color:var(--bad)}
+html body .therapist-month-stats>.fin-stat-paid{grid-column:1/-1;order:-1;background:linear-gradient(135deg,var(--hero1),var(--hero2))!important;border:0}
+html body .therapist-month-stats>.fin-stat-paid .mut,html body .therapist-month-stats>.fin-stat-paid span{color:rgba(255,255,255,.85)!important}
+html body .therapist-month-stats>.fin-stat-paid b{font-size:24px;color:#fff!important}
+html body .card:has(>.therapist-month-stats)>.row:last-child{display:grid!important;grid-template-columns:1fr 1fr;gap:8px}
+html body .card:has(>.therapist-month-stats)>.row:last-child .btn{width:100%;min-height:44px;font-size:13px;white-space:normal;line-height:1.5}
+@media(min-width:760px){html body .card:has(>.therapist-month-stats)>.row:nth-child(2){grid-template-columns:repeat(3,1fr)}html body .therapist-month-stats{grid-template-columns:repeat(4,1fr)!important}html body .card:has(>.therapist-month-stats)>.row:last-child{grid-template-columns:repeat(4,1fr)}}
+
+/* --- صیقل کلی --- */
+html body .card{border-radius:22px}
+html body .card>b:first-child{font-size:15.5px}
+html body .btn{min-height:44px}
+html body .btn.sm{min-height:40px}
+html body .stat{padding:16px 14px}
+html body .stat b{font-size:19px}
+html body h4{margin:18px 4px 8px;font-size:14px;color:var(--mut)}
+html body .row{gap:10px}
+html body input,html body select,html body textarea,html body .native-control-trigger{min-height:46px}
+
+/* --- سایدبار دسکتاپ: خوانایی در حالت روشن --- */
+@media(min-width:1024px){
+ html body nav.clinic-dock,html[data-theme="light"] body nav.clinic-dock,html[data-theme="dark"] body nav.clinic-dock{
+  background:linear-gradient(180deg,#0B3A7A 0%,#072A5E 100%)!important;border:0!important;box-shadow:-12px 0 40px rgba(7,42,94,.25)!important;color:#fff}
+ html body nav.clinic-dock::before{color:#fff!important}
+ html body nav.clinic-dock button,html body nav.clinic-dock button.center{color:#D6E4FA!important;background:transparent!important;opacity:1!important}
+ html body nav.clinic-dock button svg{stroke:currentColor!important}
+ html body nav.clinic-dock button .dlab{color:inherit!important;opacity:1!important}
+ html body nav.clinic-dock button:hover{background:rgba(255,255,255,.10)!important;color:#fff!important}
+ html body nav.clinic-dock button.on,html body nav.clinic-dock button.center.on{background:rgba(255,255,255,.20)!important;color:#fff!important;box-shadow:inset -4px 0 0 #7FC3FF}
+ html body nav.clinic-dock button.center .ci{background:none!important;box-shadow:none!important}
+ html body nav.clinic-dock button.center svg{stroke:currentColor!important}
+ html body nav.clinic-dock .dock-extra:first-of-type{border-top-color:rgba(255,255,255,.18)!important}
+}
+
+/* --- ورود و خروج (یک دکمه): در دسکتاپ هم نوار پایین وسط، نه سایدبار --- */
+@media(min-width:1024px){
+ html body:has(nav.clinic-dock.dock-2){padding-inline-start:0!important;padding-bottom:calc(110px + env(safe-area-inset-bottom))!important}
+ html body:has(nav.clinic-dock.dock-2) main{max-width:760px;margin-inline:auto}
+ html body:has(nav.clinic-dock.dock-2) header.top{border-radius:0 0 28px 28px}
+ html body nav.clinic-dock.dock-2{inset:auto 0 calc(14px + env(safe-area-inset-bottom)) 0!important;margin:0 auto!important;width:360px!important;max-width:360px!important;height:auto!important;min-height:74px;
+  flex-direction:row!important;justify-content:center!important;align-items:flex-end!important;padding:8px 6px 10px!important;border-radius:30px!important;overflow:visible!important;
+  background:var(--glass,#fff)!important;border:1px solid var(--line)!important;box-shadow:0 14px 40px rgba(7,42,94,.22)!important}
+ html body nav.clinic-dock.dock-2::before{display:none!important}
+ html body nav.clinic-dock.dock-2 button,html body nav.clinic-dock.dock-2 button.center{flex:0 0 130px!important;flex-direction:column!important;justify-content:center;align-items:center;margin-top:-34px!important;padding:6px 2px!important;color:var(--pri)!important;background:transparent!important;box-shadow:none!important;text-align:center}
+ html[data-theme="dark"] body nav.clinic-dock.dock-2 button{color:#fff!important}
+ html body nav.clinic-dock.dock-2 button.center .ci{width:60px!important;height:60px!important;border-radius:50%!important;background:linear-gradient(145deg,var(--accent),var(--pri2))!important;box-shadow:0 10px 24px rgba(7,42,94,.4),0 0 0 6px var(--bg)!important}
+ html body nav.clinic-dock.dock-2 button.center svg{width:27px!important;height:27px!important;stroke:#fff!important}
+ html body nav.clinic-dock.dock-2 button.on{background:transparent!important;box-shadow:none!important}
+}
+@media(min-width:1024px){html body:has(nav.clinic-dock.dock-2) main>*,html body:has(nav.clinic-dock.dock-2) #view>*{width:100%!important;max-width:100%!important;margin-inline:0!important;box-sizing:border-box}}
+@media(min-width:760px){html body:has(nav.clinic-dock.dock-2) main#view{grid-template-columns:1fr!important}}
+
+</style><script id="clinic-ui-v5-stable">
+/* CLINIC-UI-V5 stable: جلوگیری از پرش/رفرش صفحه هنگام اسکرول (فقط رفتار نمایشی؛ منطق برنامه عوض نشده) */
+(function(){
+ if(window.__clinicStable)return;window.__clinicStable=1;
+ let lastScroll=0,touching=false;
+ addEventListener('scroll',function(){lastScroll=Date.now()},{passive:true});
+ addEventListener('touchstart',function(){touching=true},{passive:true});
+ ['touchend','touchcancel'].forEach(function(e){addEventListener(e,function(){touching=false;lastScroll=Date.now()},{passive:true})});
+ const SKIP_TYPES={checkbox:1,radio:1,button:1,color:1,range:1,file:1,submit:1};
+ function typing(){const a=document.activeElement;return !!(a&&/^(INPUT|TEXTAREA)$/.test(a.tagName)&&!SKIP_TYPES[a.type]&&a.closest('#view,main'))}
+ function wrap(fn){
+  if(typeof fn!=='function'||fn.__stable)return fn;
+  let timer=null;
+  const w=function(){
+   const args=arguments,self=this;
+   if(touching||Date.now()-lastScroll<700||typing()){clearTimeout(timer);timer=setTimeout(function(){w.apply(self,args)},800);return}
+   clearTimeout(timer);
+   const y=window.scrollY,r=fn.apply(self,args);
+   const back=function(){if(Math.abs(window.scrollY-y)>2)window.scrollTo(0,y)};
+   back();requestAnimationFrame(function(){back();requestAnimationFrame(back)});setTimeout(back,160);
+   return r};
+  w.__stable=1;return w};
+ function install(){
+  let A;try{A=App}catch(e){return false}
+  if(!A||A.__stableInstalled)return !!A;
+  let cur=wrap(A.refresh);
+  try{Object.defineProperty(A,'refresh',{configurable:true,enumerable:true,get:function(){return cur},set:function(v){cur=wrap(v)}});A.__stableInstalled=1}catch(e){}
+  return true};
+ if(!install())document.addEventListener('DOMContentLoaded',install);
+})();
+
+</script></body></html>
+<style id="clinic-ui-v3">
+/* ===== CLINIC-UI-V3 : رفع هدر تاریک، تنظیمات جدید، یکدست‌سازی هر سه پنل ===== */
+/* palette moved to v4 */
+/* palette moved to v4 */
+
+/* --- ۱) رفع مشکل هدر در Dark: قانون قدیمی شفاف‌اش می‌کرد --- */
+html[data-theme] body header.top,html[data-theme="dark"] body header.top,html[data-theme="light"] body header.top{
+ background:linear-gradient(135deg,var(--hero1),var(--hero2))!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+ border:0!important;position:sticky;top:0;z-index:60;justify-content:flex-start!important;
+ box-shadow:0 12px 30px rgba(var(--shadow-rgb),.30)!important;border-radius:0 0 28px 28px}
+html[data-theme] body header.top h1,html[data-theme] body header.top .sub{color:#fff!important;text-align:start!important;width:auto!important}
+html body header.top #headerQuickNav{display:none}
+.center-context{position:relative;z-index:5}
+header.top .ui-hello{transition:max-height .25s ease,opacity .2s ease,margin .25s ease;max-height:90px;overflow:hidden}
+header.top.is-compact .ui-hello{max-height:0;opacity:0;margin-top:0!important}
+header.top.is-compact{padding-bottom:10px!important}
+html body main{position:relative;z-index:1}
+
+/* --- ۲) دکمه‌های هدر + آیکون تنظیمات --- */
+html body header.top .ui-ic#uiGear{background:rgba(255,255,255,.18)!important;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
+html body header.top .ui-ic#uiGear svg{transition:transform .5s ease}
+html body header.top .ui-ic#uiGear:hover svg,html body header.top .ui-ic#uiGear.on svg{transform:rotate(60deg)}
+
+/* --- ۳) کارت‌ها و اجزای عمومی (همهٔ بخش‌ها) --- */
+html body .card{border-radius:24px;background:color-mix(in srgb,var(--card) 92%,transparent);backdrop-filter:blur(10px)}
+html body .lst>*,html body .row.card{border-radius:18px}
+html body .stat{border-radius:22px;text-align:center}
+html body .stat span,html body .stat .mut{font-size:12px}
+html body .pill,html body .fin-pill{border-radius:99px;padding:2px 10px;font-weight:700;font-size:11.5px}
+html body table{border-radius:20px;box-shadow:var(--shadow-sm)}
+html body th{font-weight:700;letter-spacing:0}
+html body tr:nth-child(even) td{background:color-mix(in srgb,var(--pri-soft) 22%,transparent)}
+html body h3{font-size:16px;margin:18px 4px 8px}
+html body .btn{min-height:44px}
+html body .btn.sm{min-height:34px;border-radius:11px}
+html body select{appearance:none;-webkit-appearance:none}
+
+/* --- ۴) تنظیمات: کارت‌های آیکون‌دار + کنترل بخش‌بخش --- */
+.set-hero{display:flex;align-items:center;gap:14px;padding:18px;border-radius:26px;margin-bottom:14px;color:#fff;background:linear-gradient(135deg,var(--hero1),var(--hero2));box-shadow:0 14px 34px rgba(var(--shadow-rgb),.25)}
+.set-hero .big-ic{width:54px;height:54px;border-radius:18px;background:rgba(255,255,255,.16);display:grid;place-items:center;flex:0 0 auto}
+.set-hero svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.set-hero b{display:block;font-size:18px;color:#fff}.set-hero span{font-size:12.5px;opacity:.85;color:#fff}
+.set-card>b:first-child,.set-card>.set-t{display:flex;align-items:center;gap:10px;font-size:15.5px;margin-bottom:6px}
+.set-ic{width:36px;height:36px;border-radius:12px;background:var(--pri-soft);display:grid;place-items:center;flex:0 0 auto}
+.set-ic svg{width:19px;height:19px;stroke:var(--pri);fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+html[data-theme="dark"] .set-ic svg{stroke:#fff}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;padding:4px;border-radius:16px;background:var(--pri-soft);margin-top:8px}
+.seg button{white-space:nowrap;font-size:13px;border:0;background:none;color:var(--mut);font:inherit;font-weight:700;padding:10px 6px;border-radius:12px;cursor:pointer;min-height:42px}
+.seg button.on{background:var(--card);color:var(--pri);box-shadow:var(--shadow-sm)}
+html[data-theme="dark"] .seg button.on{color:#fff;background:var(--pri2)}
+
+/* --- ۵) ورود و خروج (کیفیت هم‌سطح پنل منشی) --- */
+html body .att-clock{border-radius:30px!important;padding:26px 20px!important;text-align:center;position:relative;overflow:hidden}
+html body .att-clock::after{content:"";position:absolute;inset-inline-end:-50px;top:-70px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.08)}
+html body .att-clock .att-clock-time{display:block;font-size:56px;line-height:1.15;font-weight:800;letter-spacing:1px;margin:8px 0 2px}
+html body .att-clock .att-clock-date{display:flex;justify-content:center;gap:10px;font-size:13px;opacity:.9}
+html body .att-state{border-inline-start:5px solid var(--line-2);border-radius:22px}
+html body .att-state.att-ok{border-inline-start-color:var(--ok)}html body .att-state.att-warn{border-inline-start-color:var(--warn)}
+html body .att-state.att-info{border-inline-start-color:var(--accent)}html body .att-state.att-bad{border-inline-start-color:var(--bad)}
+html body .att-segment-row{background:color-mix(in srgb,var(--pri-soft) 55%,transparent);border-radius:14px;padding:9px 12px;margin-top:8px}
+html body #attWidget{display:grid;gap:2px}
+html body #attWidget #in,html body #attWidget #out{min-height:58px;font-size:16px;border-radius:20px}
+@media(min-width:640px){html body #attWidget{grid-template-columns:1fr 1fr}html body #attWidget>.att-clock,html body #attWidget>#attNotices,html body #attWidget>.att-state{grid-column:1/-1}}
+html body .att-approval-item,html body .att-queue>*{border-radius:20px;border:1px solid var(--line);background:var(--card);padding:14px;margin-bottom:10px;box-shadow:var(--shadow-sm)}
+html body .att-approve{background:linear-gradient(135deg,#22B07A,#15855B)!important;color:#fff!important}
+html body .att-reject{background:linear-gradient(135deg,#E5564E,#C23A32)!important;color:#fff!important}
+html body .att-report-row,html body .att-payroll-day{border-radius:16px;padding:10px 12px;background:color-mix(in srgb,var(--pri-soft) 40%,transparent);margin-top:6px}
+
+
+html[data-theme] body .card.stat.att-clock{background:linear-gradient(135deg,var(--hero1),var(--hero2))!important;border:0!important}
+html[data-theme] body .att-clock .att-clock-time{font-size:56px!important;line-height:1.15!important;font-weight:800!important}
+html[data-theme] body .att-clock::before{display:none!important}
+
+.clinic-dock .dock-extra{display:none}
+@media(min-width:1024px){.clinic-dock{overflow-y:auto}.clinic-dock .dock-extra{display:flex;flex:0 0 auto}.clinic-dock .dock-extra:first-of-type{margin-top:8px;border-top:1px solid rgba(255,255,255,.12);border-radius:0 0 14px 14px;padding-top:16px}}
+/* --- ۶) نوار پایین: ۲ گزینه (ورود و خروج) متعادل --- */
+.clinic-dock.dock-2{max-width:420px}
+@media(min-width:1024px){body{padding-inline-start:260px}.set-hero{margin-top:4px}}
+</style>
+<script id="clinic-ui-v3-shell">
+(function(){
+ if(window.__clinicUiV3)return;window.__clinicUiV3=1;
+ var role=window.CLINIC_PANEL_ROLE||'admin';var gA=function(){try{return App}catch(e){return null}};
+ var S=function(d){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+d+'</svg>'};
+ var IC={
+  gear:'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+  cal:'<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>',
+  wallet:'<path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3"/><rect x="3.5" y="7.5" width="17" height="12" rx="3"/><circle cx="16.5" cy="13.5" r="1.2"/>',
+  type:'<path d="M5 7V5h14v2M12 5v14M9 19h6"/>',
+  moon:'<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/>',
+  msg:'<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4 3.5V17h-.5A1.5 1.5 0 0 1 4 15.5z"/>',
+  sliders:'<path d="M5 6h8M17 6h2M5 12h2M11 12h8M5 18h10"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
+  clock:'<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  info:'<circle cx="12" cy="12" r="8.5"/><path d="M12 11v5M12 8h.01"/>'};
+ /* آیکون تنظیمات بهتر برای هدر و منو */
+ function fixGear(){var g=document.getElementById('uiGear');if(g&&g.dataset.v3!=='1'){g.innerHTML=S(IC.gear);g.dataset.v3='1'}
+  if(g)g.classList.toggle('on',(gA()&&(gA().cur==='settings'||gA().cur==='set')));}
+ /* هدر جمع‌شونده هنگام اسکرول (جلوگیری از اشغال صفحه) */
+ var compact=false;
+ window.addEventListener('scroll',function(){var h=document.querySelector('header.top');if(!h)return;var y=window.scrollY||0;
+  if(!compact&&y>90){compact=true;h.classList.add('is-compact')}else if(compact&&y<12){compact=false;h.classList.remove('is-compact')}},{passive:true});
+ function pickIcon(t){t=t||'';return /تقویم/.test(t)?IC.cal:/مالی|تأخیر|یاری/.test(t)?IC.wallet:/اندازه|نوشته|فونت/.test(t)?IC.type:/پیامک|پیام/.test(t)?IC.msg:/ترتیب|بخش/.test(t)?IC.sliders:/ظاهر|تم/.test(t)?IC.moon:IC.gear}
+ /* کارت «ظاهر برنامه» مشترک بین هر سه پنل */
+ function appearanceCard(){
+  var dark=document.documentElement.getAttribute('data-theme')!=='light';
+  var fs=1;try{fs=Number(Store.cfg('fontScale',1))||1}catch(e){}
+  var d=document.createElement('div');d.className='card set-card';d.dataset.v3='appearance';
+  d.innerHTML='<b><span class="set-ic">'+S(IC.moon)+'</span>ظاهر برنامه</b><div class="mut">حالت نمایش و اندازهٔ نوشته‌ها روی همین دستگاه ذخیره می‌شود.</div>'
+   +'<div class="seg" data-k="theme"><button type="button" data-v="light" class="'+(dark?'':'on')+'">☀️ روشن</button><button type="button" data-v="dark" class="'+(dark?'on':'')+'">🌙 تاریک</button></div>'
+   +'<label style="display:block;margin-top:12px">اندازهٔ نوشته‌ها</label><div class="seg" data-k="font">'
+   +[['0.9','کوچک'],['1','معمولی'],['1.12','بزرگ'],['1.25','خیلی بزرگ']].map(function(o){return '<button type="button" data-v="'+o[0]+'" class="'+(Math.abs(fs-Number(o[0]))<.02?'on':'')+'">'+o[1]+'</button>'}).join('')+'</div>';
+  d.querySelectorAll('[data-k=theme] button').forEach(function(b){b.onclick=function(){
+   var cur=document.documentElement.getAttribute('data-theme')==='light'?'light':'dark';
+   if(cur!==b.dataset.v){var t=document.querySelector('.theme-toggle');if(t)t.click()}
+   d.querySelectorAll('[data-k=theme] button').forEach(function(x){x.classList.toggle('on',x===b)})}});
+  d.querySelectorAll('[data-k=font] button').forEach(function(b){b.onclick=function(){
+   try{Store.setCfg('fontScale',Number(b.dataset.v))}catch(e){}
+   document.documentElement.style.setProperty('--clinic-font-scale',b.dataset.v);
+   d.querySelectorAll('[data-k=font] button').forEach(function(x){x.classList.toggle('on',x===b)})}});
+  return d}
+ /* تزئین صفحهٔ تنظیمات هر پنل */
+ function decorateSettings(){
+  var v=document.getElementById('view');if(!v||!gA())return;
+  var on=(gA().cur==='settings'||gA().cur==='set');document.body.dataset.tab=gA().cur||'';
+  if(!on||v.querySelector('.set-hero'))return;
+  var hero=document.createElement('div');hero.className='set-hero';
+  hero.innerHTML='<div class="big-ic">'+S(IC.gear)+'</div><div><b>تنظیمات</b><span>'+({admin:'مدیریت مرکز و ترجیحات برنامه',secretary:'ترجیحات پنل منشی',attendance:'ترجیحات ثبت ورود و خروج'}[role]||'')+'</span></div>';
+  v.insertBefore(hero,v.firstChild);
+  hero.after(appearanceCard());
+  v.querySelectorAll(':scope>.card:not([data-v3])').forEach(function(c){
+   var b=c.querySelector(':scope>b:first-child');if(!b||c.classList.contains('set-card'))return;
+   c.classList.add('set-card');var t=b.textContent;b.innerHTML='<span class="set-ic">'+S(pickIcon(t))+'</span>'+t})}
+ /* تب تنظیمات برای ورود و خروج */
+ window.__attSettings=function(el){
+  el.innerHTML='<div class="card set-card"><b><span class="set-ic">'+S(IC.info)+'</span>دربارهٔ این برنامه</b><div class="mut">ثبت ورود و خروج منشی‌ها. برای تغییر شیفت یا تأیید اضافه‌کاری به پنل مدیریت مراجعه کنید.</div></div>'};
+ 
+ var EXTRA={admin:[['people','مراجعین','users'],['groups','گروه‌ها و کارگاه‌ها','group'],['plans','طرح‌های درمانی','clip'],['psychclub','باشگاه روانشناسی','cap'],['welfare','مطالبات بهزیستی','heart'],['sms','پیامک','sms'],['centers','مراکز','build'],['set','تنظیمات','gear']],secretary:[['therapists','درمانگرها','steth'],['psychclub','باشگاه روانشناسی','cap'],['expenses','هزینه‌های من','receipt'],['tx','تراکنش‌ها','wallet'],['sms','پیامک','sms'],['settings','تنظیمات','gear']]};
+ function extendDock(){var d=document.querySelector('.clinic-dock');if(!d||d.dataset.ext||!EXTRA[role])return;if(typeof uiSvg==='undefined')return;d.dataset.ext='1';
+  EXTRA[role].forEach(function(x){var b=document.createElement('button');b.type='button';b.dataset.go=x[0];b.className='dock-extra';b.setAttribute('aria-label',x[1]);b.innerHTML=uiSvg(x[2])+'<span class="dlab">'+x[1]+'</span>';
+   b.onclick=function(){if(gA()&&gA().goto){gA().goto(x[0]);window.scrollTo({top:0,behavior:'smooth'})}};d.appendChild(b)});
+  var cur=gA()&&gA().cur;d.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',b.dataset.go===cur)})}
+ function ensure(){fixGear();extendDock();decorateSettings();var d=document.querySelector('.clinic-dock');if(d&&role==='attendance')d.classList.add('dock-2')}
+ new MutationObserver(ensure).observe(document.body,{childList:true,subtree:true});
+ setInterval(ensure,1500);ensure();
+})();
+</script>
+<style id="clinic-ui-v3b">
+html body .dash-legacy>.dash-welcome,html body .dash-legacy .dash-links,html body .dash-legacy .dash-links{display:none!important}
+html body .dash-legacy>.card:has(.dash-links){display:none!important}
+html body .dash-legacy .dash-kpis{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:12px;margin-bottom:12px}
+@media(min-width:760px){html body .dash-legacy .dash-kpis{grid-template-columns:repeat(4,1fr)!important}}
+html body .dash-kpis .stat{padding:18px 10px;min-height:92px;display:flex;flex-direction:column;justify-content:center;gap:4px;margin:0}
+html body .dash-kpis .stat::before{height:3px!important}
+html body .dash-kpis .stat b{font-size:19px}
+html body .dash-legacy>*{margin-bottom:12px}
+</style>
+<style id="clinic-ui-v4">
+/* ===== CLINIC-UI-V4 : پالت آبیِ فایل مرجع (روشن/تاریک) + زبان بصری «خانه» برای همهٔ بخش‌ها ===== */
+/* فقط ظاهر: هیچ منطق، دکمه یا داده‌ای تغییر نکرده است. رنگ‌ها از فایل مرجع گرفته شده‌اند. */
+
+/* ---------- ۱) توکن‌های رنگ ---------- */
+html[data-theme="light"],html:not([data-theme]){
+ color-scheme:light;
+ --bg:#EEF3F9;--card:#FFFFFF;--card-2:#F4F7FB;--card-3:#E8EEF6;--row:#F5F8FC;
+ --ink:#0B1220;--mut:#5A6B7D;
+ --pri:#0B6BC4;--pri2:#07408A;--pri-soft:rgba(11,107,196,.10);--pri-soft-2:rgba(11,107,196,.17);--accent:#1A6FCF;
+ --ok:#0F8F72;--warn:#A67C00;--bad:#C93A52;
+ --ok-bg:rgba(15,143,114,.11);--warn-bg:rgba(166,124,0,.12);--bad-bg:rgba(201,58,82,.10);--info-bg:rgba(26,111,207,.10);
+ --line:rgba(22,45,75,.10);--line-2:rgba(22,45,75,.17);--r:22px;--r-sm:14px;
+ --shadow-rgb:22,50,90;--ov-rgb:15,40,80;
+ --shadow:0 12px 30px -14px rgba(22,50,90,.28),0 2px 8px -2px rgba(22,50,90,.08);
+ --shadow-sm:0 4px 16px -8px rgba(22,50,90,.20),0 1px 2px rgba(22,50,90,.04);
+ --glass:rgba(255,255,255,.80);
+ --hero:linear-gradient(135deg,#06397D 0%,#0B5BB5 55%,#2B8FE8 120%);--hero1:#07408A;--hero2:#1F82E0;
+ --hero-shadow:0 18px 34px -16px rgba(7,64,138,.60);
+ --dock-ink:#D3E7FB;--dock-shadow:0 16px 38px -12px rgba(22,50,90,.32);
+ --av1:#3BA0FF;--av2:#0B5BB5;--btn1:#1A82E6;--btn2:#0B5BB5;--on-pri:#fff;
+ --glow-1:rgba(40,130,240,.075);--glow-2:rgba(40,130,240,.04);
+ --ctl:#F4F8FD;
+}
+html[data-theme="dark"]{
+ color-scheme:dark;
+ --bg:#02070D;--card:#0B1119;--card-2:#101923;--card-3:#162331;--row:#080F17;
+ --ink:#F4FAFF;--mut:#8298AA;
+ --pri:#178BFF;--pri2:#0B4D8C;--pri-soft:rgba(23,139,255,.15);--pri-soft-2:rgba(23,139,255,.26);--accent:#69C7FF;
+ --ok:#55D6BE;--warn:#E3B341;--bad:#FF6680;
+ --ok-bg:rgba(85,214,190,.14);--warn-bg:rgba(227,179,65,.14);--bad-bg:rgba(255,102,128,.14);--info-bg:rgba(90,169,255,.14);
+ --line:rgba(160,200,240,.11);--line-2:rgba(160,200,240,.20);--r:22px;--r-sm:14px;
+ --shadow-rgb:0,0,0;--ov-rgb:0,0,0;
+ --shadow:0 14px 32px -12px rgba(0,0,0,.70),0 4px 14px -4px rgba(0,0,0,.45);
+ --shadow-sm:0 8px 20px -10px rgba(0,0,0,.65);
+ --glass:rgba(11,17,25,.80);
+ --hero:linear-gradient(135deg,#06182B 0%,#0A2F58 55%,#0B5FB0 130%);--hero1:#07111D;--hero2:#0B4D8C;
+ --hero-shadow:0 18px 36px -16px rgba(0,70,160,.55);
+ --dock-ink:#8FB3D4;--dock-shadow:0 16px 40px -10px rgba(0,0,0,.80);
+ --av1:#1DA1FF;--av2:#06305A;--btn1:#1A93FF;--btn2:#0B5FC0;--on-pri:#fff;
+ --glow-1:rgba(0,132,255,.13);--glow-2:rgba(0,91,180,.09);
+ --ctl:#101923;
+}
+html body{
+ background-color:var(--bg)!important;color:var(--ink);
+ background-image:radial-gradient(900px 520px at 72% -8%,var(--glow-1),transparent 62%),radial-gradient(700px 480px at 5% 35%,var(--glow-2),transparent 68%)!important;
+ background-attachment:fixed!important}
+::selection{background:var(--pri-soft-2)}
+html{accent-color:var(--pri)}
+html body input[type=checkbox],html body input[type=radio]{accent-color:var(--pri)}
+
+/* ---------- ۲) هدر: بزرگ در خانه، جمع‌وجور در بخش‌های دیگر ---------- */
+html[data-theme] body header.top,html[data-theme="dark"] body header.top,html[data-theme="light"] body header.top{
+ background:var(--hero)!important;box-shadow:var(--hero-shadow)!important;border-radius:0 0 28px 28px;
+ border-bottom:1px solid rgba(255,255,255,.10)!important}
+html[data-page="inner"] body header.top .ui-hello{display:none}
+html[data-page="inner"] body header.top{padding-top:calc(12px + env(safe-area-inset-top));padding-bottom:14px;border-radius:0 0 24px 24px}
+html[data-page="inner"] body header.top h1{font-size:17px}
+html[data-page="inner"] body header.top .sub{display:none}
+html body header.top .ui-avatar{background:radial-gradient(circle at 30% 25%,var(--av1),var(--av2) 95%)!important;border-color:rgba(255,255,255,.35)}
+html body header.top .ui-badge{background:#FF5C73;border-color:var(--hero1)}
+html body header.top .ui-ic#uiGear{background:rgba(255,255,255,.16)!important}
+.center-context{margin:12px 14px 0!important;border-radius:16px!important;background:var(--card)!important;color:var(--mut)!important;border:1px solid var(--line)!important;box-shadow:var(--shadow-sm)!important}
+html[data-page="inner"] .center-context{margin-top:10px!important}
+
+/* ---------- ۳) «سربرگ بخش» (مثل کارت جلسهٔ بعدی در خانه) ---------- */
+.v4-hero{position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;padding:16px 18px;margin:0 0 14px;border-radius:26px;color:#fff;
+ background:var(--hero);box-shadow:var(--hero-shadow)}
+.v4-hero::after{content:"";position:absolute;inset-inline-end:-46px;bottom:-64px;width:190px;height:190px;border-radius:50%;background:rgba(255,255,255,.08);pointer-events:none}
+.v4-hero::before{content:"";position:absolute;inset-inline-end:46px;top:-34px;width:84px;height:84px;border-radius:50%;background:rgba(255,255,255,.06);pointer-events:none}
+.v4-hero .ic{flex:0 0 auto;width:52px;height:52px;border-radius:18px;display:grid;place-items:center;background:rgba(255,255,255,.16);box-shadow:inset 0 0 0 1px rgba(255,255,255,.22);position:relative;z-index:1}
+.v4-hero .ic svg{width:27px;height:27px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.v4-hero .tx{position:relative;z-index:1;min-width:0}
+.v4-hero b{display:block;font-size:18px;line-height:1.5;color:#fff}
+.v4-hero span{display:block;font-size:12.5px;line-height:1.7;color:rgba(255,255,255,.86)}
+
+/* ---------- ۴) کارت‌ها و فهرست‌ها ---------- */
+html body .card{background:var(--card)!important;border:1px solid var(--line);border-radius:22px;padding:16px 18px;box-shadow:var(--shadow-sm);backdrop-filter:none;transition:box-shadow .18s,border-color .18s,transform .12s}
+html body .card:hover{box-shadow:var(--shadow)}
+html body .card:active{background:var(--card)}
+html body .card.row:active{background:var(--card-2)!important}
+/* عنوان کارت‌ها: نشانگر رنگی کنار عنوان */
+html body .card>b:first-child:not(.stat b){display:flex;align-items:center;gap:9px;font-size:15.5px;line-height:1.6;margin-bottom:4px}
+html body .card:not(.stat):not(.set-card):not(.row)>b:first-child::before{content:"";flex:0 0 auto;width:4px;height:17px;border-radius:4px;background:linear-gradient(180deg,var(--accent),var(--pri))}
+html body .card .mut{line-height:1.8}
+html body .stat{background:linear-gradient(180deg,var(--card),color-mix(in srgb,var(--pri-soft) 70%,var(--card)))!important;border-radius:22px}
+html body .stat::before{background:linear-gradient(90deg,var(--accent),var(--pri))}
+html body .stat b,html body .ui-strip b{color:var(--ink)}
+html[data-theme="light"] body .stat b,html[data-theme="light"] body .ui-strip b{color:var(--pri2)}
+
+html body .lst{gap:10px}
+html body .lst>.card,html body .lst .card{margin:0!important;padding:13px 15px!important;border-radius:20px!important}
+html body .lst>.card.row[data-id],html body .lst>.card.row{cursor:pointer;gap:12px;flex-wrap:nowrap}
+html body .lst>.card.row:hover{border-color:var(--pri-soft-2);transform:translateY(-1px)}
+html body .lst>.card.row:active{transform:scale(.992)}
+html body .lst>.card.row .g b{font-size:15px;line-height:1.6}
+html body .lst>.card.row[data-id]::after{content:"";flex:0 0 auto;width:8px;height:8px;border-inline-start:2px solid var(--mut);border-bottom:2px solid var(--mut);transform:rotate(45deg);opacity:.55;margin-inline-end:2px}
+html[dir=rtl] body .lst>.card.row[data-id]::after{transform:rotate(45deg)}
+.v4-av{flex:0 0 auto;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:17px;color:#fff;
+ background:radial-gradient(circle at 30% 25%,var(--av1),var(--av2) 95%);box-shadow:0 6px 14px -6px rgba(var(--shadow-rgb),.45),inset 0 0 0 2px rgba(255,255,255,.22)}
+html body .empty{background:var(--pri-soft)!important;border:1.5px dashed var(--line-2)!important;border-radius:20px!important;color:var(--mut)}
+
+/* ---------- ۵) نشان‌ها (pill) و چیپ‌ها ---------- */
+html body .fin-pill{border-radius:99px;padding:2px 11px;font-weight:700;font-size:11.5px;line-height:1.9;border:1px solid transparent}
+html body .fin-pill-debt{background:var(--bad-bg);color:var(--bad);border-color:color-mix(in srgb,var(--bad) 22%,transparent)}
+html body .fin-pill-paid{background:var(--ok-bg);color:var(--ok);border-color:color-mix(in srgb,var(--ok) 22%,transparent)}
+html body .fin-pill-discount{background:var(--warn-bg);color:var(--warn);border-color:color-mix(in srgb,var(--warn) 24%,transparent)}
+html body .fin-pill-expense{background:var(--pri-soft);color:var(--accent);border-color:color-mix(in srgb,var(--accent) 24%,transparent)}
+html body .fin-pill-installment{background:var(--warn-bg);color:var(--warn);border-color:color-mix(in srgb,var(--warn) 24%,transparent)}
+html body .fin-pill-neutral{background:var(--card-3);color:var(--mut)}
+html body .therapist-chip{font-weight:700;border:1px solid color-mix(in srgb,var(--therapist-color,var(--pri)) 28%,transparent)}
+html body .ok{color:var(--ok)}html body .bad{color:var(--bad)}html body .warn{color:var(--warn)}
+html body .fin-stat-debt{color:var(--bad)}html body .fin-stat-paid{color:var(--ok)}
+
+/* ---------- ۶) دکمه‌ها ---------- */
+html body .btn:not(.sec):not(.bad),html[data-theme="light"] body .btn:not(.sec):not(.bad),html[data-theme="dark"] body .btn:not(.sec):not(.bad){
+ background:linear-gradient(135deg,var(--btn1),var(--btn2))!important;color:#fff!important;
+ box-shadow:0 8px 18px -8px color-mix(in srgb,var(--btn2) 80%,transparent)!important}
+html body .btn{border-radius:15px;font-weight:700}
+html body .btn.big{border-radius:20px;min-height:56px;font-size:16px}
+html body .btn.sec{background:var(--pri-soft)!important;color:var(--pri)!important;border:1px solid var(--line)!important;box-shadow:none!important}
+html[data-theme="dark"] body .btn.sec{color:var(--accent)!important}
+html body .btn.bad{background:linear-gradient(135deg,#F0566B,#C23A52)!important;color:#fff!important}
+html[data-theme="dark"] body .btn.bad{background:linear-gradient(135deg,#FF6680,#C7304E)!important}
+html body .btn.sm{border-radius:12px}
+html body .ui-next .btn{background:rgba(255,255,255,.2)!important;box-shadow:none!important}
+html body .btn:focus-visible,html body input:focus-visible,html body select:focus-visible,html body textarea:focus-visible,html body .clinic-dock button:focus-visible{outline:3px solid color-mix(in srgb,var(--accent) 45%,transparent);outline-offset:2px}
+
+/* ---------- ۷) فرم‌ها ---------- */
+html body input,html body select,html body textarea{background:var(--ctl);border:1.5px solid var(--line-2);border-radius:15px;color:var(--ink)}
+html body input:focus,html body select:focus,html body textarea:focus{background:var(--card);border-color:var(--pri);box-shadow:0 0 0 4px var(--pri-soft)}
+html body label{color:var(--mut);font-weight:600}
+html body .native-control-trigger{background:var(--ctl);border:1.5px solid var(--line-2);border-radius:15px;min-height:46px;color:var(--ink)}
+html body .native-control-trigger:hover{border-color:var(--pri-soft-2)}
+html body .native-control-chevron{border-color:var(--mut)}
+html body .bar{gap:10px}
+html body .date-picker-control .btn{border-radius:14px}
+
+/* ---------- ۸) جدول‌ها ---------- */
+html body table{background:var(--card);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow-sm)}
+html body th{background:var(--pri-soft);color:var(--mut)}
+html body td{border-top:1px solid var(--line)}
+html body tr:nth-child(even) td{background:color-mix(in srgb,var(--pri-soft) 40%,transparent)}
+html body tr:hover td{background:var(--pri-soft)}
+
+/* ---------- ۹) تقویم ---------- */
+html body .cd{border-radius:14px;background:var(--card);border:1px solid var(--line)}
+html body .cd:active,html body .cd:hover{background:var(--pri-soft)}
+html body .cd.today{outline:0;background:linear-gradient(160deg,var(--btn1),var(--btn2))!important;color:#fff;border-color:transparent;box-shadow:0 8px 16px -8px var(--btn2)}
+html body .cd.today b{color:#fff}
+html body .cd i{background:var(--pri)}
+html body .ui-week div.on{background:linear-gradient(160deg,var(--btn1),var(--btn2))}
+
+/* ---------- ۱۰) اعلان‌ها، هشدارها و سطرهای کمکی ---------- */
+html body .alert-line{border-radius:16px;background:var(--pri-soft);border:1px solid var(--line);padding:10px 13px}
+html body .alert-line.alert-bad{background:var(--bad-bg);border-color:color-mix(in srgb,var(--bad) 28%,var(--line))}
+html body .notice-day{border-radius:12px;background:var(--pri-soft);border-inline-start:3px solid var(--pri)}
+html body .agenda-day{border-radius:18px!important;background:var(--card)!important;border:1px solid var(--line)!important}
+html body .therapist-session-heading{border-radius:16px}
+html body .att-state,html body .att-approval-item,html body .att-queue>*{background:var(--card)}
+html body .att-clock,html[data-theme] body .card.stat.att-clock{background:var(--hero)!important;box-shadow:var(--hero-shadow)!important}
+html body .ui-next,html body .set-hero{background:var(--hero);box-shadow:var(--hero-shadow)}
+html body .ui-strip{background:var(--glass);border-radius:24px}
+html body .ui-tile{background:linear-gradient(160deg,var(--card),color-mix(in srgb,var(--pri-soft) 80%,var(--card)));border-radius:22px}
+html body .ui-tile svg,html body .ui-strip svg{stroke:var(--pri)}
+html[data-theme="dark"] body .ui-tile svg,html[data-theme="dark"] body .ui-strip svg{stroke:var(--accent)}
+html body .set-ic{background:var(--pri-soft)}
+html body .set-ic svg{stroke:var(--pri)}
+html[data-theme="dark"] body .set-ic svg{stroke:var(--accent)}
+html body .seg{background:var(--pri-soft);border-radius:16px}
+html body .seg button.on{background:var(--card);color:var(--pri);box-shadow:var(--shadow-sm)}
+html[data-theme="dark"] body .seg button.on{background:var(--card-3);color:var(--accent)}
+html body .staff-subtabs{background:var(--pri-soft);border-radius:18px;padding:4px;gap:4px}
+html body .staff-subtab{border-radius:14px;font-weight:700}
+
+/* ---------- ۱۱) شیت‌ها و دیالوگ‌ها ---------- */
+html body .ov{background:rgba(var(--ov-rgb),.52);backdrop-filter:blur(5px)}
+html body .sh{background:var(--card);border:1px solid var(--line);border-radius:28px 28px 0 0;box-shadow:0 -22px 50px -14px rgba(var(--ov-rgb),.45)}
+html body .sh .x{background:var(--card-3);color:var(--ink)}
+html body .grip{background:var(--line-2)}
+html body #toast{background:var(--card-2);color:var(--ink);border:1px solid var(--line-2);box-shadow:var(--shadow);border-radius:99px}
+html[data-theme="light"] body #toast{background:#0B1D33;color:#F4FAFF;border-color:rgba(105,199,255,.25)}
+html body .android-picker-option{border-radius:14px}
+html body .android-picker-option:hover,html body .android-picker-option.is-active,html body .android-picker-option.selected{background:var(--pri-soft);border-color:var(--pri-soft-2)}
+
+/* ---------- ۱۲) نوار پایین ---------- */
+.clinic-dock{background:var(--glass);border:1px solid var(--line);box-shadow:var(--dock-shadow)}
+.clinic-dock button.on{color:var(--pri)}
+html[data-theme="dark"] .clinic-dock button.on{color:var(--accent)}
+.clinic-dock button.center .ci{background:radial-gradient(circle at 30% 25%,var(--av1),var(--av2) 92%);box-shadow:0 12px 24px -8px color-mix(in srgb,var(--btn2) 80%,transparent),0 0 0 6px var(--bg)}
+.clinic-dock button.center.on .ci{box-shadow:0 12px 26px -6px color-mix(in srgb,var(--btn1) 90%,transparent),0 0 0 6px var(--bg),0 0 0 8px var(--pri-soft-2)}
+@media(min-width:1024px){
+ .clinic-dock{background:var(--hero);box-shadow:var(--hero-shadow)}
+ .clinic-dock button{color:var(--dock-ink)}
+ .clinic-dock button.on{color:#fff}
+ html body header.top{border-radius:0 0 24px 24px}
+}
+
+/* ---------- ۱۳) ورود لایسنس / اسپلش ---------- */
+#clinicCloudGate,.cloud-gate{background:var(--hero)!important}
+
+/* ---------- ۱۴) یک حرکتِ ورود، فقط هنگام تعویض بخش ---------- */
+@keyframes v4in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+html body #view.v4-enter>*{animation:v4in .26s cubic-bezier(.2,.7,.2,1) both}
+@media(prefers-reduced-motion:reduce){html body #view.v4-enter>*{animation:none}}
+
+/* ---------- ۱۵) روانی اسکرول: بدون انیمیشنِ چیدمان ---------- */
+/* کارت «سلام» دیگر با max-height انیمیت نمی‌شود؛ هدر sticky است و این بخش همراه اسکرول بالا می‌رود */
+html body header.top .ui-hello,html body header.top.is-compact .ui-hello{transition:none!important;max-height:none!important;opacity:1!important;margin-top:6px!important;overflow:visible}
+html body header.top.is-compact{padding-bottom:16px!important}
+html[data-page="home"] body header.top{position:relative!important;top:auto!important;will-change:auto}
+/* حذف افکت‌های سنگین هنگام اسکرول */
+html body{background-attachment:scroll!important}
+html body header.top .menu-trigger,html body header.top .theme-toggle,html body header.top .ui-ic,html body .ui-strip,html body .sh,html body .ov{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.clinic-dock{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:color-mix(in srgb,var(--card) 96%,transparent)}
+
+/* ---------- ۱۶) سبک‌سازی رسم (روی گوشی‌های ضعیف) ---------- */
+html[data-theme="light"],html:not([data-theme]){--shadow-sm:0 1px 6px rgba(22,50,90,.10);--shadow:0 3px 12px rgba(22,50,90,.13);--hero-shadow:0 8px 20px -10px rgba(7,64,138,.55);--dock-shadow:0 4px 16px rgba(22,50,90,.20)}
+html[data-theme="dark"]{--shadow-sm:0 1px 6px rgba(0,0,0,.45);--shadow:0 3px 12px rgba(0,0,0,.55);--hero-shadow:0 8px 20px -10px rgba(0,70,160,.55);--dock-shadow:0 4px 16px rgba(0,0,0,.6)}
+html body .card,html body .ui-tile{transition:none}
+html body .card:hover{box-shadow:var(--shadow-sm)}
+.v4-av{box-shadow:inset 0 0 0 2px rgba(255,255,255,.22)}
+
+/* ---------- ۱۶) رفع لگ اسکرول: بدون blur پشت‌نما، سایه‌های سبک‌تر ---------- */
+*,*::before,*::after{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+html body header.top{background-blend-mode:normal}
+html body .lst>.card,html body .lst .card{box-shadow:0 1px 3px rgba(var(--shadow-rgb),.10)!important;contain:layout style}
+html body .lst>.card.row:hover{box-shadow:0 1px 3px rgba(var(--shadow-rgb),.10)!important;transform:none}
+html body .card{transition:none}
+html body .card:hover{box-shadow:var(--shadow-sm)}
+html body .lst>.card.row{transition:none}
+html body .ov{background:rgba(var(--ov-rgb),.62)}
+nav.tabs,.clinic-dock{background:var(--card)!important}
+
+/* ---------- ۱۶) منوی بخش‌ها: کشوی سمت راست (به‌جای دیالوگ وسط صفحه) ---------- */
+.ov.v4-drawer{align-items:stretch!important;justify-content:flex-start!important;padding:0!important}
+.ov:has([data-menu-index]){align-items:stretch!important;justify-content:flex-start!important;padding:0!important}
+.ov.v4-drawer .sh{position:fixed!important;top:0!important;bottom:0!important;right:0!important;left:auto!important;inset-inline:auto 0!important;
+ width:min(84vw,340px)!important;max-width:none!important;height:100%!important;max-height:none!important;margin:0!important;
+ border-radius:28px 0 0 28px!important;border-width:0 0 0 1px!important;overflow:auto;
+ padding:calc(18px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom))!important;
+ animation:v4drawer .28s cubic-bezier(.2,.8,.2,1) both!important;box-shadow:-24px 0 50px -16px rgba(var(--ov-rgb),.45)!important}
+.ov:has([data-menu-index]) .sh{position:fixed!important;top:0!important;bottom:0!important;right:0!important;left:auto!important;
+ width:min(84vw,340px)!important;max-width:none!important;height:100%!important;max-height:none!important;margin:0!important;
+ border-radius:28px 0 0 28px!important;overflow:auto;
+ padding:calc(18px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom))!important;
+ animation:v4drawer .28s cubic-bezier(.2,.8,.2,1) both!important}
+.ov.v4-drawer .grip,.ov:has([data-menu-index]) .grip{display:none!important}
+.ov.v4-drawer [data-menu-index]{margin:0 0 8px!important;border-radius:18px!important}
+.ov.v4-drawer [data-menu-index]:has(.mut){}
+@keyframes v4drawer{from{transform:translateX(100%)}to{transform:none}}
+@media(prefers-reduced-motion:reduce){.ov.v4-drawer .sh,.ov:has([data-menu-index]) .sh{animation:none!important}}
+.ov.v4-drawer,.ov:has([data-menu-index]){z-index:100000!important}
+.ov.v4-drawer .sh,.ov:has([data-menu-index]) .sh{z-index:100001!important}
+
+</style>
+<script id="clinic-ui-v4-shell">
+/* CLINIC-UI-V4 shell: فقط ظاهر. سربرگ هر بخش، آواتار مراجعین و نشانگر صفحه؛ ناوبری و منطق برنامه دست‌نخورده است. */
+(function(){
+ if(window.__clinicUiV4)return;window.__clinicUiV4=1;
+ var role=window.CLINIC_PANEL_ROLE||'admin';
+ var HOME={admin:'dash',secretary:'home',attendance:'now'}[role];
+ var SKIP={settings:1,set:1,now:1};
+ var gA=function(){try{return App}catch(e){return null}};
+ var S=function(d){return '<svg viewBox="0 0 24 24" aria-hidden="true">'+d+'</svg>'};
+ var IC={
+  users:'<circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19c.5-3.4 2.7-5 5.5-5s5 1.6 5.5 5"/><circle cx="17" cy="9.5" r="2.4"/><path d="M16.5 14.2c2.2.1 3.6 1.4 4 4"/>',
+  group:'<circle cx="12" cy="8" r="3"/><circle cx="5.5" cy="10" r="2.2"/><circle cx="18.5" cy="10" r="2.2"/><path d="M6.5 19c.4-3 2.4-4.6 5.5-4.6s5.1 1.6 5.5 4.6"/>',
+  check:'<rect x="4" y="4" width="16" height="16" rx="4"/><path d="m8.5 12.2 2.4 2.4 4.6-5"/>',
+  cal:'<rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/>',
+  wallet:'<path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3"/><rect x="3.5" y="7.5" width="17" height="12" rx="3"/><circle cx="16.5" cy="13.5" r="1.2"/>',
+  steth:'<path d="M6 3v6a4 4 0 0 0 8 0V3"/><path d="M10 13v1.5a4.5 4.5 0 0 0 9 0V13"/><circle cx="19" cy="11" r="2"/>',
+  sliders:'<path d="M5 6h8M17 6h2M5 12h2M11 12h8M5 18h10"/><circle cx="15" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="18" r="2"/>',
+  clip:'<rect x="5" y="4" width="14" height="17" rx="3"/><path d="M9 4.5h6M9 10h6M9 14h6"/>',
+  cap:'<path d="M3 9.5 12 5l9 4.5-9 4.5z"/><path d="M7 12v4c0 1.2 2.2 2.5 5 2.5s5-1.3 5-2.5v-4"/>',
+  heart:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>',
+  chat:'<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4 3.5V17h-.5A1.5 1.5 0 0 1 4 15.5z"/>',
+  build:'<rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M9 8h2M13 8h2M9 12h2M13 12h2M10 20.5v-4h4v4"/>',
+  receipt:'<path d="M6 3.5h12v17l-3-2-3 2-3-2-3 2z"/><path d="M9 8.5h6M9 12.5h6"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M12 3v2.5M12 18.5V21M3 12h2.5M18.5 12H21M5.6 5.6l1.8 1.8M16.6 16.6l1.8 1.8M18.4 5.6l-1.8 1.8M7.4 16.6l-1.8 1.8"/>'
+ };
+ /* [عنوان، توضیح کوتاه، آیکون] */
+ var META={
+  people:['مراجعین','پرونده‌ها، جست‌وجو و ثبت مراجع جدید','users'],
+  sessions:['ثبت جلسه','اعلان‌ها و نوبت‌های روز؛ شروع و پایان جلسه','check'],
+  groups:['گروه‌ها و کارگاه‌ها','ثبت‌نام اعضا، مبلغ هر نفر و پیامک گروهی','group'],
+  planning:['برنامه‌ریزی','تقویم ماه و نوبت‌های روزهای آینده','cal'],
+  therapists:['درمانگرها','فهرست درمانگران و روزهای حضور','steth'],
+  ther:['درمانگران','تعریف، ویرایش و روزهای حضور درمانگران','steth'],
+  psychclub:['باشگاه روانشناسی','عضویت‌ها، برنامه‌ها و پرداخت‌ها','cap'],
+  expenses:['هزینه‌های من','ثبت و مرور هزینه‌های شخصی مرکز','receipt'],
+  tx:role==='admin'?['مالی','تراکنش‌ها، بدهی‌ها و گزارش مالی مرکز','wallet']:['تراکنش‌ها','ثبت و مرور دریافتی‌ها و هزینه‌ها','wallet'],
+  sms:['پیامک','ارسال پیامک تکی و گروهی و یادآوری نوبت','chat'],
+  plans:['طرح‌های درمانی','طرح‌های سازمانی و مبلغ ثابت جلسات','clip'],
+  welfare:['مطالبات بهزیستی','پیگیری مطالبات و تخفیف‌های بهزیستی','heart'],
+  staff:['تنظیمات منشی‌ها','شیفت‌ها، دسترسی‌ها و ساعت کاری منشی‌ها','sliders'],
+  cal:['برنامه‌ها','نوبت‌ها و برنامهٔ همهٔ درمانگران','cal'],
+  centers:['مراکز','مراکز فعال و اتصال پنل‌ها','build']
+ };
+ var AV_TABS={people:1,ther:1};
+ var lastCur=null,enterT=0,pending=false;
+
+ function heroFor(cur){
+  var m=META[cur];if(!m)return null;
+  var h=document.createElement('div');h.className='v4-hero';h.dataset.t=cur;
+  h.innerHTML='<div class="ic">'+S(IC[m[2]]||IC.gear)+'</div><div class="tx"><b></b><span></span></div>';
+  h.querySelector('b').textContent=m[0];h.querySelector('span').textContent=m[1];
+  return h;
+ }
+ function initial(name){
+  name=String(name||'').replace(/^(دکتر|خانم|آقای|آقا|استاد)\s+/,'').trim();
+  var c=name.charAt(0);return c||'•';
+ }
+ function decorateAvatars(v,cur){
+  if(!AV_TABS[cur])return;
+  v.querySelectorAll('.lst>.card.row[data-id]').forEach(function(r){
+   if(r.querySelector(':scope>.v4-av'))return;
+   var b=r.querySelector('.g b');if(!b)return;
+   var a=document.createElement('span');a.className='v4-av';a.setAttribute('aria-hidden','true');a.textContent=initial(b.textContent);
+   r.insertBefore(a,r.firstChild);
+  });
+ }
+ function run(){
+  pending=false;
+  var a=gA(),v=document.getElementById('view');if(!a||!v)return;
+  var cur=a.cur;
+  document.documentElement.setAttribute('data-page',cur===HOME?'home':'inner');
+  document.documentElement.setAttribute('data-tab',cur||'');
+  document.querySelectorAll('.ov:not(.v4-drawer)').forEach(function(o){if(o.querySelector('[data-menu-index]'))o.classList.add('v4-drawer')});
+  var ex=v.querySelector(':scope>.v4-hero');
+  if(!META[cur]||SKIP[cur]||cur===HOME){if(ex)ex.remove()}
+  else if(!ex||ex.dataset.t!==cur){if(ex)ex.remove();var h=heroFor(cur);if(h)v.insertBefore(h,v.firstChild)}
+  decorateAvatars(v,cur);
+  if(cur!==lastCur){
+   lastCur=cur;v.classList.add('v4-enter');clearTimeout(enterT);enterT=setTimeout(function(){v.classList.remove('v4-enter')},450);
+  }
+ }
+ function schedule(){if(pending)return;pending=true;(window.requestAnimationFrame||setTimeout)(run)}
+ new MutationObserver(schedule).observe(document.body,{childList:true,subtree:true});
+ setInterval(schedule,1500);schedule();
+})();
+
+</script>

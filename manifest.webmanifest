@@ -1,10 +1,10 @@
 {
-  "id": "/",
+  "id": "/admin/",
   "name": "پنل مدیریت کلینیک",
   "short_name": "مدیریت",
   "description": "مدیریت مراجع، جلسه‌ها، مالی، کارکنان و گزارش‌های کلینیک",
   "lang": "fa",
-  "dir": "rtl",
+  "dir": "ltr",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
@@ -13,30 +13,22 @@
     "minimal-ui"
   ],
   "orientation": "portrait",
-  "background_color": "#061230",
-  "theme_color": "#0A4D8C",
+  "background_color": "#0E181E",
+  "theme_color": "#0C2A33",
   "categories": [
     "business",
     "productivity"
   ],
   "icons": [
     {
-      "src": "icons/icon-180.png",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
       "src": "icons/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
       "src": "icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
+      "type": "image/png"
     },
     {
       "src": "icons/icon-512-maskable.png",

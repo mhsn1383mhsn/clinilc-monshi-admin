@@ -4,7 +4,7 @@
    — برای درخواست‌های صفحه از شبکه اول استفاده می‌کند و اگر شبکه نبود، نسخهٔ کش
    — اعلان‌های پوش (در صورت تنظیم PUSH_API_URL در config) را نمایش می‌دهد
    ========================================================================= */
-const CACHE = 'clinic-app-v1';
+const CACHE = "clinic-app-v5-ui";
 const SHELL = ['./', './index.html', './manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {
