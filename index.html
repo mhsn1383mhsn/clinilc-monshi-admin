@@ -1908,7 +1908,7 @@ const Store=(()=>{const mem={};const seed={
   const base=CenterHub.current()==='center_main'?seed[t]:undefined;return mem[slot(t)]=JSON.parse(JSON.stringify(base||(t==='cfg'?{}:[])));
  };
  const sv=(t,v)=>save(t,v);
- return{hydrate(t,v){mem[slot(t)]=v},clearMem(){Object.keys(mem).forEach(k=>delete mem[k])},hasMem(t){return Object.prototype.hasOwnProperty.call(mem,slot(t))},cloudMode,all:ld,add(t,o){if(t==='people'&&o?.type==='client'&&!(Number.isInteger(+o.fileNo)&&+o.fileNo>0)){const max=ld('people').filter(x=>x.type==='client').reduce((z,x)=>Math.max(z,+x.fileNo||0),0);o={...o,fileNo:max+1}}o.id=Date.now()+Math.random().toString(36).slice(2,5);sv(t,[o,...ld(t)]);return o},
+ return{hydrate(t,v){mem[slot(t)]=v},clearMem(){Object.keys(mem).forEach(k=>delete mem[k])},hasMem(t){return Object.prototype.hasOwnProperty.call(mem,slot(t))},cloudMode,all:ld,add(t,o){if(t==='people'&&o?.type==='client'&&!(Number.isInteger(+o.fileNo)&&+o.fileNo>0)){const nums=new Set(ld('people').filter(x=>x.type==='client').map(x=>+x.fileNo).filter(n=>Number.isInteger(n)&&n>0));let max=0;nums.forEach(n=>{if(n>max)max=n});o={...o,fileNo:max+1}}o.id=Date.now()+Math.random().toString(36).slice(2,5);sv(t,[o,...ld(t)]);return o},
  del(t,id){sv(t,ld(t).filter(x=>x.id!==id))},upd(t,id,p){sv(t,ld(t).map(x=>x.id===id?{...x,...p}:x))},
  cfg(k,d){const o=ld('cfg');const v=Array.isArray(o)?undefined:o[k];return v===undefined?d:v},setCfg(k,v){const o=ld('cfg');sv('cfg',{...(Array.isArray(o)?{}:o),[k]:v})},refresh(t){if(cloudMode()){if(window.ClinicCloud.repaint)window.ClinicCloud.repaint(t);return}if(t!=null)delete mem[slot(t)];else Object.keys(mem).forEach(k=>delete mem[k])},dump(){return Object.fromEntries(['people','tx','appts','att','groups','events','notifs','sms','ovr','cfg'].map(t=>[t,ld(t)]))},
  load(o){
@@ -1918,8 +1918,29 @@ const Store=(()=>{const mem={};const seed={
  }
 };})();
 window.addEventListener('storage',e=>{if(window.ClinicCloud&&window.ClinicCloud.active)return;if(e.key&&e.key.startsWith('clinic_'))Store.refresh(e.key.slice(7));else if(!e.key)Store.refresh()});
-function ensureClientFileNumbers(){const clients=Store.all('people').filter(p=>p.type==='client');let max=clients.reduce((z,p)=>Math.max(z,+p.fileNo||0),0),seen=new Set();for(const p of clients){const n=+p.fileNo;if(Number.isInteger(n)&&n>0&&!seen.has(n)){seen.add(n);continue}do{max++}while(seen.has(max));Store.upd('people',p.id,{fileNo:max});seen.add(max)}}
+function nextClientFileNo(){
+  const nums=new Set(Store.all('people').filter(p=>p.type==='client').map(p=>+p.fileNo).filter(n=>Number.isInteger(n)&&n>0));
+  let max=0;nums.forEach(n=>{if(n>max)max=n});
+  return max+1;
+}
+function ensureClientFileNumbers(){
+  const clients=Store.all('people').filter(p=>p.type==='client');
+  const used=new Set();
+  for(const p of clients){
+    const n=+p.fileNo;
+    if(Number.isInteger(n)&&n>0)used.add(n);
+  }
+  let max=0;used.forEach(n=>{if(n>max)max=n});
+  for(const p of clients){
+    const n=+p.fileNo;
+    if(Number.isInteger(n)&&n>0)continue;
+    max+=1;
+    Store.upd('people',p.id,{fileNo:max});
+    used.add(max);
+  }
+}
 ensureClientFileNumbers();
+
 
 
 function mountAdminQuickNav(){
@@ -2164,11 +2185,389 @@ const PAYMENT_LABEL={cash:'نقدی',installment:'قسطی',check:'چکی',debt:
 const WEEKDAY_LABELS=['شنبه','یکشنبه','دوشنبه','سه‌شنبه','چهارشنبه','پنجشنبه','جمعه'];
 const bal=pid=>Store.all('tx').filter(t=>t.pid===pid).reduce((s,t)=>s+(t.kind==='charge'?t.amount:(t.kind==='pay'||t.kind==='discount')?-t.amount:0),0);
 const byType=r=>Store.all('people').filter(p=>p.type===r).map(p=>[p.id,p.name]);
-function personForm(p){form(p?'ویرایش مراجع':'مراجع جدید',[{k:'name',l:'نام',req:1,v:p&&p.name},{k:'phone',l:'تلفن',t:'tel',v:p&&p.phone},{k:'gender',l:'جنسیت',t:'select',o:[['','انتخاب کنید'],['male','آقا'],['female','خانم']],req:1,v:p&&p.gender}],v=>{p?Store.upd('people',p.id,v):Store.add('people',{...v,type:'client'});toast('ذخیره شد');App.refresh()})}
-function peopleTab(el,o={}){let q='';
- el.innerHTML=`<button class="btn big" id="np">+ مراجع جدید</button><div class="card"><div class="mut">ترتیب فهرست: شمارهٔ پرونده، از کم به زیاد</div><label>جست‌وجوی مراجع</label><input placeholder="نام یا تلفن…" id="q"></div><div class="lst" id="peopleList"></div>`;
- const paint=()=>{const r=Store.all('people').filter(p=>p.type==='client'&&(!q||(p.name+(p.phone||'')).toLowerCase().includes(q.toLowerCase()))).sort((a,b)=>{const x=Number(a.fileNo),y=Number(b.fileNo);return(Number.isFinite(x)?x:Number.MAX_SAFE_INTEGER)-(Number.isFinite(y)?y:Number.MAX_SAFE_INTEGER)||String(a.name||'').localeCompare(String(b.name||''),'fa')});$('#peopleList',el).innerHTML=r.length?r.map(p=>{const b=bal(p.id);return `<div class="card row" data-id="${esc(p.id)}" style="cursor:pointer"><div class="g"><b>${esc(politeName(p))}</b>${ctBtns(p.id)}<div class="mut">پروندهٔ شمارهٔ ${fa(p.fileNo||'—')} · ${esc(p.phone||'')}</div></div>${b?`<b class="${b>0?'bad':'ok'}">${money(Math.abs(b))}</b>`:''}</div>`}).join(''):'<div class="empty">مراجعی پیدا نشد.</div>';$$('[data-id]',el).forEach(c=>c.onclick=()=>personSheet(c.dataset.id,{del:!!o.admin,admin:!!o.admin}))};
- $('#q',el).oninput=e=>{q=e.target.value;paint()};$('#np',el).onclick=()=>personForm();paint()}
+function personForm(p){
+  if(p){
+    form('ویرایش مراجع',[
+      {k:'name',l:'نام',req:1,v:p.name},
+      {k:'phone',l:'تلفن',t:'tel',v:p.phone},
+      {k:'gender',l:'جنسیت',t:'select',o:[['','انتخاب کنید'],['male','آقا'],['female','خانم']],req:1,v:p.gender}
+    ],v=>{
+      Store.upd('people',p.id,v);
+      toast('ذخیره شد');App.refresh();
+    });
+    return;
+  }
+  const html=`
+    <label>نوع پرونده</label>
+    <div class="seg" id="caseTypeSeg" style="margin-bottom:12px">
+      <button type="button" data-v="individual" class="on">فردی</button>
+      <button type="button" data-v="couple">زوجی</button>
+    </div>
+    <div id="indFields">
+      <label>نام</label><input data-k="name" type="text">
+      <label>تلفن</label><input data-k="phone" type="tel">
+      <label>جنسیت</label>
+      <select data-k="gender"><option value="">انتخاب کنید</option><option value="male">آقا</option><option value="female">خانم</option></select>
+    </div>
+    <div id="cplFields" hidden>
+      <h4 style="margin:8px 0 6px">نفر اول</h4>
+      <label>نام نفر اول</label><input data-k="name1" type="text">
+      <label>تلفن نفر اول</label><input data-k="phone1" type="tel">
+      <label>جنسیت نفر اول</label>
+      <select data-k="gender1"><option value="">انتخاب کنید</option><option value="male">آقا</option><option value="female">خانم</option></select>
+      <h4 style="margin:12px 0 6px">نفر دوم</h4>
+      <label>نام نفر دوم</label><input data-k="name2" type="text">
+      <label>تلفن نفر دوم</label><input data-k="phone2" type="tel">
+      <label>جنسیت نفر دوم</label>
+      <select data-k="gender2"><option value="">انتخاب کنید</option><option value="male">آقا</option><option value="female">خانم</option></select>
+      <div class="mut" style="margin-top:8px">هر دو نفر با یک شماره پرونده ثبت می‌شوند و هر دو در فهرست مراجعین قرار می‌گیرند.</div>
+    </div>
+    <button class="btn big" id="ok">ذخیره</button>`;
+  sheet('مراجع جدید',html,(b,c)=>{
+    let caseType='individual';
+    const sync=()=>{
+      $('#indFields',b).hidden=caseType!=='individual';
+      $('#cplFields',b).hidden=caseType!=='couple';
+      $$('#caseTypeSeg button',b).forEach(btn=>btn.classList.toggle('on',btn.dataset.v===caseType));
+    };
+    $$('#caseTypeSeg button',b).forEach(btn=>btn.onclick=()=>{caseType=btn.dataset.v;sync()});
+    sync();
+    $('#ok',b).onclick=()=>{
+      const val=k=>( $(`[data-k="${k}"]`,b)?.value||'').trim();
+      if(caseType==='individual'){
+        const name=val('name'),phone=val('phone'),gender=val('gender');
+        if(!name)return toast('«نام» را پر کن');
+        if(!gender)return toast('«جنسیت» را پر کن');
+        Store.add('people',{name,phone,gender,type:'client',caseType:'individual'});
+        toast('ذخیره شد');c();App.refresh();return;
+      }
+      const name1=val('name1'),phone1=val('phone1'),gender1=val('gender1');
+      const name2=val('name2'),phone2=val('phone2'),gender2=val('gender2');
+      if(!name1)return toast('نام نفر اول را پر کنید');
+      if(!gender1)return toast('جنسیت نفر اول را انتخاب کنید');
+      if(!name2)return toast('نام نفر دوم را پر کنید');
+      if(!gender2)return toast('جنسیت نفر دوم را انتخاب کنید');
+      const fileNo=nextClientFileNo();
+      const p1=Store.add('people',{name:name1,phone:phone1,gender:gender1,type:'client',caseType:'couple',fileNo});
+      const p2=Store.add('people',{name:name2,phone:phone2,gender:gender2,type:'client',caseType:'couple',fileNo,partnerId:p1.id});
+      Store.upd('people',p1.id,{partnerId:p2.id});
+      toast('پروندهٔ زوجی با شمارهٔ '+fa(fileNo)+' ثبت شد');
+      c();App.refresh();
+    };
+  });
+}
+
+/* ---- وضعیت پرونده (دسته‌بندی مراجعین) ---- */
+const CASE_STATUS_COLORS=['#2f7df6','#1f7a45','#c99412','#b83a32','#7564bf','#0b6e78','#d38b26','#31bcc8','#e77470','#59b3a8'];
+const CASE_STATUS_DEFAULT={id:'__running',name:'در حال اجرا',color:'#1f7a45'};
+function caseStatusCats(){
+  const a=Store.cfg('caseStatusCats',[]);
+  return (Array.isArray(a)?a:[]).slice().sort((x,y)=>(Number(x.order)||0)-(Number(y.order)||0));
+}
+function saveCaseStatusCats(list){
+  Store.setCfg('caseStatusCats',list.map((c,i)=>({id:c.id,name:c.name,color:c.color||CASE_STATUS_COLORS[i%CASE_STATUS_COLORS.length],order:i})));
+}
+function ensureDefaultCaseStatusCat(){
+  const cats=caseStatusCats();
+  if(cats.some(c=>c.name==='در حال اجرا'||String(c.id)==='cs_running'))return;
+  // فقط اگر هیچ دسته‌ای نیست، پیش‌فرض را بساز
+  if(!cats.length){
+    saveCaseStatusCats([{id:'cs_running',name:'در حال اجرا',color:CASE_STATUS_DEFAULT.color,order:0}]);
+  }
+}
+function caseStatusById(id){
+  if(id==null||id==='')return null;
+  return caseStatusCats().find(c=>String(c.id)===String(id))||null;
+}
+function caseStatusOfPerson(p){
+  if(p&&p.caseStatusId){
+    const c=caseStatusById(p.caseStatusId);
+    if(c)return c;
+  }
+  // بدون دسته = در حال اجرا
+  const running=caseStatusCats().find(c=>c.name==='در حال اجرا'||String(c.id)==='cs_running');
+  return running||CASE_STATUS_DEFAULT;
+}
+function caseStatusChipHtml(p){
+  const c=caseStatusOfPerson(p);
+  if(!c)return '';
+  return ` <span class="fin-pill" style="background:color-mix(in srgb,${c.color} 20%,var(--card));color:${c.color};border:1px solid color-mix(in srgb,${c.color} 40%,var(--line));font-weight:700">${esc(c.name)}</span>`;
+}
+function caseStatusCardStyle(p){
+  const c=caseStatusOfPerson(p);
+  if(!c||!c.color)return '';
+  return `border-inline-start:4px solid ${c.color};`;
+}
+function caseStatusCount(id){
+  return Store.all('people').filter(p=>p.type==='client'&&String(p.caseStatusId||'')===String(id)).length;
+}
+function caseStatusSetMembers(catId,ids){
+  const want=new Set((ids||[]).map(String));
+  Store.all('people').filter(p=>p.type==='client').forEach(p=>{
+    const cur=String(p.caseStatusId||'');
+    const id=String(p.id);
+    if(want.has(id)&&cur!==String(catId))Store.upd('people',p.id,{caseStatusId:catId});
+    else if(!want.has(id)&&cur===String(catId))Store.upd('people',p.id,{caseStatusId:''});
+  });
+}
+function caseStatusMovePerson(pid,toCatId){
+  Store.upd('people',pid,{caseStatusId:toCatId||''});
+}
+function caseStatusHub(rootEl,opts={}){
+  const back=typeof opts.back==='function'?opts.back:()=>{};
+  let view='list'; // list | cat
+  let activeCatId=null;
+  let q='';
+  let pickMode=false;
+  let selected=new Set();
+
+  const paint=()=>{
+    if(view==='cat'&&activeCatId)return paintCat();
+    const cats=caseStatusCats();
+    rootEl.innerHTML=`
+      <button class="btn sec" id="csBack" type="button">← بازگشت به مراجعین</button>
+      <div class="card" style="margin-top:10px">
+        <b>وضعیت پرونده</b>
+        <div class="mut">دسته‌بندی‌ها را بسازید، رنگ بدهید و مراجعین را بین آن‌ها جابه‌جا کنید. مراجع بدون دسته به‌صورت خودکار «در حال اجرا» نمایش داده می‌شوند.</div>
+        <button class="btn big" id="csAdd" type="button" style="margin-top:10px">+ دسته‌بندی جدید</button>
+      </div>
+      <div class="lst" id="csList"></div>`;
+    $('#csBack',rootEl).onclick=()=>back();
+    $('#csAdd',rootEl).onclick=()=>addCat();
+    const host=$('#csList',rootEl);
+    if(!cats.length){
+      host.innerHTML='<div class="empty">هنوز دسته‌بندی‌ای تعریف نشده. مثلاً «در حال اجرا» یا «بایگانی یک».</div>';
+      return;
+    }
+    host.innerHTML=cats.map((c,idx)=>`
+      <div class="card" data-cat="${esc(c.id)}" style="border-inline-start:5px solid ${esc(c.color)};cursor:pointer">
+        <div class="row">
+          <div class="g">
+            <b style="display:flex;align-items:center;gap:8px">
+              <i style="width:12px;height:12px;border-radius:50%;background:${esc(c.color)};display:inline-block"></i>
+              ${esc(c.name)}
+            </b>
+            <div class="mut">${fa(caseStatusCount(c.id))} مراجع · برای مدیریت اعضا لمس کنید</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:4px">
+            <button class="btn sec sm" data-up="${esc(c.id)}" type="button" ${idx===0?'disabled':''}>↑</button>
+            <button class="btn sec sm" data-dn="${esc(c.id)}" type="button" ${idx===cats.length-1?'disabled':''}>↓</button>
+          </div>
+        </div>
+        <div class="center-card-actions">
+          <button class="btn sec sm" data-edit="${esc(c.id)}" type="button">ویرایش</button>
+          <button class="btn bad sm" data-del="${esc(c.id)}" type="button">حذف دسته</button>
+        </div>
+      </div>`).join('');
+    $$('[data-cat]',host).forEach(card=>{
+      card.onclick=e=>{
+        if(e.target.closest('button'))return;
+        activeCatId=card.dataset.cat;view='cat';q='';pickMode=false;selected=new Set();paint();
+      };
+    });
+    $$('[data-up]',host).forEach(b=>b.onclick=e=>{e.stopPropagation();reorder(b.dataset.up,-1)});
+    $$('[data-dn]',host).forEach(b=>b.onclick=e=>{e.stopPropagation();reorder(b.dataset.dn,1)});
+    $$('[data-edit]',host).forEach(b=>b.onclick=e=>{e.stopPropagation();editCat(b.dataset.edit)});
+    $$('[data-del]',host).forEach(b=>b.onclick=e=>{e.stopPropagation();delCat(b.dataset.del)});
+  };
+
+  const reorder=(id,dir)=>{
+    const cats=caseStatusCats();
+    const i=cats.findIndex(c=>String(c.id)===String(id));
+    const j=i+dir;
+    if(i<0||j<0||j>=cats.length)return;
+    const t=cats[i];cats[i]=cats[j];cats[j]=t;
+    saveCaseStatusCats(cats);paint();
+  };
+
+  const colorPickerHtml=(selected)=>{
+    return `<div class="cs-colors" style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:6px 0 12px">`+
+      CASE_STATUS_COLORS.map(c=>`<button type="button" data-color="${c}" class="cs-color-btn${c===selected?' on':''}" style="aspect-ratio:1;border-radius:12px;border:2px solid ${c===selected?'var(--ink)':'var(--line)'};background:${c};padding:0;cursor:pointer;box-shadow:${c===selected?'0 0 0 3px color-mix(in srgb,'+c+' 35%,transparent)':'none'}" aria-label="${c}"></button>`).join('')+
+      `</div>`;
+  };
+  const bindColorPicker=(b,initial)=>{
+    let color=initial||CASE_STATUS_COLORS[0];
+    const sync=()=>{
+      $$('.cs-color-btn',b).forEach(btn=>{
+        const on=btn.dataset.color===color;
+        btn.classList.toggle('on',on);
+        btn.style.borderColor=on?'var(--ink)':'var(--line)';
+        btn.style.boxShadow=on?('0 0 0 3px color-mix(in srgb,'+btn.dataset.color+' 35%,transparent)'):'none';
+      });
+    };
+    $$('.cs-color-btn',b).forEach(btn=>btn.onclick=()=>{color=btn.dataset.color;sync()});
+    sync();
+    return ()=>color;
+  };
+  const addCat=()=>{
+    const used=caseStatusCats().length;
+    const initial=CASE_STATUS_COLORS[used%CASE_STATUS_COLORS.length];
+    const html=`<label>نام دسته‌بندی (مثلاً بایگانی یک)</label><input data-k="name" type="text" placeholder="مثلاً بایگانی یک">
+      <label>رنگ</label>${colorPickerHtml(initial)}
+      <button class="btn big" id="ok" type="button">ذخیره</button>`;
+    sheet('دسته‌بندی جدید',html,(b,c)=>{
+      const getColor=bindColorPicker(b,initial);
+      $('#ok',b).onclick=()=>{
+        const name=String(($('[data-k="name"]',b)?.value||'')).trim();
+        if(!name)return toast('نام را وارد کنید');
+        const cats=caseStatusCats();
+        if(cats.some(x=>x.name===name))return toast('این نام قبلاً ثبت شده');
+        cats.push({id:'cs'+Date.now().toString(36),name,color:getColor(),order:cats.length});
+        saveCaseStatusCats(cats);toast('دسته‌بندی اضافه شد');c();paint();
+      };
+    });
+  };
+
+  const editCat=id=>{
+    const cat=caseStatusById(id);if(!cat)return;
+    const html=`<label>نام</label><input data-k="name" type="text" value="${esc(cat.name)}">
+      <label>رنگ</label>${colorPickerHtml(cat.color||CASE_STATUS_COLORS[0])}
+      <button class="btn big" id="ok" type="button">ذخیره</button>`;
+    sheet('ویرایش دسته‌بندی',html,(b,c)=>{
+      const getColor=bindColorPicker(b,cat.color||CASE_STATUS_COLORS[0]);
+      $('#ok',b).onclick=()=>{
+        const name=String(($('[data-k="name"]',b)?.value||'')).trim();
+        if(!name)return toast('نام را وارد کنید');
+        const cats=caseStatusCats().map(c=>String(c.id)===String(id)?{...c,name,color:getColor()}:c);
+        saveCaseStatusCats(cats);toast('ذخیره شد');c();paint();
+      };
+    });
+  };
+
+  const delCat=id=>{
+    const cat=caseStatusById(id);if(!cat)return;
+    const n=caseStatusCount(id);
+    const go=()=>{
+      Store.all('people').filter(p=>String(p.caseStatusId||'')===String(id)).forEach(p=>Store.upd('people',p.id,{caseStatusId:''}));
+      saveCaseStatusCats(caseStatusCats().filter(c=>String(c.id)!==String(id)));
+      toast('دسته حذف شد');view='list';activeCatId=null;paint();
+    };
+    if(typeof confirmSheet==='function'){
+      confirmSheet(`دسته «${cat.name}» حذف شود؟${n?` ${fa(n)} مراجع از این وضعیت خارج می‌شوند.`:''}`,go);
+    }else if(confirm(`حذف «${cat.name}»؟`))go();
+  };
+
+  const paintCat=()=>{
+    const cat=caseStatusById(activeCatId);
+    if(!cat){view='list';activeCatId=null;return paint()}
+    const members=Store.all('people').filter(p=>p.type==='client'&&String(p.caseStatusId||'')===String(cat.id))
+      .filter(p=>!q||(p.name+(p.phone||'')+String(p.fileNo||'')).toLowerCase().includes(q.toLowerCase()))
+      .sort((a,b)=>String(a.name||'').localeCompare(String(b.name||''),'fa'));
+    const otherCats=caseStatusCats().filter(c=>String(c.id)!==String(cat.id));
+    rootEl.innerHTML=`
+      <button class="btn sec" id="csBackList" type="button">← همهٔ دسته‌ها</button>
+      <div class="card" style="margin-top:10px;border-inline-start:5px solid ${esc(cat.color)}">
+        <b style="display:flex;align-items:center;gap:8px"><i style="width:12px;height:12px;border-radius:50%;background:${esc(cat.color)};display:inline-block"></i>${esc(cat.name)}</b>
+        <div class="mut">${fa(caseStatusCount(cat.id))} مراجع در این وضعیت</div>
+        <div class="bar" style="margin-top:10px">
+          <input id="csQ" placeholder="جست‌وجوی مراجع در این دسته…" style="margin:0" value="${esc(q)}">
+        </div>
+        <div class="center-card-actions">
+          <button class="btn" id="csPick" type="button">+ افزودن از فهرست مراجعین</button>
+        </div>
+      </div>
+      <div class="lst" id="csMembers"></div>`;
+    $('#csBackList',rootEl).onclick=()=>{view='list';activeCatId=null;q='';pickMode=false;paint()};
+    $('#csQ',rootEl).oninput=e=>{q=e.target.value;paintCat()};
+    $('#csPick',rootEl).onclick=()=>openPicker(cat);
+    const host=$('#csMembers',rootEl);
+    if(!members.length){
+      host.innerHTML='<div class="empty">مراجعی در این دسته نیست. با «افزودن از فهرست مراجعین» عضو اضافه کنید.</div>';
+      return;
+    }
+    host.innerHTML=members.map(p=>`
+      <div class="card row" data-pid="${esc(p.id)}">
+        <div class="g">
+          <b>${esc(politeName(p))}</b>
+          <div class="mut">پروندهٔ ${fa(p.fileNo||'—')} · ${esc(p.phone||'')}</div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end">
+          ${otherCats.length?`<select data-move="${esc(p.id)}" style="margin:0;width:auto;min-width:120px">
+            <option value="">انتقال به…</option>
+            ${otherCats.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('')}
+            <option value="__none">بدون وضعیت</option>
+          </select>`:''}
+          <button class="btn bad sm" data-rm="${esc(p.id)}" type="button">حذف از دسته</button>
+        </div>
+      </div>`).join('');
+    $$('[data-rm]',host).forEach(b=>b.onclick=()=>{
+      caseStatusMovePerson(b.dataset.rm,'');
+      toast('از دسته حذف شد');paintCat();
+    });
+    $$('[data-move]',host).forEach(sel=>sel.onchange=()=>{
+      const v=sel.value;if(!v)return;
+      caseStatusMovePerson(sel.dataset.move,v==='__none'?'':v);
+      toast('منتقل شد');paintCat();
+    });
+  };
+
+  const openPicker=cat=>{
+    const all=Store.all('people').filter(p=>p.type==='client')
+      .sort((a,b)=>(Number(a.fileNo)||1e15)-(Number(b.fileNo)||1e15)||String(a.name||'').localeCompare(String(b.name||''),'fa'));
+    let pq='';
+    const already=new Set(Store.all('people').filter(p=>String(p.caseStatusId||'')===String(cat.id)).map(p=>String(p.id)));
+    selected=new Set(already);
+    const html=`
+      <div class="mut" style="margin-bottom:8px">مراجعین را تیک بزنید تا در «${esc(cat.name)}» قرار گیرند. تیک‌برداشتن = خروج از این دسته.</div>
+      <input id="pickQ" placeholder="جست‌وجوی نام، تلفن یا شماره پرونده…" style="margin-bottom:8px">
+      <div id="pickList" style="max-height:50vh;overflow:auto"></div>
+      <button class="btn big" id="pickOk" type="button">ثبت انتخاب‌ها</button>`;
+    sheet('افزودن مراجع به '+cat.name,html,(b,c)=>{
+      const render=()=>{
+        const rows=all.filter(p=>!pq||(p.name+(p.phone||'')+String(p.fileNo||'')).toLowerCase().includes(pq.toLowerCase()));
+        $('#pickList',b).innerHTML=rows.length?rows.map(p=>{
+          const on=selected.has(String(p.id));
+          const other=p.caseStatusId&&String(p.caseStatusId)!==String(cat.id)?caseStatusById(p.caseStatusId):null;
+          return `<button type="button" class="member-select${on?' selected':''}" data-pid="${esc(p.id)}">
+            <span class="member-select-mark">${on?'✓':''}</span>
+            <span class="g"><b>${esc(politeName(p))}</b>
+              <small class="mut">پروندهٔ ${fa(p.fileNo||'—')} · ${esc(p.phone||'')}${other?' · الان: '+esc(other.name):''}</small>
+            </span>
+          </button>`;
+        }).join(''):'<div class="empty">موردی نیست</div>';
+        $$('[data-pid]',b).forEach(btn=>btn.onclick=()=>{
+          const id=String(btn.dataset.pid);
+          if(selected.has(id))selected.delete(id);else selected.add(id);
+          render();
+        });
+      };
+      $('#pickQ',b).oninput=e=>{pq=e.target.value;render()};
+      $('#pickOk',b).onclick=()=>{
+        caseStatusSetMembers(cat.id,[...selected]);
+        toast('اعضای دسته به‌روز شد');
+        c();paintCat();
+      };
+      render();
+    });
+  };
+
+  paint();
+}
+
+function peopleTab(el,o={}){let q='',ft='';
+ const renderMain=()=>{
+ el.innerHTML=`<div class="card row" id="caseStatusEntry" style="cursor:pointer;border-inline-start:5px solid var(--pri)"><div class="g"><b>وضعیت پرونده</b><div class="mut">دسته‌بندی، بایگانی و جابه‌جایی وضعیت مراجعین</div></div><span class="mut">›</span></div><button class="btn big" id="np">+ مراجع جدید</button><div class="card"><div class="mut">ترتیب فهرست: شمارهٔ پرونده، از کم به زیاد · پروندهٔ زوجی دو نفر با یک شماره</div><div class="bar"><select id="ft" style="margin:0;width:42%"><option value="">همه</option><option value="individual">فردی</option><option value="couple">زوجی</option><option value="male">آقا</option><option value="female">خانم</option><option value="nostatus">در حال اجرا (بدون دسته)</option>${caseStatusCats().map(c=>`<option value="st:${esc(c.id)}">${esc(c.name)}</option>`).join('')}</select><input placeholder="نام یا تلفن…" id="q" style="margin:0"></div></div><div class="lst" id="peopleList"></div>`;
+ const paint=()=>{const r=Store.all('people').filter(p=>{
+   if(p.type!=='client')return false;
+   if(ft==='individual'&&p.caseType==='couple')return false;
+   if(ft==='couple'&&p.caseType!=='couple')return false;
+   if(ft==='male'&&p.gender!=='male')return false;
+   if(ft==='female'&&p.gender!=='female')return false;
+   if(ft==='nostatus'&&p.caseStatusId)return false;
+   if(ft.startsWith('st:')&&String(p.caseStatusId||'')!==ft.slice(3))return false;
+   if(q&&!(p.name+(p.phone||'')).toLowerCase().includes(q.toLowerCase()))return false;
+   return true;
+ }).sort((a,b)=>{const x=Number(a.fileNo),y=Number(b.fileNo);return(Number.isFinite(x)?x:Number.MAX_SAFE_INTEGER)-(Number.isFinite(y)?y:Number.MAX_SAFE_INTEGER)||String(a.name||'').localeCompare(String(b.name||''),'fa')});
+ $('#peopleList',el).innerHTML=r.length?r.map(p=>{const b=bal(p.id);const partner=p.partnerId?Store.all('people').find(x=>String(x.id)===String(p.partnerId)):null;const caseLabel=p.caseType==='couple'?` · زوجی${partner?' با '+esc(partner.name):''}`:' · فردی';return `<div class="card row" data-id="${esc(p.id)}" style="cursor:pointer;${caseStatusCardStyle(p)}"><div class="g"><b>${esc(politeName(p))}</b>${caseStatusChipHtml(p)}${ctBtns(p.id)}<div class="mut">پروندهٔ شمارهٔ ${fa(p.fileNo||'—')}${caseLabel} · ${esc(p.phone||'')}</div></div>${b?`<b class="${b>0?'bad':'ok'}">${money(Math.abs(b))}</b>`:''}</div>`}).join(''):'<div class="empty">مراجعی پیدا نشد.</div>';
+ $$('[data-id]',el).forEach(c=>c.onclick=()=>personSheet(c.dataset.id,{del:!!o.admin,admin:!!o.admin}))};
+ $('#q',el).oninput=e=>{q=e.target.value;paint()};
+ $('#ft',el).onchange=e=>{ft=e.target.value;paint()};
+ $('#np',el).onclick=()=>personForm();
+ $('#caseStatusEntry',el).onclick=()=>caseStatusHub(el,{back:renderMain});
+ paint();
+ };
+ renderMain();
+}
 
 function personSheet(pid,o={}){
  const p=Store.all('people').find(x=>String(x.id)===String(pid));if(!p)return;
